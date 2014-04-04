@@ -1,0 +1,9 @@
+{% extends 'testdashboard/base.html' %}
+
+{% block maincontent %}
+
+{% for jjob in jenkins_jobs %}
+    <a href="{{ jjob.get_absolute_url }}">{{ jjob.name }}</a>
+{% endfor %}
+
+{% endblock %}

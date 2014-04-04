@@ -1,0 +1,8 @@
+<div class="login_logut">
+{% if request.user.username %}
+    <div class="welcome">Welcome <b>{{ request.user.username }}!</b></div>
+    <div class="logout"><a href="/logout/">"Logout"</a></div>
+{% else %}
+    <div class="login"><a href="/accounts/login/">Login</a></div>
+{% endif %}
+</div>

@@ -1,0 +1,20 @@
+{% extends 'testplanner/base.html' %}
+
+{% block maincontent %}
+<form action="/testplanner/new" method="post">{% csrf_token %}
+<input type="submit" value="Submit" />
+<div style="clear:both;">&nbsp;</div>
+<div class="testplanner">
+{% include "testplanner/form_wrapper.html" with form=testplan_form %}
+</div>
+<div class="testplannertests1">
+{{ testplan_formset.management_form }}
+{% for form in testplan_formset %}
+    {% include "testplanner/form_wrapper.html" with form=form %}
+<div class="button" onclick="add_definition({{ forloop.counter0 }})">Add definition</div>
+{% endfor %}
+</div>
+<div style="clear:both;">&nbsp;</div>
+<input type="submit" value="Submit" />
+</form>
+{% endblock %}

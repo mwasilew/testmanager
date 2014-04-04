@@ -1,0 +1,12 @@
+{% extends 'testplanner/base.html' %}
+
+{% block maincontent %}
+    <p>
+        <a href="/testplanner/new">New test plan</a>
+    </p>
+    <ul>
+    {% for testplan in testplans %}
+        <li><a href="{{testplan.get_absolute_url }}">{{ testplan.name }}</a></li>
+    {% endfor %}
+    </li>
+{% endblock %}

@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <title>Welcome to TcStorm</title>
+    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/login.css" />
+  </head>
+  <body>
+{% block content %}
+
+{% if form.errors %}
+<p id="notification">Your username and password didn't match. Please try again.</p>
+{% endif %}
+
+<div id="container">
+
+<img id="tcstormlogo" src="{{ MEDIA_URL }}image/logo.png" alt="logo" />
+
+<div id="loginform">
+<form method="post" action=".">{% csrf_token %}
+<table border="0" cellspacing="0" cellpadding="0" width="140px">
+<tr>
+    <td>{{ form.username.label_tag }}</td>
+</tr>
+<tr>
+    <td>{{ form.username }}</td>
+</tr>
+<tr>
+    <td>{{ form.password.label_tag }}</td>
+</tr>
+<tr>
+    <td>{{ form.password }}</td>
+</tr>
+</table>
+<input class="button" type="submit" value="login" />
+<input type="hidden" name="next" value="{{ next }}" />
+</form>
+</div>
+</div>
+
+{% endblock %}
+
+  </body>
+</html>

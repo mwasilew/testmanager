@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.5 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    {% block css_include %}
+    {% endblock %}
+
+    {% block js_include %}
+    {% endblock %}
+    <title>{% block title %}{% endblock %}</title>
+</head>
+
+<body>
+<div id="containerfull">
+    <div id="top-bar">
+        {% block tools %}
+        <div style="float:right;">
+            {% include "_logout.html" %}
+        </div>
+        {% include "tools.html" %}
+        {% endblock %}
+        <div class="clear">&nbsp;</div>
+    </div>
+    <div id="main">
+        {% block maincontent %}{% endblock %}
+    </div>
+    <div id="footer">
+        <div id="footersections">
+            {% block footer %}{% endblock %}
+            <div class="clear">&nbsp;</div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+

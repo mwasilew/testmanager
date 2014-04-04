@@ -1,0 +1,86 @@
+{% extends 'testrunner/base.html' %}
+
+{% block css_include %}
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/timeline.css">
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/testrunner.css">
+{% endblock %}
+
+{% block js_include %}
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/timeline.js"></script>
+
+<script type="text/javascript">
+        var timeline;
+
+        google.load("visualization", "1");
+
+        // Set callback to run when API is loaded
+        google.setOnLoadCallback(drawVisualization);
+
+        // Called when the Visualization API is loaded.
+        function drawVisualization() {
+            // Create and populate a data table.
+            var data = [];
+
+            {% for build in jenkins_job.builds.all reversed %}
+                {% if build.is_umbrella %}
+                //data.push({
+                //    "start": new Date("{{ build.timestamp|date:'c' }}"),
+                //    "content": "<a class=\"confirm\" href=\"{{ build.get_absolute_url }}\">{{ build.number }}</a>", 
+                //    "editable": false,
+                //    "group": "masterbuild"
+                //});
+                    {% for subbuild in build.jenkinsbuild_set.all %}
+                    data.push({
+                        "start": new Date("{{ subbuild.timestamp|date:'c' }}"),
+                        "content": "<a class=\"confirm\" href=\"{{ subbuild.get_absolute_url }}\">{{ subbuild.number }}</a>", 
+                        "editable": false,
+                        "group": "{{ subbuild.get_hwpack_name }}-build",
+                        "className": "{{ subbuild.status.name }}"
+                     });
+                        {% for lavajob in subbuild.lavajob_set.all %}
+                        data.push({
+                            "start": new Date("{{ lavajob.start_time|date:'c' }}"),
+                            "content": "<a class=\"confirm\" href=\"{{ lavajob.get_absolute_url }}\">({{ subbuild.number }}) {{ lavajob.number }}</a>", 
+                            "editable": false,
+                            "group": "{{ subbuild.get_hwpack_name }}-test",
+                            "className": "{{ lavajob.status.name }}"
+                        });
+                        {% endfor %}
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+            // specify options
+            var options = {
+                "width":  "100%",
+                "height": "auto",
+                "style": "dot",
+                "zoomable": false,
+                "intervalMin": 1000*3600*24,
+                "intervalMax": 1000*3600*24*30
+            };
+
+            // Instantiate our timeline object.
+            timeline = new links.Timeline(document.getElementById('mytimeline'));
+
+            // Draw our timeline with the created data and options
+            timeline.draw(data, options);
+            timeline.setVisibleChartRange(new Date(2014, 0, 1), new Date(2014, 0, 31));
+        }
+    </script>
+
+{% endblock %}
+
+{% block maincontent %}
+
+<div id="mytimeline"></div>
+
+    <h1>{{ jenkins_job.name }}</h1>
+    <ul>
+    {% for build in jenkins_job.builds.all reversed %}
+        {% if build.is_umbrella %}
+            <li><a href="{{ build.get_absolute_url }}">{{ build.name }} ({{ build.timestamp }})</a></li>
+        {% endif %}
+    {% endfor %}
+    </ul>
+{% endblock %}
