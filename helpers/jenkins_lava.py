@@ -99,6 +99,7 @@ def get_lava_job_details(lava_server, job_id, jenkins_build):
 
                 lava_db_result.save()
                 for test_result in run['test_results']:
+                    log.debug("trying to save test results {0}".format(test_result['test_case_id']))
                     test_result_status, created = LavaJobResultStatus.objects.get_or_create(name = test_result['result'])
                     lava_db_test_result = LavaJobTestResult(
                         lava_job_result = lava_db_result,
