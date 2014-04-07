@@ -41,10 +41,10 @@
                         {% for lavajob in subbuild.lavajob_set.all %}
                         data.push({
                             "start": new Date("{{ lavajob.start_time|date:'c' }}"),
-                            "content": "<a class=\"confirm\" href=\"{{ lavajob.get_absolute_url }}\">({{ subbuild.number }}) {{ lavajob.number }}</a>", 
+                            "content": "<a class=\"confirm\" href=\"{{ lavajob.get_absolute_url }}\">({{ subbuild.number }}) {{ lavajob.number }}</a> {% if lavajob.has_results_missing %}!{% endif %}", 
                             "editable": false,
                             "group": "{{ subbuild.get_hwpack_name }}-test",
-                            "className": "{{ lavajob.status.name }}"
+                            "className": "{{ lavajob.status.name }} {% if lavajob.has_results_missing %}resultsmissing{% endif %}"
                         });
                         {% endfor %}
                     {% endfor %}
@@ -56,6 +56,8 @@
                 "height": "auto",
                 "style": "dot",
                 "zoomable": false,
+                "animate": false,
+                "animateZoom": false,
                 "intervalMin": 1000*3600*24,
                 "intervalMax": 1000*3600*24*30
             };
@@ -73,14 +75,7 @@
 
 {% block maincontent %}
 
+<h1>{{ jenkins_job.name }}</h1>
 <div id="mytimeline"></div>
 
-    <h1>{{ jenkins_job.name }}</h1>
-    <ul>
-    {% for build in jenkins_job.builds.all reversed %}
-        {% if build.is_umbrella %}
-            <li><a href="{{ build.get_absolute_url }}">{{ build.name }} ({{ build.timestamp }})</a></li>
-        {% endif %}
-    {% endfor %}
-    </ul>
 {% endblock %}

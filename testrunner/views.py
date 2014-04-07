@@ -7,6 +7,7 @@ from django.template import RequestContext, loader
 from testrunner.models import (
     JenkinsJob,
     JenkinsBuild,
+    LavaJob,
 )
 
 
@@ -27,12 +28,20 @@ def jenkins_job_view(request, job_name):
     return HttpResponse(template.render(context))   
 
 def jenkins_build_view(request, job_name, build_number):
-    print job_name, build_number
     jenkins_job = get_object_or_404(JenkinsJob, name=job_name)
     jenkins_build = jenkins_job.builds.filter(is_umbrella = True, number = build_number)
     template = loader.get_template('testrunner/jenkins_build_view.html')
     context = RequestContext(request, {
         'jenkins_build': jenkins_build,
+        'lava_url': settings.LAVA_JOB_ID_REGEXP.rsplit("/", 1)[0],
+    })
+    return HttpResponse(template.render(context))
+
+def lava_job_view(request, job_name, build_number, lava_job_number):
+    lava_job = get_object_or_404(LavaJob, number=lava_job_number)
+    template = loader.get_template('testrunner/lava_job_view.html')
+    context = RequestContext(request, {
+        'lava_job': lava_job,
         'lava_url': settings.LAVA_JOB_ID_REGEXP.rsplit("/", 1)[0],
     })
     return HttpResponse(template.render(context))   

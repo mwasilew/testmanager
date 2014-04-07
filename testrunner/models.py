@@ -82,6 +82,18 @@ class LavaJob(models.Model):
                 result_list.append((testdef, None))
         return result_list
 
+    # TODO: move to helpers to be defined during import time, include field for failed tests
+    def has_results_missing(self):
+        for testdef in self.test_definitions.all():
+            resultset = LavaJobResult.objects.filter(lava_job = self, test_definition = testdef)
+            if not resultset:
+                return True
+        return False
+
+    def get_absolute_url(self):
+        return reverse('lava_job_view', args=[str(self.jenkins_build.job.name), str(self.jenkins_build.number), str(self.number)])
+
+
 class LavaJobResultStatus(models.Model):
     name = models.CharField(max_length=8)
 
@@ -97,6 +109,38 @@ class LavaJobResult(models.Model):
     def __unicode__(self):
         return "%s result for %s" % (self.lava_job.__unicode__(), self.test_definition.__unicode__())
 
+    def get_resultset_total(self):
+        return self.lavajobtestresult_set.count()
+    
+    def get_resultset_count_by_status(self):
+        status_count = {}
+        # TODO: fix this, use aggregate to collect the numbers
+        for testresult in self.lavajobtestresult_set.all():
+            if testresult.status.name in status_count:
+                status_count[testresult.status.name] += 1
+            else:
+                status_count[testresult.status.name] = 1
+        print status_count
+        return status_count
+                
+
+class LavaJobTestResultUnit(models.Model):
+    name = models.CharField(max_length=32)
+
+    def __unicode__(self):
+        return self.name
+
+
+class LavaJobTestResult(models.Model):
+    test_case_id = models.CharField(max_length=1024)
+    lava_job_result = models.ForeignKey(LavaJobResult)
+    status = models.ForeignKey(LavaJobResultStatus, blank=True, null=True) # there should be default of 'unknown'
+    is_measurement = models.BooleanField(default=False)
+    unit = models.ForeignKey(LavaJobTestResultUnit, blank=True, null=True)
+    value = models.FloatField(blank=True, null=True)
+
+    def __unicode__(self):
+        return self.test_case_id
 
 class LavaJobTestResultUnit(models.Model):
     name = models.CharField(max_length=32)

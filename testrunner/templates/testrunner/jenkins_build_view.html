@@ -2,14 +2,16 @@
 
 {% block maincontent %}
     {% if jenkins_build %}
+    <a href="{{ jenkins_build.0.job.get_absolute_url }}">{{ jenkins_build.0.job.name }}</a> |
+    <a href="{{ jenkins_build.0.get_absolute_url }}">{{ jenkins_build.0.number }}</a> 
         {% for build in jenkins_build %}
             <h1> {{ build.name }} </h1>
             <ul>
             {% for subbuild in build.jenkinsbuild_set.all %}
-                <li> {{ subbuild.name }} - {{ subbuild.status.name }} ({{ subbuild.timestamp }}) - {{ subbuild.get_hwpack_name }} </li>
+                <li> <a href="{{ subbuild.job.service.url }}job/{{ subbuild.job.name }}/{{ subbuild.number }}">{{ subbuild.name }} - {{ subbuild.status.name }} ({{ subbuild.timestamp }}) - {{ subbuild.get_hwpack_name }}</a></li>
                 <ul>
                 {% for lavajob in subbuild.lavajob_set.all %}
-                    <li> <a href="{{ lava_url }}/{{ lavajob.number }}">{{ lavajob.number }} - {{ lavajob.status }}</a> (submitted:{{ lavajob.submit_time }} {% if lavajob.start_time %}started: {{ lavajob.start_time }}{% endif %}) </li>
+                    <li> <a href="{{ lavajob.get_absolute_url }}">{{ lavajob.number }} - {{ lavajob.status }}</a> (submitted:{{ lavajob.submit_time }} {% if lavajob.start_time %}started: {{ lavajob.start_time }}{% endif %}) </li>
                     <ul>
                     {% for testdef, testresult in lavajob.get_definitions_results %}
                         <li {% if not testresult %} style="color:red"{% endif %}> {{ testdef.name }} - {% if testresult %} OK {% else %} Missing {% endif %} </li>
