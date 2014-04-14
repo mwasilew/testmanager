@@ -22,7 +22,7 @@
             // Create and populate a data table.
             var data = [];
 
-            {% for build in jenkins_job.builds.all reversed %}
+            {% for build in jenkins_builds %}
                 {% if build.is_umbrella %}
                 //data.push({
                 //    "start": new Date("{{ build.timestamp|date:'c' }}"),
@@ -31,21 +31,31 @@
                 //    "group": "masterbuild"
                 //});
                     {% for subbuild in build.jenkinsbuild_set.all %}
+                    var content = "<div><ul class=\"tree\"><li class=\"first\"><a href=\"{{ subbuild.get_absolute_url }}\"><img align=\"baseline\" src=\"{{ STATIC_URL }}img/{{ subbuild.status.name }}.png\"/> {{ subbuild.number }}</a>";
+                    {% if subbuild.lavajob_set.all %}
+                        content += "<ul>"
+                        {% for lavajob in subbuild.lavajob_set.all %}
+                        content += "<li {% if forloop.last %}class=\"last\"{% endif %}><img src=\"{{ STATIC_URL }}img/{{ lavajob.status.name }}.png\"/><a href=\"{{ lavajob.get_absolute_url }}\">{{ lavajob.number }}</a> {% if lavajob.has_results_missing %}!{% endif %}</li>";
+                        {% endfor %}
+                        content += "</ul>"
+                    {% endif %}
+                    content += "</li></ul></div>"
                     data.push({
                         "start": new Date("{{ subbuild.timestamp|date:'c' }}"),
-                        "content": "<a class=\"confirm\" href=\"{{ subbuild.get_absolute_url }}\">{{ subbuild.number }}</a>", 
+                        //"content": "<a class=\"confirm\" href=\"{{ subbuild.get_absolute_url }}\">{{ subbuild.number }}</a>", 
+                        "content": content, 
                         "editable": false,
-                        "group": "{{ subbuild.get_hwpack_name }}-build",
-                        "className": "{{ subbuild.status.name }}"
+                        "group": "{{ subbuild.get_hwpack_name }}"//,
+                        //"className": "{{ subbuild.status.name }}"
                      });
                         {% for lavajob in subbuild.lavajob_set.all %}
-                        data.push({
-                            "start": new Date("{{ lavajob.start_time|date:'c' }}"),
-                            "content": "<a class=\"confirm\" href=\"{{ lavajob.get_absolute_url }}\">({{ subbuild.number }}) {{ lavajob.number }}</a> {% if lavajob.has_results_missing %}!{% endif %}", 
-                            "editable": false,
-                            "group": "{{ subbuild.get_hwpack_name }}-test",
-                            "className": "{{ lavajob.status.name }} {% if lavajob.has_results_missing %}resultsmissing{% endif %}"
-                        });
+                        //data.push({
+                        //    "start": {% if lavajob.start_time %}new Date("{{ lavajob.start_time|date:'c' }}"){% else %}new Date("{{ lavajob.submit_time|date:'c' }}"){% endif %},
+                        //    "content": "<a class=\"confirm\" href=\"{{ lavajob.get_absolute_url }}\">({{ subbuild.number }}) {{ lavajob.number }}</a> {% if lavajob.has_results_missing %}!{% endif %}", 
+                        //    "editable": false,
+                        //    "group": "{{ subbuild.get_hwpack_name }}-test",
+                        //    "className": "{{ lavajob.status.name }} {% if lavajob.has_results_missing %}resultsmissing{% endif %}"
+                        //});
                         {% endfor %}
                     {% endfor %}
                 {% endif %}
@@ -67,7 +77,10 @@
 
             // Draw our timeline with the created data and options
             timeline.draw(data, options);
-            timeline.setVisibleChartRange(new Date(2014, 0, 1), new Date(2014, 0, 31));
+            var time_now = new Date();
+            var time_min_30 = new Date();
+            time_min_30.setDate(time_now.getDate()-30);
+            timeline.setVisibleChartRange(time_min_30, time_now);
         }
     </script>
 
@@ -76,6 +89,9 @@
 {% block maincontent %}
 
 <h1>{{ jenkins_job.name }}</h1>
+
+{% include "testrunner/legend.html" %} 
+
 <div id="mytimeline"></div>
 
 {% endblock %}

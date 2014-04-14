@@ -1,7 +1,9 @@
+import re
 import ast
 import json
 import logging
 from datetime import datetime
+from django.conf import settings
 from testplanner.models import (
     Device,
     TestDefinition,
@@ -17,12 +19,60 @@ from testrunner.models import (
     LavaJobResultStatus,
     LavaJobTestResult
 )
+#ToDo - get rid of lava_tool. Rewrite XML-RPC using token stored in settings
+from lava_tool.authtoken import (
+    AuthenticatingServerProxy, 
+    KeyringAuthBackend
+)
 
 RUNNING = "RUNNING"
 log = logging.getLogger('testrunner')
 
+def fetch_jenkins_builds(jenkins_db_job, jenkins_job, jenkins_build):
+    lava_server = AuthenticatingServerProxy(
+        settings.LAVA_SERVER_URL,
+        verbose=False,
+        auth_backend=KeyringAuthBackend())
 
-def get_lava_job_details(lava_server, job_id, jenkins_build):
+    lava_job_regexp = re.compile(settings.LAVA_JOB_ID_REGEXP)
+    build = jenkins_job.get_build(jenkins_build)
+    # create umbrella build in DB
+    db_build = create_jenkins_build(build, jenkins_db_job)
+    log.debug("master build: {0} {1}".format(db_build.number, db_build.name))
+    is_matrix = False
+    log.debug("fetching matrix builds")
+    for run in build.get_matrix_runs():
+        is_matrix = True
+        db_run = create_jenkins_build(run, jenkins_db_job, False, db_build)
+        if 'description' in run._data and run._data['description']:
+            log.debug("Jenkins build description: {0}".format(run._data['description']))
+            r = lava_job_regexp.search(run._data['description'])
+            if r:
+                log.debug('LAVA job ID: {0}'.format(r.group('lava_job_id')))
+                get_lava_job_details(r.group('lava_job_id'), db_run, lava_server)
+        else:
+            log.debug("no description for build")
+            for r in lava_job_regexp.finditer(run.get_console()):
+                log.debug('LAVA job ID: {0}'.format(r.group('lava_job_id')))
+                get_lava_job_details(r.group('lava_job_id'), db_run, lava_server)
+    if not is_matrix:
+        db_run = create_jenkins_build(build, jenkins_db_job, False, db_build)
+        if 'description' in build._data and build._data['description']:
+            log.debug("Jenkins build description: {0}".format(build._data['description']))
+            r = lava_job_regexp.search(build._data['description'])
+            if r:
+                #print 'LAVA job ID:', r.group('lava_job_id')
+                get_lava_job_details(r.group('lava_job_id'), db_run, lava_server)
+
+
+
+def get_lava_job_details(job_id, jenkins_build, lava_server=None):
+    if lava_server is not None:
+        lava_server = AuthenticatingServerProxy(
+            settings.LAVA_SERVER_URL,
+            verbose=False,
+            auth_backend=KeyringAuthBackend())
+
     job_details = lava_server.scheduler.job_details(job_id)
     #pprint(job_details)
     db_device = None
@@ -35,20 +85,34 @@ def get_lava_job_details(lava_server, job_id, jenkins_build):
     job_status = lava_server.scheduler.job_status(job_id)
     #print 'LAVA job status:', job_status['job_status']
     lava_db_job_status, created = LavaJobStatus.objects.get_or_create(name = job_status['job_status'])
-    lava_db_job = LavaJob(
-        jenkins_build = jenkins_build,
-        number = job_details['id'],
-        status = lava_db_job_status
-        )
-    log.debug(db_device)
-    if db_device:
-        log.debug("adding db_device {0} to lava job {1}".format(db_device, lava_db_job))
+    lava_job_defaults = {
+        'status': lava_db_job_status,
+        'device_type': db_device
+    }
+    #lava_db_job = LavaJob(
+    #    jenkins_build = jenkins_build,
+    #    number = job_details['id'],
+    #    status = lava_db_job_status,
+    #    
+    #    )
+    lava_db_job, lava_db_job_created = LavaJob.objects.get_or_create(
+        jenkins_build = jenkins_build, 
+        number = job_details['id'], 
+        defaults = lava_job_defaults)
+    # make sure the fields are updated if the job object already exists
+    if not lava_db_job_created:
+        lava_db_job.status = lava_db_job_status
         lava_db_job.device_type = db_device
+        lava_db_job.save()
+    log.debug(db_device)
+    #if db_device:
+    #    log.debug("adding db_device {0} to lava job {1}".format(db_device, lava_db_job))
+    #    lava_db_job.device_type = db_device
     log.debug("Submit time: {0}".format(job_details['submit_time']))
     log.debug("Submit time: {0}".format(job_details['submit_time'].__class__.__name__))
      
     lava_db_job.submit_time = datetime.strptime(str(job_details['submit_time']), '%Y%m%dT%H:%M:%S')
-    if 'start_time' in job_details:
+    if 'start_time' in job_details and job_details['start_time']:
         log.debug("Start time: {0}".format(job_details['start_time']))
         lava_db_job.start_time = datetime.strptime(str(job_details['start_time']), '%Y%m%dT%H:%M:%S')
 
@@ -61,7 +125,7 @@ def get_lava_job_details(lava_server, job_id, jenkins_build):
             #or action['command'] == "lava_android_test_run":
             job_definition_tests += action['parameters']['testdef_repos']
 
-    lava_db_job.save()
+    #lava_db_job.save()
     #print "Test runs scheduled", len(job_definition_tests)
     for test_def in job_definition_tests:
         # find test definition object
@@ -118,16 +182,26 @@ def create_jenkins_build(jenkins_build, jenkins_db_job, is_umbrella = True, umbr
     if not jenkins_build.is_running():
         status_name = jenkins_build.get_status()
     build_status, created = JenkinsBuildStatus.objects.get_or_create(name = status_name)
-    db_build = JenkinsBuild(
+    jenkins_build_defaults = {
+        "status": build_status,
+        "is_umbrella": is_umbrella,
+        "timestamp": jenkins_build.get_timestamp()
+    }
+    db_build, db_build_created = JenkinsBuild.objects.get_or_create(
         name = jenkins_build.name,
         job = jenkins_db_job,
         number = jenkins_build.get_number(),
-        status = build_status,
-        is_umbrella = is_umbrella,
-        timestamp = jenkins_build.get_timestamp()
+        defaults = jenkins_build_defaults
         )
     if not is_umbrella and umbrella_db_build:
         db_build.umbrella_build = umbrella_db_build
+    if not db_build_created:
+        db_build.status = build_status
+        db_build.is_umbrella = is_umbrella
+        db_build.timestamp = jenkins_build.get_timestamp()
     db_build.save()
-    log.debug("Jenkins build {0} created.".format(jenkins_build.get_number()))
+    if db_build_created:
+        log.debug("Jenkins build {0} created ({1})".format(jenkins_build.get_number(), jenkins_build.name))
+    else:
+        log.debug("Jenkins build {0} updated ({1})".format(jenkins_build.get_number(), jenkins_build.name))
     return db_build

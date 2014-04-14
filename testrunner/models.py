@@ -20,6 +20,9 @@ class JenkinsJob(models.Model):
     def get_absolute_url(self):
         return reverse('jenkins_job_view', args=[str(self.name)])
 
+    def get_umbrella_builds(self):
+        return self.builds.filter(is_umbrella=True).order_by("-pk")
+
 
 class JenkinsBuildStatus(models.Model):
     name = models.CharField(max_length=16)

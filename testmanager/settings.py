@@ -48,6 +48,18 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.transaction.TransactionMiddleware',
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.static',
+    'django.core.context_processors.tz',
+    'django.contrib.messages.context_processors.messages',
+    'django.core.context_processors.request',
 )
 
 ROOT_URLCONF = 'testmanager.urls'
@@ -137,12 +149,23 @@ LOGGING = {
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
+)
+
 STATIC_URL = '/static/'
 REPOSITORIES_HOME = '/tmp'
-# URL used to fetch the job and bundle details using lava_tool
+# URL used to fetch the job and bundle details using lava_tool (including LAVA username)
+# example: https://username@lava.server/RPC2/
 LAVA_SERVER_URL = ''
 # regexp used for parsing Jenkins job description in order to get LAVA job ID
 LAVA_JOB_ID_REGEXP = ''
+# list of LAVA status names meaning the jobs is running
+LAVA_JOB_RUNNING_STATUSES = ['']
+# list of status names that mean Jenkins build is running
+# RUNNING is artificial as Jenkins doesn't provide such status 
+# it is introduced in testmanager import scripts
+JENKINS_BUILD_RUNNING_STATUSES = ['RUNNING']
 
 try:
     from local_settings import *
