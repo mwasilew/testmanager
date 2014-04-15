@@ -35,6 +35,9 @@ def jenkins_job_view(request, job_name):
 def jenkins_build_view(request, job_name, build_number):
     jenkins_job = get_object_or_404(JenkinsJob, name=job_name)
     jenkins_build = jenkins_job.builds.filter(number = build_number)
+    jenkins_umbrella_build = jenkins_build.filter(is_umbrella = True)
+    if jenkins_umbrella_build.all():
+        jenkins_build = jenkins_umbrella_build
     template = loader.get_template('testrunner/jenkins_build_view.html')
     context = RequestContext(request, {
         'jenkins_build': jenkins_build,
