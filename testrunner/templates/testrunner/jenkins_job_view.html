@@ -21,15 +21,32 @@
         function drawVisualization() {
             // Create and populate a data table.
             var data = [];
-
-            {% for build in jenkins_builds %}
-                {% if build.is_umbrella %}
-                //data.push({
-                //    "start": new Date("{{ build.timestamp|date:'c' }}"),
-                //    "content": "<a class=\"confirm\" href=\"{{ build.get_absolute_url }}\">{{ build.number }}</a>", 
-                //    "editable": false,
-                //    "group": "masterbuild"
-                //});
+            {% if jenkins_job.get_umbrella_builds %}
+                {% for build in jenkins_job.get_umbrella_builds %}
+                    {% if build.is_umbrella %}
+                        {% for subbuild in build.jenkinsbuild_set.all %}
+                        var content = "<div><ul class=\"tree\"><li class=\"first\"><a href=\"{{ subbuild.get_absolute_url }}\"><img align=\"baseline\" src=\"{{ STATIC_URL }}img/{{ subbuild.status.name }}.png\"/> {{ subbuild.number }}</a>";
+                        {% if subbuild.lavajob_set.all %}
+                            content += "<ul>"
+                            {% for lavajob in subbuild.lavajob_set.all %}
+                            content += "<li {% if forloop.last %}class=\"last\"{% endif %}><img src=\"{{ STATIC_URL }}img/{{ lavajob.status.name }}.png\"/><a href=\"{{ lavajob.get_absolute_url }}\">{{ lavajob.number }}</a> {% if lavajob.has_results_missing %}!{% endif %}</li>";
+                            {% endfor %}
+                            content += "</ul>"
+                        {% endif %}
+                        content += "</li></ul></div>"
+                        data.push({
+                            "start": new Date("{{ subbuild.timestamp|date:'c' }}"),
+                            //"content": "<a class=\"confirm\" href=\"{{ subbuild.get_absolute_url }}\">{{ subbuild.number }}</a>", 
+                            "content": content, 
+                            "editable": false,
+                            "group": "{{ subbuild.get_hwpack_name }}"//,
+                            //"className": "{{ subbuild.status.name }}"
+                         });
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                {% for build in jenkins_builds %}
                     {% for subbuild in build.jenkinsbuild_set.all %}
                     var content = "<div><ul class=\"tree\"><li class=\"first\"><a href=\"{{ subbuild.get_absolute_url }}\"><img align=\"baseline\" src=\"{{ STATIC_URL }}img/{{ subbuild.status.name }}.png\"/> {{ subbuild.number }}</a>";
                     {% if subbuild.lavajob_set.all %}
@@ -42,24 +59,13 @@
                     content += "</li></ul></div>"
                     data.push({
                         "start": new Date("{{ subbuild.timestamp|date:'c' }}"),
-                        //"content": "<a class=\"confirm\" href=\"{{ subbuild.get_absolute_url }}\">{{ subbuild.number }}</a>", 
                         "content": content, 
                         "editable": false,
                         "group": "{{ subbuild.get_hwpack_name }}"//,
-                        //"className": "{{ subbuild.status.name }}"
                      });
-                        {% for lavajob in subbuild.lavajob_set.all %}
-                        //data.push({
-                        //    "start": {% if lavajob.start_time %}new Date("{{ lavajob.start_time|date:'c' }}"){% else %}new Date("{{ lavajob.submit_time|date:'c' }}"){% endif %},
-                        //    "content": "<a class=\"confirm\" href=\"{{ lavajob.get_absolute_url }}\">({{ subbuild.number }}) {{ lavajob.number }}</a> {% if lavajob.has_results_missing %}!{% endif %}", 
-                        //    "editable": false,
-                        //    "group": "{{ subbuild.get_hwpack_name }}-test",
-                        //    "className": "{{ lavajob.status.name }} {% if lavajob.has_results_missing %}resultsmissing{% endif %}"
-                        //});
-                        {% endfor %}
                     {% endfor %}
-                {% endif %}
-            {% endfor %}
+                {% endfor %}
+            {% endif %}
             // specify options
             var options = {
                 "width":  "100%",
