@@ -142,7 +142,7 @@ def get_lava_job_details(job_id, jenkins_build, lava_server=None):
         bundle_hash = job_status['bundle_sha1']
         bundle = json.loads(lava_server.dashboard.get(bundle_hash)['content'])
         log.debug("Test runs executed: {0}".format(len(bundle['test_runs'])))
-        for run in bundle['test_runs']:
+        for run in iter(bundle['test_runs']):
             if run['test_id'] != 'lava':
                 # find test definition corresponding to the results
                 # lava should not execute test that wasn't requested
@@ -162,7 +162,7 @@ def get_lava_job_details(job_id, jenkins_build, lava_server=None):
                         lava_db_result.test_revision = test_definition_revision_list[0]
 
                 lava_db_result.save()
-                for test_result in run['test_results']:
+                for test_result in iter(run['test_results']):
                     log.debug("trying to save test results {0}".format(test_result['test_case_id']))
                     test_result_status, created = LavaJobResultStatus.objects.get_or_create(name = test_result['result'])
                     lava_db_test_result = LavaJobTestResult(
