@@ -11,7 +11,7 @@
                 <li> <a href="{{ subbuild.job.service.url }}job/{{ subbuild.job.name }}/{{ subbuild.number }}">{{ subbuild.name }} - {{ subbuild.status.name }} ({{ subbuild.timestamp }}) - {{ subbuild.get_hwpack_name }}</a></li>
                 <ul>
                 {% for lavajob in subbuild.lavajob_set.all %}
-                    <li> <a href="{{ lavajob.get_absolute_url }}">{{ lavajob.number }} - {{ lavajob.status }}</a> (submitted:{{ lavajob.submit_time }} {% if lavajob.start_time %}started: {{ lavajob.start_time }}{% endif %}) </li>
+                    <li> <a href="{{ lavajob.get_absolute_url }}">{{ lavajob.device_type.name }}: {{ lavajob.number }} - {{ lavajob.status }}</a> (submitted:{{ lavajob.submit_time }} {% if lavajob.start_time %}started: {{ lavajob.start_time }}{% endif %}) </li>
                     <ul>
                     {% for testdef, testresult in lavajob.get_definitions_results %}
                         <li {% if not testresult %} style="color:red"{% endif %}> {{ testdef.name }} - {% if testresult %} OK {% else %} Missing {% endif %} </li>

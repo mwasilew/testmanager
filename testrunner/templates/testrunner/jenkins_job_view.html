@@ -29,7 +29,7 @@
                         {% if subbuild.lavajob_set.all %}
                             content += "<ul>"
                             {% for lavajob in subbuild.lavajob_set.all %}
-                            content += "<li {% if forloop.last %}class=\"last\"{% endif %}><img src=\"{{ STATIC_URL }}img/{{ lavajob.status.name }}.png\"/><a href=\"{{ lavajob.get_absolute_url }}\">{{ lavajob.number }}</a> {% if lavajob.has_results_missing %}!{% endif %}</li>";
+                            content += "<li {% if forloop.last %}class=\"last\"{% endif %}><img src=\"{{ STATIC_URL }}img/{{ lavajob.status.name }}.png\"/><a href=\"{{ lavajob.get_absolute_url }}\">{{ lavajob.device_type.name }} ({{ lavajob.number }})</a> {% if lavajob.has_results_missing %}!{% endif %}</li>";
                             {% endfor %}
                             content += "</ul>"
                         {% endif %}
