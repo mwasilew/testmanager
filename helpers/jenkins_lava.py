@@ -148,14 +148,15 @@ def get_lava_job_details(job_id, jenkins_build, lava_server=None):
                 # lava should not execute test that wasn't requested
                 log.debug("trying to find test definition with ID: {0} from LAVA {1}".format(run['test_id'], lava_db_job))
                 # test_id is not unique, but there is no better way of matching results to definition at this point
-                result_test_definition = lava_db_job.test_definitions.filter(test_id = run['test_id'])[0]
+                result_test_definition = lava_db_job.test_definitions.filter(test_id = run['test_id'])
                 log.debug(run['test_id'])
                 lava_db_result = LavaJobResult(
                     lava_job = lava_db_job
                 )
                 if result_test_definition:
+                    result_test_definition = result_test_definition[0]
                     lava_db_result.test_definition = result_test_definition
-                if 'testdef_metadata' in run:
+                if 'testdef_metadata' in run and result_test_definition:
                     # check if there is a corresponding version in db
                     test_definition_revision_list = result_test_definition.testdefinitionrevision_set.filter(revision = run['testdef_metadata']['version'])
                     if test_definition_revision_list:
