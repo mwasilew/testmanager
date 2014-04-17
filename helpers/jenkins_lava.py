@@ -17,7 +17,8 @@ from testrunner.models import (
     LavaJobStatus,
     LavaJobResult,
     LavaJobResultStatus,
-    LavaJobTestResult
+    LavaJobTestResult,
+    LavaJobTestResultUnit
 )
 #ToDo - get rid of lava_tool. Rewrite XML-RPC using token stored in settings
 from lava_tool.authtoken import (
