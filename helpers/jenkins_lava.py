@@ -211,7 +211,9 @@ def create_jenkins_build(jenkins_build, jenkins_db_job, is_umbrella = True, umbr
         db_build.timestamp = jenkins_build.get_timestamp()
     db_build.save()
     if db_build_created:
-        log.debug("Jenkins build {0} created ({1})".format(jenkins_build.get_number(), jenkins_build.name.decode('ascii', 'ignore')))
+        #log.debug("Jenkins build {0} created ({1})".format(jenkins_build.get_number(), jenkins_build.name.decode('ascii', 'ignore')))
+        log.debug("Jenkins build {0} created ({1})".format(jenkins_build.get_number(), ''.join([x for x in jenkins_build.name if ord(x) < 128])))
     else:
-        log.debug("Jenkins build {0} updated ({1})".format(jenkins_build.get_number(), jenkins_build.name.decode('ascii', 'ignore')))
+        #log.debug("Jenkins build {0} updated ({1})".format(jenkins_build.get_number(), jenkins_build.name.decode('ascii', 'ignore')))
+        log.debug("Jenkins build {0} updated ({1})".format(jenkins_build.get_number(), ''.join([x for x in jenkins_build.name if ord(x) < 128])))
     return db_build
