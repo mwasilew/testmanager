@@ -164,7 +164,7 @@ LAVA_JOB_RUNNING_STATUSES = ['']
 # list of status names that mean Jenkins build is running
 # RUNNING is artificial as Jenkins doesn't provide such status 
 # it is introduced in testmanager import scripts
-JENKINS_BUILD_RUNNING_STATUSES = ['RUNNING']
+JENKINS_BUILD_RUNNING_STATUSES = ['RUNNING', 'ERROR']
 
 try:
     from local_settings import *
