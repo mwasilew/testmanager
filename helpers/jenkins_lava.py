@@ -182,7 +182,7 @@ def get_lava_job_details(job_id, jenkins_build, lava_server=None):
                         lava_db_test_result.save()
     except URLError:
         log.error("URLError occured. Probably timeout")
-        log.error(traceback..print_exc())
+        log.error(traceback.print_exc())
         build_status, created = JenkinsBuildStatus.objects.get_or_create(name = ERROR)
         jenkins_build.status = build_status
         jenkins_build.save()
