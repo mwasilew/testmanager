@@ -68,7 +68,7 @@ def fetch_jenkins_builds(jenkins_db_job, jenkins_job, jenkins_build):
 
 
 def get_lava_job_details(job_id, jenkins_build, lava_server=None):
-    if lava_server is not None:
+    if lava_server is None:
         lava_server = AuthenticatingServerProxy(
             settings.LAVA_SERVER_URL,
             verbose=False,
