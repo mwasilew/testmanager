@@ -28,12 +28,13 @@ class Command(BaseCommand):
                 # if there are no builds at all, the result is the same
                 last_db_build = job.builds.filter(is_umbrella=False).order_by('-number')
             last_jenkins_build = jenkins_job.get_last_buildnumber()
+            build_ids = jenkins_job.get_build_ids()
             if last_db_build: 
-                if last_db_build[0].number < last_jenkins_build:
-                    for jenkins_build in range(last_db_build[0].number + 1, last_jenkins_build + 1):
+                for jenkins_build in build_ids:
+                    if jenkins_build > last_db_build[0].number:
                         log.debug("jenkins_build to fetch: {0}".format(jenkins_build))
                         fetch_jenkins_builds(job, jenkins_job, jenkins_build)
 
             else: # no builds in db ?
-                for jenkins_build in range(jenkins_job.get_first_buildnumber(), last_jenkins_build + 1):
+                for jenkins_build in build_ids:
                     fetch_jenkins_builds(job, jenkins_job, jenkins_build)
