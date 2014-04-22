@@ -16,5 +16,5 @@ class Command(BaseCommand):
         for build in JenkinsBuild.objects.filter(status__name__in=settings.JENKINS_BUILD_RUNNING_STATUSES):
             jenkins = Jenkins(build.job.service.url)
             jenkins_job = jenkins[build.job.name]
-            log.debug("checking Jenkins build {0}".format(build.name.decode('unicode-escape').encode('ascii', 'ignore')))
+            log.debug("checking Jenkins build {0}".format(build.name.decode('ascii', 'ignore')))
             fetch_jenkins_builds(build.job, jenkins_job, build.number)
