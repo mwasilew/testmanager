@@ -50,8 +50,7 @@ def fetch_jenkins_builds(jenkins_db_job, jenkins_job, jenkins_build):
         db_run = create_jenkins_build(run, jenkins_db_job, False, db_build)
         if 'description' in run._data and run._data['description']:
             log.debug("Jenkins build description: {0}".format(run._data['description']))
-            r = lava_job_regexp.search(run._data['description'])
-            if r:
+            for r in lava_job_regexp.finditer(run._data['description'])
                 log.debug('LAVA job ID: {0}'.format(r.group('lava_job_id')))
                 get_lava_job_details(r.group('lava_job_id'), db_run, lava_server)
         else:
@@ -63,8 +62,7 @@ def fetch_jenkins_builds(jenkins_db_job, jenkins_job, jenkins_build):
         db_run = create_jenkins_build(build, jenkins_db_job, False, db_build)
         if 'description' in build._data and build._data['description']:
             log.debug("Jenkins build description: {0}".format(build._data['description']))
-            r = lava_job_regexp.search(build._data['description'])
-            if r:
+            for r in lava_job_regexp.finditer(build._data['description'])
                 #print 'LAVA job ID:', r.group('lava_job_id')
                 get_lava_job_details(r.group('lava_job_id'), db_run, lava_server)
 
