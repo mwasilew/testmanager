@@ -7,6 +7,7 @@ from django.core.management.base import (
 )
 from testrunner.models import JenkinsJob
 from jenkinsapi.jenkins import Jenkins
+from jenkinsapi.utils.requester import Requester
 from helpers.jenkins_lava import (
     fetch_jenkins_builds
 )
@@ -20,7 +21,10 @@ class Command(BaseCommand):
         log.setLevel(logging.DEBUG)
         for job in JenkinsJob.objects.all():
             log.debug("processing {0}".format(job.name))
-            jenkins = Jenkins(job.service.url)
+            # a dirty hack to overcome the SSL issues with Linaro Jenkins
+            requester = Requester(baseurl=job.service.url, ssl_verify=False)
+            jenkins = Jenkins(job.service.url, requester=requester)
+            #jenkins = Jenkins(job.service.url)
             jenkins_job = jenkins[job.name]
             last_db_build = job.builds.filter(is_umbrella=True).order_by('-number')
             if not last_db_build:
