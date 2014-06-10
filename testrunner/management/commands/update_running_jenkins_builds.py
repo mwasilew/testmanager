@@ -16,8 +16,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         for build in JenkinsBuild.objects.filter(status__name__in=settings.JENKINS_BUILD_RUNNING_STATUSES):
             # dirty hack to overcome SSL issues with Linaro Jenkins
-            requester = Requester(baseurl=job.service.url, ssl_verify=False)
-            jenkins = Jenkins(job.service.url, requester=requester)
+            requester = Requester(baseurl=build.job.service.url, ssl_verify=False)
+            jenkins = Jenkins(build.job.service.url, requester=requester)
             #jenkins = Jenkins(build.job.service.url)
             jenkins_job = jenkins[build.job.name]
             #log.debug("checking Jenkins build {0}".format(build.name.decode('ascii', 'ignore')))
