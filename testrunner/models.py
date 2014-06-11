@@ -21,7 +21,29 @@ class JenkinsJob(models.Model):
         return reverse('jenkins_job_view', args=[str(self.name)])
 
     def get_umbrella_builds(self):
-        return self.builds.filter(is_umbrella=True).order_by("-pk")
+        return self.builds.filter(is_umbrella=True).order_by("-timestamp")
+
+    def get_last_build(self):
+        last_umbrella_build = self.builds.filter(is_umbrella=True).order_by("-timestamp")
+        if last_umbrella_build:
+            return last_umbrella_build[0]
+        last_build = self.builds.all().order_by("-timestamp")
+        if last_build:
+            return last_build[0]
+        return None
+
+    def get_last_test_results(self):
+        last_build = self.get_last_build()
+        if last_build:
+            if not last_build.is_umbrella:
+                return last_build.lavajob_set.all()
+            else:
+                lava_jobs = []
+                for build in self.builds.filter(is_umbrella=False, number=last_build.number):
+                    for build_lava_jobs in build.lavajob_set.all():
+                        lava_jobs.append(build_lava_job)
+                return lava_jobs
+        return None
 
 
 class JenkinsBuildStatus(models.Model):

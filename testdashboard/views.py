@@ -11,7 +11,7 @@ from testrunner.models import (
 
 @login_required
 def default(request):
-    jenkins_jobs = JenkinsJob.objects.all()
+    jenkins_jobs = JenkinsJob.objects.all().order_by("name")
     context = RequestContext(request, {
         'jenkins_jobs': jenkins_jobs,
     })

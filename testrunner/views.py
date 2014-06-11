@@ -23,7 +23,7 @@ def index(request):
 @login_required
 def jenkins_job_view(request, job_name):
     jenkins_job = get_object_or_404(JenkinsJob, name=job_name)
-    jenkins_builds = jenkins_job.builds.filter(is_umbrella=False).order_by("-pk")[:30]
+    jenkins_builds = jenkins_job.builds.filter(is_umbrella=False).order_by("-number")[:10]
     template = loader.get_template('testrunner/jenkins_job_view.html')
     context = RequestContext(request, {
         'jenkins_job': jenkins_job,

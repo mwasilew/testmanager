@@ -1,103 +1,111 @@
 {% extends 'testrunner/base.html' %}
 
 {% block css_include %}
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/timeline.css">
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/testrunner.css">
-{% endblock %}
-
-{% block js_include %}
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/timeline.js"></script>
-
-<script type="text/javascript">
-        var timeline;
-
-        google.load("visualization", "1");
-
-        // Set callback to run when API is loaded
-        google.setOnLoadCallback(drawVisualization);
-
-        // Called when the Visualization API is loaded.
-        function drawVisualization() {
-            // Create and populate a data table.
-            var data = [];
-            {% if jenkins_job.get_umbrella_builds %}
-                {% for build in jenkins_job.get_umbrella_builds %}
-                    {% if build.is_umbrella %}
-                        {% for subbuild in build.jenkinsbuild_set.all %}
-                        var content = "<div><ul class=\"tree\"><li class=\"first\"><a href=\"{{ subbuild.get_absolute_url }}\"><img align=\"baseline\" src=\"{{ STATIC_URL }}img/{{ subbuild.status.name }}.png\"/> {{ subbuild.number }}</a>";
-                        {% if subbuild.lavajob_set.all %}
-                            content += "<ul>"
-                            {% for lavajob in subbuild.lavajob_set.all %}
-                            content += "<li {% if forloop.last %}class=\"last\"{% endif %}><img src=\"{{ STATIC_URL }}img/{{ lavajob.status.name }}.png\"/><a href=\"{{ lavajob.get_absolute_url }}\">{{ lavajob.device_type.name }} ({{ lavajob.number }})</a> {% if lavajob.has_results_missing %}!{% endif %}</li>";
-                            {% endfor %}
-                            content += "</ul>"
-                        {% endif %}
-                        content += "</li></ul></div>"
-                        data.push({
-                            "start": new Date("{{ subbuild.timestamp|date:'c' }}"),
-                            //"content": "<a class=\"confirm\" href=\"{{ subbuild.get_absolute_url }}\">{{ subbuild.number }}</a>", 
-                            "content": content, 
-                            "editable": false,
-                            "group": "{{ subbuild.get_hwpack_name }}"//,
-                            //"className": "{{ subbuild.status.name }}"
-                         });
-                        {% endfor %}
-                    {% endif %}
-                {% endfor %}
-            {% else %}
-                {% for build in jenkins_builds %}
-                    {% for subbuild in build.jenkinsbuild_set.all %}
-                    var content = "<div><ul class=\"tree\"><li class=\"first\"><a href=\"{{ subbuild.get_absolute_url }}\"><img align=\"baseline\" src=\"{{ STATIC_URL }}img/{{ subbuild.status.name }}.png\"/> {{ subbuild.number }}</a>";
-                    {% if subbuild.lavajob_set.all %}
-                        content += "<ul>"
-                        {% for lavajob in subbuild.lavajob_set.all %}
-                        content += "<li {% if forloop.last %}class=\"last\"{% endif %}><img src=\"{{ STATIC_URL }}img/{{ lavajob.status.name }}.png\"/><a href=\"{{ lavajob.get_absolute_url }}\">{{ lavajob.number }}</a> {% if lavajob.has_results_missing %}!{% endif %}</li>";
-                        {% endfor %}
-                        content += "</ul>"
-                    {% endif %}
-                    content += "</li></ul></div>"
-                    data.push({
-                        "start": new Date("{{ subbuild.timestamp|date:'c' }}"),
-                        "content": content, 
-                        "editable": false,
-                        "group": "{{ subbuild.get_hwpack_name }}"//,
-                     });
-                    {% endfor %}
-                {% endfor %}
-            {% endif %}
-            // specify options
-            var options = {
-                "width":  "100%",
-                "height": "auto",
-                "style": "dot",
-                "zoomable": false,
-                "animate": false,
-                "animateZoom": false,
-                "intervalMin": 1000*3600*24,
-                "intervalMax": 1000*3600*24*30
-            };
-
-            // Instantiate our timeline object.
-            timeline = new links.Timeline(document.getElementById('mytimeline'));
-
-            // Draw our timeline with the created data and options
-            timeline.draw(data, options);
-            var time_now = new Date();
-            var time_min_30 = new Date();
-            time_min_30.setDate(time_now.getDate()-30);
-            timeline.setVisibleChartRange(time_min_30, time_now);
-        }
-    </script>
-
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/timeline-fb.css">
 {% endblock %}
 
 {% block maincontent %}
 
-<h1>{{ jenkins_job.name }}</h1>
-
-{% include "testrunner/legend.html" %} 
-
-<div id="mytimeline"></div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="page-header">
+        <h2>{{ jenkins_job.name }}</h2>
+        </div>
+    </div>
+</div>
+     {% if jenkins_job.get_umbrella_builds %}
+         {% for build in jenkins_job.get_umbrella_builds|slice:":10" %}
+             <div class="article">
+                 <div class="header"><a href="{{ build.get_absolute_url }}">{{ build.number }} - {{ build.timestamp|date:'c' }}</a></div>
+                 {% if build.is_umbrella %}
+                     <table id="job-status" class="table table-striped table-condensed">
+                         <thead>
+                             <tr>
+                                 <th>Build hwpack</th>
+                                 <th>Build status</th>
+                                 <th></th>
+                             </tr>
+                         <thead>
+                         <tbody id="job-status-body">
+                     {% for subbuild in build.jenkinsbuild_set.all %}
+                             <tr>
+                                 <td>{{ subbuild.get_hwpack_name }}</td>
+                                 <td>{{ subbuild.status.name }}</td>
+                                 {% if subbuild.lavajob_set.all %}
+                                 <td>
+                                     <table class="table table-striped table-condensed">
+                                         <thead>
+                                             <tr>
+                                                 <th>LAVA job</th>
+                                                 <th>LAVA device</th>
+                                                 <th>LAVA status</th>
+                                                 <th>LAVA Results</th>
+                                             </tr>
+                                         <thead>
+                                         <tbody id="job-status-body">
+                                             {% for lavajob in subbuild.lavajob_set.all %}
+                                             <tr>
+                                                 <td><a href="{{ lavajob.get_absolute_url }}">{{ lavajob.number }}</a></td>
+                                                 <td>{{ lavajob.device_type.name }}</td>
+                                                 <td>{{ lavajob.status.name }}</td>
+                                                 <td>{% if lavajob.has_results_missing %} Incomplete {% else %} OK {% endif %}</td>
+                                             </tr>
+                                             {% endfor %}
+                                         </tbody>
+                                     </table>
+                                 </td>
+                                 {% endif %}
+                             </tr>
+                             {% endfor %}
+                         </tbody>
+                     </table>
+                 {% endif %}
+             </div>
+         {% endfor %}
+     {% else %}
+         {% for build in jenkins_builds %}
+             <div class="article">
+                 <div class="header"><a href="{{ build.get_absolute_url }}">{{ build.number }} - {{ build.timestamp|date:'c' }}</a></div>
+                 <table id="job-status" class="table table-striped table-condensed">
+                     <thead>
+                         <tr>
+                             <th>Build status</th>
+                             <th></th>
+                         </tr>
+                     <thead>
+                     <tbody id="job-status-body">
+                         <tr>
+                             <td>{{ build.status.name }}</td>
+                             {% if build.lavajob_set.all %}
+                             <td>
+                                 <table class="table table-striped table-condensed">
+                                     <thead>
+                                         <tr>
+                                             <th>LAVA job</th>
+                                             <th>LAVA device</th>
+                                             <th>LAVA status</th>
+                                             <th>LAVA Results</th>
+                                         </tr>
+                                     <thead>
+                                     <tbody id="job-status-body">
+                                         {% for lavajob in build.lavajob_set.all %}
+                                         <tr>
+                                             <td><a href="{{ lavajob.get_absolute_url }}">{{ lavajob.number }}</a></td>
+                                             <td>{{ lavajob.device_type.name }}</td>
+                                             <td>{{ lavajob.status.name }}</td>
+                                             <td>{% if lavajob.has_results_missing %} Incomplete {% else %} OK {% endif %}</td>
+                                         </tr>
+                                         {% endfor %}
+                                     </tbody>
+                                 </table>
+                             </td>
+                             {% endif %}
+                         </tr>
+                         {% endfor %}
+                     </tbody>
+                 </table>
+             </div>
+     {% endif %}
 
 {% endblock %}

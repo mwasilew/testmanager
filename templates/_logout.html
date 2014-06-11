@@ -1,8 +1,6 @@
-<div class="login_logut">
 {% if request.user.username %}
-    <div class="welcome">Welcome <b>{{ request.user.username }}!</b></div>
-    <div class="logout"><a href="/logout/">Logout</a></div>
+    <li id="li-welcome"><p class="navbar-text">{{ request.user.username }}</p></li>
+    <li id="li-logout"><a href="/logout/">Logout</a></li>
 {% else %}
-    <div class="login"><a href="/accounts/login/">Login</a></div>
+    <li id="li-login"><a href="/accounts/login/">Login</a></li>
 {% endif %}
-</div>

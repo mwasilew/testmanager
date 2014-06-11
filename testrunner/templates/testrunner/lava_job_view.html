@@ -10,7 +10,13 @@
     <h3>LAVA job: <a href="{{ lava_url }}/{{ lava_job.number }}">{{ lava_job.device_type.name }} ({{ lava_job.number }})</a></h3>
         <ul>
         {% for testdef, testresult in lava_job.get_definitions_results %}
-            <li {% if not testresult %} style="color:red"{% endif %}> {{ testdef.name }} - {% if testresult %} OK ({{ testresult.get_resultset_total }} {% for status_name, status_count in testresult.get_resultset_count_by_status.items %} | {{ status_name }}: {{ status_count }}{% endfor %}) {% else %} Missing {% endif %} </li>
+            <li {% if not testresult %} style="color:red"{% endif %}> {{ testdef.name }} - {% if testresult %} OK ({{ testresult.get_resultset_total }} {% for status_name, status_count in testresult.get_resultset_count_by_status.items %} | {{ status_name }}: {{ status_count }}{% endfor %}) {% else %} Missing {% endif %} 
+                <ul>
+                    {% for testcase in testresult.lavajobtestresult_set.all %}
+                    <li>{{ testcase.test_case_id }} - {{ testcase.status }}
+                    {% endfor %}
+                </ul>
+            </li>
         {% endfor %}
         </ul>
     {% endif %}
