@@ -32,18 +32,36 @@ class JenkinsJob(models.Model):
             return last_build[0]
         return None
 
-    def get_last_test_results(self):
+    def is_last_test_result_green(self):
         last_build = self.get_last_build()
         if last_build:
             if not last_build.is_umbrella:
-                return last_build.lavajob_set.all()
+                for lavajob in last_build.lavajob_set.all():
+                    if lavajob.has_results_missing():
+                        return False
+                    for lavajobresult in lavajob.lavajobresult_set.all():
+                        result_count = lavajobresult.get_resultset_count_by_status()
+                        if result_count and 'fail' in result_count.keys():
+                            return False
+                    #for key, value in lavajob.lavajobresult.get_resultset_count_by_status():
+                    #    # todo: move status name to settings
+                    #    if key == 'fail':
+                    #        return False
             else:
-                lava_jobs = []
+                if not self.builds.filter(is_umbrella=False, number=last_build.number):
+                    # Jenkins API returnet rubbish
+                    return False
                 for build in self.builds.filter(is_umbrella=False, number=last_build.number):
-                    for build_lava_jobs in build.lavajob_set.all():
-                        lava_jobs.append(build_lava_job)
-                return lava_jobs
-        return None
+                    if not build.lavajob_set.all():
+                        return False
+                    for lavajob in build.lavajob_set.all():
+                        if lavajob.has_results_missing():
+                            return False
+                        for lavajobresult in lavajob.lavajobresult_set.all():
+                            result_count = lavajobresult.get_resultset_count_by_status()
+                            if result_count and 'fail' in result_count.keys():
+                                return False
+        return True
 
 
 class JenkinsBuildStatus(models.Model):
@@ -145,27 +163,9 @@ class LavaJobResult(models.Model):
                 status_count[testresult.status.name] += 1
             else:
                 status_count[testresult.status.name] = 1
-        print status_count
+        #print status_count
         return status_count
                 
-
-class LavaJobTestResultUnit(models.Model):
-    name = models.CharField(max_length=32)
-
-    def __unicode__(self):
-        return self.name
-
-
-class LavaJobTestResult(models.Model):
-    test_case_id = models.CharField(max_length=1024)
-    lava_job_result = models.ForeignKey(LavaJobResult)
-    status = models.ForeignKey(LavaJobResultStatus, blank=True, null=True) # there should be default of 'unknown'
-    is_measurement = models.BooleanField(default=False)
-    unit = models.ForeignKey(LavaJobTestResultUnit, blank=True, null=True)
-    value = models.FloatField(blank=True, null=True)
-
-    def __unicode__(self):
-        return self.test_case_id
 
 class LavaJobTestResultUnit(models.Model):
     name = models.CharField(max_length=32)
