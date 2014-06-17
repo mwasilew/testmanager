@@ -3,7 +3,7 @@
 {% block maincontent %}
     {% if jenkins_build %}
 <div class="row">
-    <form action="/testrunner/compare_results/" method="POST">{% csrf_token %}
+    <form action="/testrunner/compare_results/" method="GET">
     <div class="col-lg-12">
         {% for build in jenkins_build %}
         <div class="page-header">

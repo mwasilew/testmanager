@@ -63,8 +63,8 @@ def lava_job_view(request, job_name, build_number, lava_job_number):
 
 @login_required
 def compare_results(request):
-    if request.method == "POST":
-        form = ResultComparisonForm(request.POST)
+    if request.method == "GET":
+        form = ResultComparisonForm(request.GET)
         if form.is_valid():
             testsets = form.cleaned_data['testresults']
             testcase_names = LavaJobTestResult.objects.filter(
