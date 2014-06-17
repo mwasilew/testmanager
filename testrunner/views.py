@@ -78,7 +78,7 @@ def compare_results(request):
                     if result:
                         testcase_list[-1]['results'].append(result[0].status.name) # there should be only one?
                     else:
-                        testcase_list[-1]['results'].append("Missing")
+                        testcase_list[-1]['results'].append("-")
                 if len(set(testcase_list[-1]['results'])) > 1:
                     testcase_list[-1]['is_different'] = True
 
