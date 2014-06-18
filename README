@@ -1,0 +1,18 @@
+0. local_settings
+REPOSITORIES_HOME
+LAVA_SERVER_URL
+LAVA_JOB_ID_REGEXP
+LAVA_JOB_RUNNING_STATUSES
+JENKINS_BUILD_RUNNING_STATUSES
+
+1. create entry in admin for:
+ - git repo (Test repository)
+ - jenkins server (Jenkins service)
+
+2. run manage.py
+ - manage.py clonerepos (once each time repo is added to admin)
+ - manage.py pullrepos (cron or manually every time the repo is updated)
+ - manage.py fetch_matrix_builds (cron)
+ - manage.py update_running_lava_jobs (cron)
+ - manage.py update_running_jenkins_jobs (cron)
+
