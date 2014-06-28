@@ -1,1 +1,2 @@
 *.pyc
+testmanager/local_settings.py
