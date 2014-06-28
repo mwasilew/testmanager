@@ -10,3 +10,12 @@
     display: inline;
 }
 
+
+#login-view {
+	margin: 60px auto;
+	width: 500px;
+}
+
+#login-view button {
+	width: 100%;
+}

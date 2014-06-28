@@ -35,7 +35,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
 
     # Login
-    (r'^accounts/login/$', 'django.contrib.auth.views.login',
+    (r'^login/$', 'django.contrib.auth.views.login',
      {'template_name': 'accounts/login.html'}),
     (r'^logout/$', 'django.contrib.auth.views.logout',
      {'next_page': '/'}),
