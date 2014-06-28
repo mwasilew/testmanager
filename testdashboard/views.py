@@ -16,23 +16,15 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Testmanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
-from django.template import RequestContext, loader
 
-from testplanner.models import *
-from testrunner.models import (
-    JenkinsJob
-)
+from testrunner.models import JenkinsJob
+from django.views.generic import TemplateView
 
 
-@login_required
-def default(request):
-    jenkins_jobs = JenkinsJob.objects.all().order_by("name")
-    context = RequestContext(request, {
-        'jenkins_jobs': jenkins_jobs,
-    })
-    template = loader.get_template('testdashboard/index.html') 
-    return HttpResponse(template.render(context))
+class Main(TemplateView):
+    template_name='testdashboard/index.html'
 
+    def get_context_data(self, **kwargs):
+        context = super(Main, self).get_context_data(**kwargs)
+        context['jenkins_jobs'] = JenkinsJob.objects.order_by("name")
+        return context
