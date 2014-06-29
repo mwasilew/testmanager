@@ -20,7 +20,6 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import (
     HttpResponse,
-    HttpResponseServerError,
     HttpResponseRedirect
 )
 from django.shortcuts import get_object_or_404
