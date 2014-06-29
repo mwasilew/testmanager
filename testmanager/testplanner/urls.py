@@ -17,9 +17,11 @@
 # along with Testmanager.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf.urls import patterns, url, include
-from testmanager.testplanner.views import *
+from testmanager.testplanner import views
 
-urlpatterns = patterns('',
-                       url(r'^$', index),
-                       url(r'^new$', testplan_new, name='testplan_new'),
-              )
+
+urlpatterns = patterns(
+    '',
+    url(r'^$', views.index),
+    url(r'^new$', views.testplan_new, name='testplan_new'),
+)
