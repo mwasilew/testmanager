@@ -27,7 +27,6 @@ from django.template import RequestContext, loader
 
 from testmanager.testrunner.models import (
     JenkinsJob,
-    JenkinsBuild,
     LavaJob,
     LavaJobTestResult,
 )
