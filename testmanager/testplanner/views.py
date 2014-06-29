@@ -16,21 +16,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Testmanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.http import (
-    HttpResponse,
-    HttpResponseServerError,
-    HttpResponseRedirect,
-)
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.forms.models import inlineformset_factory
 from django.template import RequestContext, loader
-from testmanager.testplanner.models import (
-    TestPlan,
-    TestPlanTestDefinition
-)
-from testmanager.testplanner.forms import (
-    TestPlanForm,
-)
+from testmanager.testplanner.models import TestPlan, TestPlanTestDefinition
+from testmanager.testplanner.forms import TestPlanForm
+
 
 @login_required
 def index(request):
@@ -40,6 +32,7 @@ def index(request):
         'testplans': testplans,
     })
     return HttpResponse(template.render(context))
+
 
 @login_required
 def testplan_new(request):
