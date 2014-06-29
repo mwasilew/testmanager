@@ -18,17 +18,14 @@
 
 import logging
 
-from django.conf import settings
-from django.core.management.base import (
-    BaseCommand, 
-    CommandError
-)
-from testrunner.models import JenkinsJob
+from django.core.management.base import BaseCommand
+
 from jenkinsapi.jenkins import Jenkins
 from jenkinsapi.utils.requester import Requester
-from helpers.jenkins_lava import (
-    fetch_jenkins_builds
-)
+
+from testmanager.testrunner.models import JenkinsJob
+from helpers.jenkins_lava import fetch_jenkins_builds
+
 
 #log = logging.getLogger('testrunner.fetch_matrix_builds')
 log = logging.getLogger('testrunner')

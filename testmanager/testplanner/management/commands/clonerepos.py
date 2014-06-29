@@ -17,14 +17,14 @@
 # along with Testmanager.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-from django.conf import settings
-from django.core.management.base import (
-    BaseCommand, 
-    CommandError
-)
-from helpers.git import copy_commits_to_db
-from testplanner.models import TestRepository
 from git import Repo
+
+from django.core.management.base import BaseCommand
+from django.conf import settings
+
+from testmanager.testplanner.models import TestRepository
+from helpers.git import copy_commits_to_db
+
 
 log = logging.getLogger('testplanner')
 

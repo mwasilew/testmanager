@@ -20,12 +20,9 @@ import logging
 from jenkinsapi.jenkins import Jenkins
 from jenkinsapi.utils.requester import Requester
 from django.conf import settings
-from django.core.management.base import (
-    BaseCommand, 
-    CommandError
-)
+from django.core.management.base import BaseCommand
 from helpers.jenkins_lava import fetch_jenkins_builds
-from testrunner.models import JenkinsBuild 
+from testrunner.models import JenkinsBuild
 
 log = logging.getLogger('testrunner')
 

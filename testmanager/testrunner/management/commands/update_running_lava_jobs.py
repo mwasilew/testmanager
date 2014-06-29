@@ -19,14 +19,13 @@
 import logging
 
 from django.conf import settings
-from django.core.management.base import (
-    BaseCommand, 
-    CommandError
-)
+from django.core.management.base import BaseCommand
 from testrunner.models import LavaJob
 from helpers.jenkins_lava import get_lava_job_details
 
+
 log = logging.getLogger("testrunner")
+
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
