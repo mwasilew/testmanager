@@ -22,7 +22,7 @@ from jsonfield import JSONField
 
 
 class TestRepository(models.Model):
-    """ Represents a git (only?) repository 
+    """ Represents a git (only?) repository
         that contains yaml files with test definitions
     """
     url = models.CharField(max_length=200)
@@ -107,7 +107,7 @@ class TestDefinition(models.Model):
 
 class TestDefinitionRevision(models.Model):
     test_definition = models.ManyToManyField(TestDefinition)
-    revision = models.CharField(max_length=40) 
+    revision = models.CharField(max_length=40)
 
     def __unicode__(self):
         return self.revision
