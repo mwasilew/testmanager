@@ -27,7 +27,6 @@ from testmanager.testrunner.models import JenkinsJob
 from helpers.jenkins_lava import fetch_jenkins_builds
 
 
-#log = logging.getLogger('testrunner.fetch_matrix_builds')
 log = logging.getLogger('testrunner')
 
 
