@@ -1,0 +1,5 @@
+.article {border:1px solid #DFDFD7; border-radius:.5em; padding:1em; margin:1em 0 1em 3em; background:#FFF; position:relative; box-shadow:0 .1em .2em #DFDFD7;}
+.article:before {display:block; position:absolute; content:''; border:1px solid; border-color: #FFF #FFF #DFDFD7 #DFDFD7; background:#FFF; top:.6em; left:-.5em; -webkit-transform:rotate(45deg); -moz-transform:rotate(45deg); -ms-transform:rotate(45deg); -o-transform:rotate(45deg); transform:rotate(45deg); padding:.4em;}
+.article .header:before {display:block; position:absolute; top:-.25em; height:1em; left:-1.1em; font-size:3em; font-weight:400; content:'☻'; color:#C9C9C1}
+.article:after {border-right:4px solid #DFDFD7; display:block; position:absolute; top:2.5em; bottom:0; left:-2em; content:''}
+.article .header {margin:0 0 1em; color:#45A4E8; font-weight:bold;}

@@ -1,0 +1,36 @@
+{% extends 'testrunner/base.html' %}
+
+{% block maincontent %}
+    {% if testsets %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="page-header">
+        <h4>Comparison of: <a href="{{ testsets.0.lava_job.jenkins_build.job.get_absolute_url }}">{{ testsets.0.lava_job.jenkins_build.job.name }}</a></h4>
+        </div>
+            <table id="job-status" class="table table-striped table-condensed">
+                <thead>
+                    <tr>
+                        <th>Test name</th>
+                        {% for testset in testsets %}
+                        <th><a href="{{ testset.lava_job.jenkins_build.get_absolute_url }}">{{ testset.lava_job.jenkins_build.number }}</a> <a href="{{ testset.lava_job.get_absolute_url }}">{{ testset.lava_job.device_type.name }} #{{ testset.lava_job.number }}</a></th>
+                        {% endfor %}
+                        <th></th>
+                    </tr>
+                <thead>
+                <tbody id="job-status-body">
+                    {% for testcase in testcases %}
+                    <tr{% if testcase.is_different %} class="danger"{% endif %}>
+                        <td>{{ testcase.name }}</td>
+                        {% for result in testcase.results %}
+                        <td>{{ result }}</td>
+                        {% endfor %}
+                        <td>{% if testcase.is_different %}<i class="fa fa-exclamation-triangle"></i>{% endif %}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+     </div>
+</div>
+    {% endif %}
+
+{% endblock %}
