@@ -20,6 +20,7 @@ import re
 from django.db import models
 from django.core.urlresolvers import reverse
 
+
 class JenkinsService(models.Model):
     url = models.URLField()
     description = models.TextField(blank=True, null=True)
@@ -97,7 +98,7 @@ class JenkinsBuild(models.Model):
     status = models.ForeignKey(JenkinsBuildStatus)
     is_umbrella = models.BooleanField(default=False)
     timestamp = models.DateTimeField(null=True, blank=True)
-    
+
     def __unicode__(self):
         return self.name
 
@@ -152,7 +153,12 @@ class LavaJob(models.Model):
         return False
 
     def get_absolute_url(self):
-        return reverse('lava_job_view', args=[str(self.jenkins_build.job.name), str(self.jenkins_build.number), str(self.number)])
+        return reverse(
+            'lava_job_view',
+            args=[str(self.jenkins_build.job.name),
+                  str(self.jenkins_build.number),
+                  str(self.number)]
+        )
 
 
 class LavaJobResultStatus(models.Model):
@@ -172,7 +178,7 @@ class LavaJobResult(models.Model):
 
     def get_resultset_total(self):
         return self.lavajobtestresult_set.count()
-    
+
     def get_resultset_count_by_status(self):
         status_count = {}
         # TODO: fix this, use aggregate to collect the numbers
@@ -181,9 +187,8 @@ class LavaJobResult(models.Model):
                 status_count[testresult.status.name] += 1
             else:
                 status_count[testresult.status.name] = 1
-        #print status_count
         return status_count
-                
+
 
 class LavaJobTestResultUnit(models.Model):
     name = models.CharField(max_length=32)
