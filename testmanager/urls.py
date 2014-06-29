@@ -20,15 +20,16 @@ from django.conf.urls import patterns, include, url
 from django.contrib.auth.decorators import login_required
 from django.contrib import admin; admin.autodiscover()
 
-from testdashboard.views import Main
+from testmanager.testdashboard.views import Main
+
 
 urlpatterns = patterns(
     '',
 
     url(r'^$', login_required(Main.as_view())),
 
-    url(r'^testrunner/', include('testrunner.urls', app_name="testrunner")),
-    url(r'^testplanner/',include('testplanner.urls', app_name="testplanner")),
+    url(r'^testrunner/', include('testmanager.testrunner.urls', app_name="testrunner")),
+    url(r'^testplanner/',include('testmanager.testplanner.urls', app_name="testplanner")),
     url(r'^admin/', include(admin.site.urls)),
 
     # Login
