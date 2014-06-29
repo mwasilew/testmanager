@@ -17,26 +17,15 @@
 # along with Testmanager.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib import admin
-from testmanager.testrunner.models import (
-    JenkinsService,
-    JenkinsJob,
-    JenkinsBuildStatus,
-    JenkinsBuild,
-    LavaJobStatus,
-    LavaJob,
-    LavaJobResultStatus,
-    LavaJobResult,
-    LavaJobTestResultUnit,
-    LavaJobTestResult
-)
+from testmanager.testrunner import models
 
-admin.site.register(JenkinsService)
-admin.site.register(JenkinsJob)
-admin.site.register(JenkinsBuildStatus)
-admin.site.register(JenkinsBuild)
-admin.site.register(LavaJobStatus)
-admin.site.register(LavaJob)
-admin.site.register(LavaJobResultStatus)
-admin.site.register(LavaJobResult)
-admin.site.register(LavaJobTestResultUnit)
-admin.site.register(LavaJobTestResult)
+admin.site.register(models.JenkinsService)
+admin.site.register(models.JenkinsJob)
+admin.site.register(models.JenkinsBuildStatus)
+admin.site.register(models.JenkinsBuild)
+admin.site.register(models.LavaJobStatus)
+admin.site.register(models.LavaJob)
+admin.site.register(models.LavaJobResultStatus)
+admin.site.register(models.LavaJobResult)
+admin.site.register(models.LavaJobTestResultUnit)
+admin.site.register(models.LavaJobTestResult)
