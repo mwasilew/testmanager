@@ -17,7 +17,7 @@
 # along with Testmanager.  If not, see <http://www.gnu.org/licenses/>.
 
 from django import forms
-from testmanager.testrunner.models import LavaJobResult 
+from testmanager.testrunner.models import LavaJobResult
 
 
 class ResultComparisonForm(forms.Form):
