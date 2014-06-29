@@ -17,12 +17,16 @@
 # along with Testmanager.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-from jenkinsapi.jenkins import Jenkins
-from jenkinsapi.utils.requester import Requester
+
 from django.conf import settings
 from django.core.management.base import BaseCommand
+
+from jenkinsapi.jenkins import Jenkins
+from jenkinsapi.utils.requester import Requester
+
 from helpers.jenkins_lava import fetch_jenkins_builds
-from testrunner.models import JenkinsBuild
+from testmanager.testrunner.models import JenkinsBuild
+
 
 log = logging.getLogger('testrunner')
 

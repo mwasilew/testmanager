@@ -20,7 +20,8 @@ import logging
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from testrunner.models import LavaJob
+
+from testmanager.testrunner.models import LavaJob
 from helpers.jenkins_lava import get_lava_job_details
 
 
