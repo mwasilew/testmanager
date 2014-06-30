@@ -24,12 +24,12 @@ import traceback
 from urllib2 import URLError
 from datetime import datetime
 from django.conf import settings
-from testplanner.models import (
+from testmanager.testplanner.models import (
     Device,
     TestDefinition,
     TestDefinitionRevision
 )
-from testrunner.models import (
+from testmanager.testrunner.models import (
     JenkinsJob,
     JenkinsBuild,
     JenkinsBuildStatus,
@@ -42,7 +42,7 @@ from testrunner.models import (
 )
 #ToDo - get rid of lava_tool. Rewrite XML-RPC using token stored in settings
 from lava_tool.authtoken import (
-    AuthenticatingServerProxy, 
+    AuthenticatingServerProxy,
     KeyringAuthBackend
 )
 
@@ -114,11 +114,11 @@ def get_lava_job_details(job_id, jenkins_build, lava_server=None):
         #    jenkins_build = jenkins_build,
         #    number = job_details['id'],
         #    status = lava_db_job_status,
-        #    
+        #
         #    )
         lava_db_job, lava_db_job_created = LavaJob.objects.get_or_create(
-            jenkins_build = jenkins_build, 
-            number = job_details['id'], 
+            jenkins_build = jenkins_build,
+            number = job_details['id'],
             defaults = lava_job_defaults)
         # make sure the fields are updated if the job object already exists
         if not lava_db_job_created:
@@ -129,34 +129,34 @@ def get_lava_job_details(job_id, jenkins_build, lava_server=None):
         #if db_device:
         #    log.debug("adding db_device {0} to lava job {1}".format(db_device, lava_db_job))
         #    lava_db_job.device_type = db_device
-         
+
         lava_db_job.submit_time = datetime.strptime(str(job_details['submit_time']), '%Y%m%dT%H:%M:%S')
         if 'start_time' in job_details and job_details['start_time']:
             log.debug("Start time: {0}".format(job_details['start_time']))
             lava_db_job.start_time = datetime.strptime(str(job_details['start_time']), '%Y%m%dT%H:%M:%S')
-    
+
         job_definition = ast.literal_eval(job_details['definition'].replace("\n","").replace(" ","").replace("false","False"))
-    
+
         job_definition_tests = []
         for action in job_definition['actions']:
             if action['command'] == "lava_test_shell":
                 # ignore lava_android_test_run as these are not in db yet
                 #or action['command'] == "lava_android_test_run":
                 job_definition_tests += action['parameters']['testdef_repos']
-    
+
         #lava_db_job.save()
         #print "Test runs scheduled", len(job_definition_tests)
         for test_def in job_definition_tests:
             # find test definition object
             log.debug("adding test definition {0} from repository {1} to LAVA {2}".format(test_def['testdef'], test_def['git-repo'], lava_db_job))
             db_test_def_list = TestDefinition.objects.filter(
-                test_file_name = test_def['testdef'], 
+                test_file_name = test_def['testdef'],
                 repository__url = test_def['git-repo'])
             if db_test_def_list:
                 # attach first test in the list to lava job
                 lava_db_job.test_definitions.add(db_test_def_list[0])
         lava_db_job.save()
-    
+
         if 'bundle_sha1' in job_status and job_status['bundle_sha1']:
             bundle_hash = job_status['bundle_sha1']
             bundle = json.loads(lava_server.dashboard.get(bundle_hash)['content'])
@@ -180,7 +180,7 @@ def get_lava_job_details(job_id, jenkins_build, lava_server=None):
                         test_definition_revision_list = result_test_definition.testdefinitionrevision_set.filter(revision = run['testdef_metadata']['version'])
                         if test_definition_revision_list:
                             lava_db_result.test_revision = test_definition_revision_list[0]
-    
+
                     lava_db_result.save()
                     for test_result in iter(run['test_results']):
                         log.debug("trying to save test results {0}".format(test_result['test_case_id']))
@@ -193,7 +193,7 @@ def get_lava_job_details(job_id, jenkins_build, lava_server=None):
                         if 'measurement' in test_result:
                             db_unit, created = LavaJobTestResultUnit.objects.get_or_create(name = test_result['units'])
                             lava_db_test_result.is_measurement = True
-                            lava_db_test_result.value = test_result['measurement'] 
+                            lava_db_test_result.value = test_result['measurement']
                             lava_db_test_result.unit = db_unit
                         lava_db_test_result.save()
     except URLError:
@@ -233,3 +233,30 @@ def create_jenkins_build(jenkins_build, jenkins_db_job, is_umbrella = True, umbr
         #log.debug("Jenkins build {0} updated ({1})".format(jenkins_build.get_number(), jenkins_build.name.decode('ascii', 'ignore')))
         log.debug("Jenkins build {0} updated ({1})".format(jenkins_build.get_number(), ''.join([x for x in jenkins_build.name if ord(x) < 128])))
     return db_build
+
+
+def get_lava_hardware():
+    lava_response = [
+        {'idle': 0, 'busy': 1, 'name': 'arndale', 'offline': 2},
+        {'idle': 1, 'busy': 0, 'name': 'arndale-octa', 'offline': 0},
+        {'idle': 2, 'busy': 0, 'name': 'beaglebone-black', 'offline': 2},
+        {'idle': 0, 'busy': 0, 'name': 'beaglexm', 'offline': 0},
+        {'idle': 0, 'busy': 0, 'name': 'dynamic-vm', 'offline': 0},
+        {'idle': 0, 'busy': 0, 'name': 'highbank', 'offline': 0},
+        {'idle': 1, 'busy': 0, 'name': 'ifc6410', 'offline': 0},
+        {'idle': 5, 'busy': 0, 'name': 'kvm', 'offline': 3},
+        {'idle': 0, 'busy': 0, 'name': 'origen', 'offline': 0},
+        {'idle': 3, 'busy': 0, 'name': 'panda', 'offline': 0},
+        {'idle': 0, 'busy': 0, 'name': 'qemu', 'offline': 3},
+        {'idle': 1, 'busy': 0, 'name': 'rtsm_foundation-armv8', 'offline': 0},
+        {'idle': 2, 'busy': 0, 'name': 'rtsm_fvp_base-aemv8a', 'offline': 1},
+        {'idle': 0, 'busy': 0, 'name': 'rtsm_ve-a15x1-a7x1', 'offline': 0},
+        {'idle': 0, 'busy': 0, 'name': 'snowball_sd', 'offline': 0},
+        {'idle': 2, 'busy': 0, 'name': 'vayu', 'offline': 0},
+        {'idle': 1, 'busy': 0, 'name': 'vexpress-a9', 'offline': 0},
+        {'idle': 1, 'busy': 0, 'name': 'vexpress-tc2', 'offline': 0},
+        {'idle': 1, 'busy': 0, 'name': 'wg', 'offline': 0},
+        {'idle': 0, 'busy': 0, 'name': 'x86', 'offline': 0}
+    ]
+
+    return [hw['name'] for hw in lava_response]
