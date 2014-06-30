@@ -16,12 +16,14 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Testmanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls import patterns, url, include
+from django.conf.urls import url
 from testmanager.testplanner import views
 
 
-urlpatterns = patterns(
-    '',
-    url(r'^$', views.index),
-    url(r'^new$', views.testplan_new, name='testplan_new'),
-)
+urlpatterns = [
+    # url(r'^plans/$', views.index),
+    # url(r'^plans/new$', views.index),
+
+    url(r'^new$', views.testplan_new),
+    url(r'^$', views.testplan_new),
+]
