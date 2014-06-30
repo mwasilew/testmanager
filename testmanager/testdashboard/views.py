@@ -22,10 +22,19 @@ from django.views.generic import TemplateView
 from testmanager.testrunner.models import JenkinsJob
 
 
+
 class Main(TemplateView):
     template_name='testdashboard/index.html'
 
     def get_context_data(self, **kwargs):
         context = super(Main, self).get_context_data(**kwargs)
         context['jenkins_jobs'] = JenkinsJob.objects.order_by("name")
+        return context
+
+
+class Project(TemplateView):
+    template_name='testdashboard/project.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(Project, self).get_context_data(**kwargs)
         return context
