@@ -43,7 +43,10 @@
                 {% for lavajob in subbuild.lavajob_set.all %}
                   <div class="col-lg-9 col-lg-offset-3">
                     <div class="page-header">
-                      <h4>{{ lavajob.device_type.name }} <a href="{{ lavajob.get_absolute_url }}">#{{ lavajob.number }}</a></h4>
+                      <h4>
+			{{ lavajob.device_type.name }} 
+			<a href="{{ lavajob.get_absolute_url }}">#{{ lavajob.number }}</a>
+		      </h4>
                     </div>
                     <table id="job-status" class="table table-striped table-condensed">
                       <thead>
@@ -62,7 +65,11 @@
                             <td>{% if testresult %} OK {% else %} Missing {% endif %}</td>
                             <td>{{ testresult.get_resultset_count_by_status.pass }}</td>
                             <td>{{ testresult.get_resultset_count_by_status.fail }}</td>
-                            <td>{% if testresult %}<input type="checkbox" value="{{ testresult.pk }}" name="testresults"/>{% endif %}</td>
+                            <td>
+			      {% if testresult %}
+				<input type="checkbox" value="{{ testresult.pk }}" name="testresults"/>
+			      {% endif %}
+			    </td>
                           </tr>
                         {% endfor %}
                       </tbody>
