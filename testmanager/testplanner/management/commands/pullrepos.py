@@ -20,7 +20,7 @@ import logging
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from helpers.git import copy_commits_to_db
-from testplanner.models import TestRepository
+from testmanager.testplanner.models import TestRepository
 from git import Repo
 
 log = logging.getLogger('testplanner')

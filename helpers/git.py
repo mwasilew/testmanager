@@ -21,7 +21,7 @@ import traceback
 import logging
 import yaml
 from django.db.models import ManyToManyField
-from testplanner.models import (
+from testmanager.testplanner.models import (
 #    TestRepository,
     Maintainer,
     OS,
@@ -53,21 +53,21 @@ def create_from_yaml(tc, blob, commit, repository):
             'description': test_description,
         }
         newtest, created = TestDefinition.objects.get_or_create(
-            name=test_name, 
-            test_id=test_id, 
+            name=test_name,
+            test_id=test_id,
             defaults=test_defaults)
         tc_maintainer_list = extract_metadata(tc['metadata'], 'maintainer', Maintainer, 'email')
         test_defaults.update({'maintainer': tc_maintainer_list})
-        
+
         tc_os_list = extract_metadata(tc['metadata'], 'os', OS)
         test_defaults.update({'os': tc_os_list})
-        
+
         tc_scope_list = extract_metadata(tc['metadata'], 'scope', Scope)
         test_defaults.update({'scope': tc_scope_list})
-        
+
         tc_device_list = extract_metadata(tc['metadata'], 'devices', Device)
         test_defaults.update({'device': tc_device_list})
-        
+
         if not created:
             for attr, value in test_defaults.iteritems():
                 attribute = getattr(newtest, attr)
@@ -105,16 +105,19 @@ def copy_commits_to_db(r, repository, lastsha=None):
             # process only yaml files
             # ignore symlinks
             if blob.name.endswith("yaml"):
-                if blob.mode == blob.file_mode:
-                    tc = yaml.load(blob.data_stream.read())
-                    create_from_yaml(tc, blob, commit, repository)
-                if blob.mode == blob.link_mode:
-                    os.chdir(os.path.dirname(blob.abspath))
-                    realfile = open(blob.data_stream.read(), 'r')
-                    tc = yaml.load(realfile)
-                    realfile.close()
-                    create_from_yaml(tc, blob, commit, repository)
-                    
+                try:
+                    if blob.mode == blob.file_mode:
+                        tc = yaml.load(blob.data_stream.read())
+                        create_from_yaml(tc, blob, commit, repository)
+                    if blob.mode == blob.link_mode:
+                        os.chdir(os.path.dirname(blob.abspath))
+                        realfile = open(blob.data_stream.read(), 'r')
+                        tc = yaml.load(realfile)
+                        realfile.close()
+                        create_from_yaml(tc, blob, commit, repository)
+                except yaml.YAMLError:
+                    pass
+
         log.info("updated head revision to: {0}".format(commit.hexsha))
         repository.head_revision = commit.hexsha
         repository.save()
