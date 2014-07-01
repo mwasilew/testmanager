@@ -19,3 +19,8 @@
 #login-view button {
 	width: 100%;
 }
+
+.table-hover td {
+	cursor: pointer;
+	cursor: hand;
+}
