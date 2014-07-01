@@ -18,6 +18,8 @@
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.text import slugify
+
 from jsonfield import JSONField
 
 
@@ -70,8 +72,9 @@ class TestPlan(models.Model):
         Test plan corresponds to single build,
         so different builds will have separate test plans.
     """
-    slug = models.SlugField()
-    name = models.CharField(max_length=128)
+    name = models.CharField(max_length=128, unique=True)
+    slug = models.SlugField(blank=True)
+
     owner = models.ForeignKey(User)
     description = models.TextField()
     external_url = models.URLField(blank=True, null=True)
@@ -80,6 +83,10 @@ class TestPlan(models.Model):
     # Jenkins job link
     automated_build_url = models.ForeignKey('testrunner.JenkinsJob', blank=True, null=True)
     device = models.ForeignKey(Device)
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(TestPlan, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return self.name
