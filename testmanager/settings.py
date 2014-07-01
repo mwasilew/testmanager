@@ -59,7 +59,6 @@ INSTALLED_APPS = (
     'testmanager.testplanner',
     'testmanager.testrunner',
 
-    'debug_toolbar',
     'rest_framework',
 )
 
