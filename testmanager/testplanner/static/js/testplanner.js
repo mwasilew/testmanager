@@ -38,7 +38,7 @@ function Index($scope, $window, $routeParams, TestPlan) {
 	$scope.plans = TestPlan.query();
 }
 
-function New($scope, $window, $routeParams, Device, TestPlan, Definitions) {
+function New($scope, $window, $routeParams, $location, Device, TestPlan, Definitions) {
 	$scope.availableDevices = Device.query();
 	$scope.device = {};
 
@@ -47,8 +47,18 @@ function New($scope, $window, $routeParams, Device, TestPlan, Definitions) {
 		testPlan.name = $scope.name;
 		testPlan.description = $scope.description;
 		testPlan.device = $scope.device.id;
+		testPlan.definitions = []
+
+		angular.forEach($scope.testDefinitions, function(value, key) {
+			if (value.active) {
+				this.push(value.id);
+			}
+		}, testPlan.definitions);
+
+		console.log(testPlan.definitions);
+
 		testPlan.$save().then(function() {
-			
+			$location.path('/');
 		}, function(error) {
 			$scope.error = error.data
 		})

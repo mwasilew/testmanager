@@ -64,10 +64,17 @@ class TestPlanView(APIView):
 
     def post(self, request, format=None):
         serializer = TestPlanSerializer(data=request.DATA)
+        definitions = request.DATA.pop('definitions', [])
 
         if serializer.is_valid():
             serializer.object.owner = request.user
             serializer.save()
+
+            for test_definition_id in definitions:
+                models.TestPlanTestDefinition.objects.create(
+                    test_plan=serializer.object,
+                    test_definition_id=test_definition_id
+                )
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
