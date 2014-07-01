@@ -20,13 +20,13 @@ from django.conf.urls import patterns, include, url
 from django.contrib.auth.decorators import login_required
 from django.contrib import admin; admin.autodiscover()
 
-from testmanager.testdashboard.views import Main, Project
+from testmanager.testdashboard.views import Main
 
 
 urlpatterns = patterns(
     '',
     url(r'^testrunner/', include('testmanager.testrunner.urls', app_name="testrunner")),
-    url(r'^testplanner/',include('testmanager.testplanner.urls', app_name="testplanner")),
+    url(r'^planner/',include('testmanager.testplanner.urls', app_name="testplanner")),
     url(r'^admin/', include(admin.site.urls)),
 
     # Login
@@ -34,5 +34,4 @@ urlpatterns = patterns(
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}),
 
     url(r'^$', login_required(Main.as_view())),
-    url(r'^(?P<project>[0-9a-zA-Z_\-]+)', login_required(Project.as_view())),
 )
