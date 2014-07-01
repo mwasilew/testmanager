@@ -122,13 +122,16 @@ class TestDefinitionRevision(models.Model):
 
 
 class TestPlanTestDefinition(models.Model):
-    """Represents TestDefinition instance that
-       is included in the test plan"""
+    """
+    Represents TestDefinition instance that
+    is included in the test plan
+    """
+
     test_definition = models.ForeignKey(TestDefinition)
     test_plan = models.ForeignKey(TestPlan)
-    sequence_number = models.PositiveIntegerField()
+    sequence_number = models.PositiveIntegerField(null=True)
     parameters = JSONField(blank=True)
-    timeout = models.IntegerField()
+    timeout = models.IntegerField(null=True)
 
     def __unicode__(self):
         return "#%s in %s (%s)" % (self.sequence_number, self.test_plan.name, self.test_definition.name)
