@@ -18,11 +18,14 @@
 
 from django.conf.urls import url
 from testmanager.testplanner import views
+from django.conf.urls import patterns, include, url
 
 
 urlpatterns = [
-    url(r'^new$', views.NewView.as_view()),
-    url(r'^new/test-definitions.json$', views.JSONView.as_view()),
 
-    url(r'^$', views.testplan_new),
+    url(r'view/plan/', views.TestPlanView.as_view()),
+    url(r'view/device/', views.DeviceView.as_view()),
+    url(r'view/definitions/', views.DeviceView.as_view()),
+    url(r'^$', views.Base.as_view()),
+
 ]

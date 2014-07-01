@@ -11,3 +11,10 @@
   
   <script type="text/javascript" src="{{ STATIC_URL }}js/testplanner.js"></script>
 {% endblock %}
+
+
+{% block maincontent %}
+  <div ng-app="app" >
+    <div ng-view></div>
+  </div>
+{% endblock %}

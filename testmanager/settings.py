@@ -54,9 +54,13 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+
     'testmanager.testdashboard',
     'testmanager.testplanner',
-    'testmanager.testrunner'
+    'testmanager.testrunner',
+
+    'debug_toolbar',
+    'rest_framework',
 )
 
 MIDDLEWARE_CLASSES = (
