@@ -1,0 +1,21 @@
+<div class="row">
+	<div class="col-lg-12">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>Name</th>
+					<th>Owner</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="plan in plans">
+					<td>1</td>
+					<td><a href="#">{{ plan.name }}</a></td>
+					<td>{{ plan.owner }}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
