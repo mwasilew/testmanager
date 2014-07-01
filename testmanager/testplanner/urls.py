@@ -21,9 +21,8 @@ from testmanager.testplanner import views
 
 
 urlpatterns = [
-    # url(r'^plans/$', views.index),
-    # url(r'^plans/new$', views.index),
+    url(r'^new$', views.NewView.as_view()),
+    url(r'^new/test-definitions.json$', views.JSONView.as_view()),
 
-    url(r'^new$', views.testplan_new),
     url(r'^$', views.testplan_new),
 ]

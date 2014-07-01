@@ -17,11 +17,16 @@
 # along with Testmanager.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.forms import ModelForm
-from testmanager.testplanner.models import (
-    TestPlan,
-)
+from testmanager.testplanner.models import TestPlan
 
 
 class TestPlanForm(ModelForm):
+
     class Meta:
         model = TestPlan
+        fields = ['device','name', 'description']
+
+    def __init__(self, *args, **kwargs):
+        super(TestPlanForm, self).__init__(*args, **kwargs)
+        for name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
