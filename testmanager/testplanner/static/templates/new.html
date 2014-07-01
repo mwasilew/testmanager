@@ -1,32 +1,58 @@
 <div class="row">
-  <div class="col-lg-12">
+	<div class="col-lg-12">
 
-    <form role="form" ng-submit="submit()">
+		<form role="form" ng-submit="submit()">
 
-      <div class="form-group">
-	<label class="control-label">name:</label>
-	<input type="text" ng-model="testPlan.name" class="form-control input-sm" placeholder="name" required>
-      </div>
+			<div class="form-group" ng-class="{'has-error':error.name}">
+				<label class="control-label">name:</label>
+				<span class="help-inline" ng-bind="error.name"></span>
+				<input type="text" ng-model="name" class="form-control" placeholder="name">
+			</div>
 
-      <div class="form-group">
-	<label class="control-label">description:</label>
-	<textarea ng-model="testPlan.description" class="form-control input-sm" rows="4" 
-		  placeholder="description" required>
-	</textarea>
-      </div>
+			<div class="form-group" ng-class="{'has-error':error.description}">
+				<label class="control-label">description:</label>
+				<span class="help-inline" ng-bind="error.description"></span>
+				<textarea ng-model="description" class="form-control input-sm" rows="4"
+						  placeholder="description">
+				</textarea>
+			</div>
 
-      <div class="form-group">
-	<label class="control-label">device:</label>
-	<select class="form-control input-sm"
-		ng-model="testPlan.device" ng-options="device.name for device in availableDevices" 
-		required>
-	  <option value="">-- choose device --</option>
-	</select>
-      </div>
+			<div class="form-group" ng-class="{'has-error':error.device}">
+				<label class="control-label">device:</label>
+				<span class="help-inline" ng-bind="error.description"></span>
+				<select class="form-control input-sm"
+						ng-model="device" ng-options="device.name for device in availableDevices"
+						ng-change="deviceSelected()">
+					<option value="">-- choose device --</option>
+				</select>
+			</div>
 
-      <button type="submit" class="btn btn-default btn-sm input-sm pull-right">Submit</button>
+			<table ng-show="testDefinitions.length" class="table table-hover table-striped">
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>Name</th>
+						<th>Test Id</th>
+						<th>File Name</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-class="{info: definition.active}"
+						ng-click="selectDefinition(definition)"
+						ng-repeat="definition in testDefinitions">
+						<td>{{ definition.id }}</td>
+						<td>{{ definition.name }}</td>
+						<td>{{ definition.test_id }}</td>
+						<td>{{ definition.test_file_name }}</td>
+						<td><input ng-model="definition.active" type="checkbox"></td>
+					</tr>
+				</tbody>
+			</table>
 
-    </form>
+			<button type="submit" class="btn btn-default btn-sm input-sm pull-right">Submit</button>
 
-  </div>
+		</form>
+
+	</div>
 </div>

@@ -48,6 +48,7 @@ class TestPlanSerializer(serializers.ModelSerializer):
 class TestDefinitionSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.TestDefinition
+        fields = ('id', 'name', 'test_id', 'test_file_name')
 
 
 class DefinitionView(APIView):
@@ -58,17 +59,16 @@ class DefinitionView(APIView):
         serializer = self.serializer_class(query)
         return Response(serializer.data)
 
-class TestPlanView(APIView):
 
+class TestPlanView(APIView):
 
     def post(self, request, format=None):
         data = request.DATA
-        data['slug'] = slugify(request.DATA['name'])
-        data['owner'] = request.user.pk
-
+        data['slug'] = slugify(request.DATA.get('name', u''))
         serializer = TestPlanSerializer(data=data)
 
         if serializer.is_valid():
+            serializer.object.owner = request.user
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 

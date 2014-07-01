@@ -1,12 +1,16 @@
 var URL = "/planner/view/";
 
-angular.module('api', ['ngResource']).
-	factory('Device', function($resource) {
+angular.module('api', ['ngResource'])
+	.factory('Device', function($resource) {
 		return $resource(URL + 'device/:id/', {}, {});
-	}).
-	factory('TestPlan', function($resource) {
+	})
+	.factory('TestPlan', function($resource) {
 		return $resource(URL + 'plan/:id/', {}, {});
 	})
+	.factory('Definitions', function($resource) {
+		return $resource(URL + 'definitions/:deviceName/', {}, {});
+	});
+
 
 
 var app = angular.module('app', ['ngRoute', 'api'], function(
@@ -34,42 +38,27 @@ function Index($scope, $window, $routeParams, TestPlan) {
 	$scope.plans = TestPlan.query();
 }
 
-function New($scope, $window, $routeParams, Device, TestPlan) {
+function New($scope, $window, $routeParams, Device, TestPlan, Definitions) {
 	$scope.availableDevices = Device.query();
+	$scope.device = {};
 
 	$scope.submit = function() {
 		var testPlan = new TestPlan();
-		testPlan.name = $scope.testPlan.name;
-		testPlan.description = $scope.testPlan.description;
-		testPlan.device = $scope.testPlan.device.id;
-		testPlan.$save();
+		testPlan.name = $scope.name;
+		testPlan.description = $scope.description;
+		testPlan.device = $scope.device.id;
+		testPlan.$save().then(function() {
+			
+		}, function(error) {
+			$scope.error = error.data
+		})
+	}
+
+	$scope.deviceSelected = function() {
+		$scope.testDefinitions = Definitions.query({deviceName:$scope.device.name});
+	}
+
+	$scope.selectDefinition = function(testDefinition) {
+		testDefinition.active = !testDefinition.active;
 	}
 }
-
-
-// $(document).ready(function(){
-
-// 	$("#id_device").change(function(aaa){
-// 		$deviceId = $(this).val();
-
-// 		$.getJSON( "new/definitions/" + $deviceId, function( data ) {
-// 			$('.list-group').html("");
-// 			$.each( data, function( _, row ) {
-// 				$('.list-group').append(
-// 					'<a href="#" class="list-group-item">' + row.name +
-// 					'<input class="pull-right" value="' + row.id + '"type="checkbox">' +
-// 					'</a>'
-// 				)
-// 			});
-// 		});
-// 	});
-
-// 	$(".list-group").on("click", "a", function(e) {
-// 		e.stopPropagation();
-// 		e.preventDefault();
-// 		$(this)
-// 			.toggleClass('active')
-// 			.find('input').prop("checked", !$(this).find('input').is( ":checked" ));
-// 	});
-
-// });
