@@ -19,7 +19,7 @@
 
 			<div class="form-group" ng-class="{'has-error':error.device}">
 				<label class="control-label">device:</label>
-				<span class="help-inline" ng-bind="error.description"></span>
+				<span class="help-inline" ng-bind="error.device"></span>
 				<select class="form-control input-sm"
 						ng-model="device" ng-options="device.name for device in availableDevices"
 						ng-change="deviceSelected()">
