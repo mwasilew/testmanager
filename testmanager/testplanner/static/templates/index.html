@@ -10,12 +10,14 @@
 			</thead>
 			<tbody>
 				<tr ng-repeat="plan in plans">
-					<td>1</td>
+					<td><a href="#">1</a></td>
 					<td><a href="#">{{ plan.name }}</a></td>
 					<td>{{ plan.owner }}</td>
 				</tr>
 			</tbody>
 		</table>
+
+		<a href="#/new" class="btn btn-default btn-sm pull-right" role="button">Create Test Plan</a>
 	</div>
 </div>
 
