@@ -45,11 +45,21 @@ class TestPlanSerializer(serializers.ModelSerializer):
         model = models.TestPlan
 
 
+class TestDefinitionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.TestDefinition
+
+
+class DefinitionView(APIView):
+    serializer_class = TestDefinitionSerializer
+
+    def get(self, request, device_name, format=None):
+        query = models.TestDefinition.objects.filter(device__name=device_name)
+        serializer = self.serializer_class(query)
+        return Response(serializer.data)
+
 class TestPlanView(APIView):
 
-    def get(self, request, format=None):
-        serializer = TestPlanSerializer(models.TestPlan.objects.all())
-        return Response(serializer.data)
 
     def post(self, request, format=None):
         data = request.DATA
