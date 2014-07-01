@@ -15,101 +15,58 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Testmanager.  If not, see <http://www.gnu.org/licenses/>.
-import json 
-
-from django.http import HttpResponse, HttpResponseRedirect
-from django.contrib.auth.decorators import login_required
-from django.forms.models import inlineformset_factory
-from django.template import RequestContext, loader
-from django.core import serializers
-from django.views.generic import TemplateView, View
-
-from testmanager.testplanner.models import TestPlan, TestPlanTestDefinition
-from testmanager.testplanner.forms import TestPlanForm
 
 
-@login_required
-def index(request):
-    testplans = TestPlan.objects.all()
-    template = loader.get_template('testplanner/index.html')
-    context = RequestContext(request, {
-        'testplans': testplans,
-    })
-    return HttpResponse(template.render(context))
+from django.utils.text import slugify
+from django.views.generic import TemplateView
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import generics
+from rest_framework import serializers
+from rest_framework import status
+
+from testmanager.testplanner import models
 
 
-class JSONView(View):
-
-    def get_context_data(self):
-        raise NotImplementedError("get_context_data not implemented")
-
-    def get(self, request, *args, **kwargs):
-        return HttpResponse(
-            json.dumps(self.get_context_data()),
-            content_type='application/json',
-            **kwargs
-        )
+class Base(TemplateView):
+    template_name='testplanner/base.html'
 
 
-class NewView(TemplateView):
-    template_name='testplanner/new.html'
-
-    def get(self, request, *args, **kwargs):
-        form = TestPlanForm()
-
-        return super(NewView, self).get(request, **{
-            "form": form
-        })
-
-    def post(self, request, *args, **kwargs):
-        form = TestPlanForm(request.POST)
-
-        if form.is_valid():
-            return HttpResponseRedirect('/success/')
-
-        return super(NewView, self).get(request, **{
-            "form": form
-        })
+class DeviceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Device
 
 
-# class TestDefinitionsView(View):
+class TestPlanSerializer(serializers.ModelSerializer):
+    owner = serializers.RelatedField()
 
-#      def render_to_json_response(self, context, **response_kwargs):
-#          return HttpResponse(
-#              self.convert_context_to_json(context),
-#              content_type='application/json',
-#              **response_kwargs
-#          )
-
-#     def render_to_response(self, context, **response_kwargs):
-#         return self.render_to_json_response(context, **response_kwargs)
-
-#     def render_to_response(self, context, **response_kwargs):
-#         import pdb; pdb.set_trace()
-#         return self.render_to_json_response(context, **response_kwargs)
+    class Meta:
+        model = models.TestPlan
 
 
-@login_required
-def testplan_new(request):
-    testplan = TestPlan()
-    TestplanFormset = inlineformset_factory(
-        TestPlan,
-        TestPlanTestDefinition,
-        extra=1,
-        can_delete=False)
-    if request.POST:
-        testplan_formset = TestplanFormset(request.POST, instance=testplan)
-        testplan_form = TestPlanForm(request.POST, instance=testplan)
-        if testplan_form.is_valid() and testplan_formset.is_valid():
-            testplan_form.save()
-            testplan_formset.save()
-            return HttpResponseRedirect('/testplanner')
-    else:
-        testplan_form = TestPlanForm(instance=testplan)
-        testplan_formset = TestplanFormset(instance=testplan)
-    template = loader.get_template('testplanner/new.html')
-    context = RequestContext(request, {
-        'form': testplan_form,
-        'testplan_formset': testplan_formset,
-    })
-    return HttpResponse(template.render(context))
+class TestPlanView(APIView):
+
+    def get(self, request, format=None):
+        serializer = TestPlanSerializer(models.TestPlan.objects.all())
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        data = request.DATA
+        data['slug'] = slugify(request.DATA['name'])
+        data['owner'] = request.user.pk
+
+        serializer = TestPlanSerializer(data=data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DeviceView(generics.ListCreateAPIView):
+    serializer_class = DeviceSerializer
+    queryset = models.Device.objects.all()
+
+
