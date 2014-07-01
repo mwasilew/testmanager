@@ -63,16 +63,21 @@ class DefinitionView(APIView):
 class TestPlanView(APIView):
 
     def post(self, request, format=None):
-        data = request.DATA
-        data['slug'] = slugify(request.DATA.get('name', u''))
-        serializer = TestPlanSerializer(data=data)
+        serializer = TestPlanSerializer(data=request.DATA)
 
         if serializer.is_valid():
             serializer.object.owner = request.user
             serializer.save()
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request, format=None):
+        query = models.TestPlan.objects.all()
+        serializer = TestPlanSerializer(query)
+        return Response(serializer.data)
+
 
 
 class DeviceView(generics.ListCreateAPIView):
