@@ -1,4 +1,3 @@
-Django
 GitPython
 PyYAML
 -e git://git.linaro.org/lava/django-crowd-rest-backend.git@c741f1738786c58253b400ffc27a16967702f84c#egg=django_crowd_rest_backend-dev
@@ -13,3 +12,5 @@ lava-tool
 psycopg2
 simplejson
 virtualenv
+https://www.djangoproject.com/download/1.7c1/tarball/
+djangorestframework
