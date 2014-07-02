@@ -78,8 +78,8 @@ class TestDefinitionSerializer(serializers.ModelSerializer):
 class DefinitionView(APIView):
     serializer_class = TestDefinitionSerializer
 
-    def get(self, request, device_name, format=None):
-        query = models.TestDefinition.objects.filter(device__name=device_name)
+    def get(self, request, device_id, format=None):
+        query = models.TestDefinition.objects.filter(device__id=device_id)
         serializer = self.serializer_class(query)
         return Response(serializer.data)
 
