@@ -24,5 +24,8 @@ urlpatterns = [
     url(r'view/testrun/$', views.TestRun_ListCreate_View.as_view()),
     url(r'view/testrun/(?P<pk>[0-9]+)/$', views.TestRun_Details_View.as_view()),
 
-    # url(r'$', views.Base.as_view()),
+    url(r'view/build/$', views.Build_List_View.as_view()),
+    url(r'view/build/(?P<pk>[0-9]+)/$', views.Build_Details_View.as_view()),
+
+    url(r'$', views.Base.as_view()),
 ]

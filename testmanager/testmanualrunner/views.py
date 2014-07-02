@@ -7,10 +7,14 @@ from rest_framework import serializers
 from rest_framework import status
 
 from testmanager.testmanualrunner import models
+from testmanager.testrunner import models as testrunner_models
 
 
 class Base(TemplateView):
     template_name='testmanualrunner/base.html'
+
+
+#### serializers ####
 
 
 class TestRun(serializers.ModelSerializer):
@@ -18,9 +22,17 @@ class TestRun(serializers.ModelSerializer):
         model = models.TestRun
 
 
+class JenkinsBuild(serializers.ModelSerializer):
+    class Meta:
+        model = testrunner_models.JenkinsBuild
+
+
 class TestRunResult(serializers.ModelSerializer):
     class Meta:
         model = models.TestRunResult
+
+
+#### views ####
 
 
 class TestRun_ListCreate_View(generics.ListCreateAPIView):
@@ -31,6 +43,16 @@ class TestRun_ListCreate_View(generics.ListCreateAPIView):
 class TestRun_Details_View(generics.RetrieveUpdateDestroyAPIView):
     queryset = models.TestRun.objects.all()
     serializer_class = TestRun
+
+
+class Build_List_View(generics.ListAPIView):
+    queryset = testrunner_models.JenkinsBuild.objects.all()
+    serializer_class = JenkinsBuild
+
+
+class Build_Details_View(generics.RetrieveAPIView):
+    queryset = testrunner_models.JenkinsBuild.objects.all()
+    serializer_class = JenkinsBuild
 
 
 
