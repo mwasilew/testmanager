@@ -67,6 +67,10 @@ def create_from_yaml(tc, blob, commit, repository):
 
         tc_device_list = extract_metadata(tc['metadata'], 'devices', Device)
         test_defaults.update({'device': tc_device_list})
+        
+        if 'manual-test' in tc['metadata']['environment'] and \
+           tc['metadata']['format'].startswith('Manual'):
+            newtest.is_automated = False
 
         if not created:
             for attr, value in test_defaults.iteritems():
