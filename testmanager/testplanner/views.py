@@ -39,9 +39,17 @@ class DeviceSerializer(serializers.ModelSerializer):
 
 class TestPlanSerializer(serializers.ModelSerializer):
     owner = serializers.RelatedField()
+    test_definitions = serializers.SerializerMethodField('get_test_definitions')
 
     class Meta:
         model = models.TestPlan
+
+    def get_test_definitions(self, obj):
+        query = models.TestDefinition.objects.filter(
+            testplantestdefinition__test_plan=obj
+        )
+        serialize = TestDefinitionSerializer(query)
+        return serialize.data
 
 
 class TestDefinitionSerializer(serializers.ModelSerializer):
