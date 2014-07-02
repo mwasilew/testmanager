@@ -39,6 +39,7 @@ class DeviceSerializer(serializers.ModelSerializer):
 
 class TestPlanSerializer(serializers.ModelSerializer):
     owner = serializers.RelatedField()
+    device = DeviceSerializer()
     test_definitions = serializers.SerializerMethodField('get_test_definitions')
 
     class Meta:
@@ -96,6 +97,11 @@ class TestPlanDetails(generics.RetrieveUpdateDestroyAPIView):
 
 
 class DeviceView(generics.ListCreateAPIView):
+    serializer_class = DeviceSerializer
+    queryset = models.Device.objects.all()
+
+
+class DeviceDetailsView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = DeviceSerializer
     queryset = models.Device.objects.all()
 
