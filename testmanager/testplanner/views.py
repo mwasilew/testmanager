@@ -59,7 +59,9 @@ class DefinitionView(APIView):
         return Response(serializer.data)
 
 
-class TestPlanView(APIView):
+class TestPlanView(generics.ListCreateAPIView):
+    queryset = models.TestPlan.objects.all()
+    serializer_class = TestPlanSerializer
 
     def post(self, request, format=None):
         serializer = TestPlanSerializer(data=request.DATA)
@@ -79,13 +81,8 @@ class TestPlanView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get(self, request, format=None):
-        query = models.TestPlan.objects.all()
-        serializer = TestPlanSerializer(query)
-        return Response(serializer.data)
 
-
-class TestDetails(generics.RetrieveUpdateDestroyAPIView):
+class TestPlanDetails(generics.RetrieveUpdateDestroyAPIView):
     queryset = models.TestPlan.objects.all()
     serializer_class = TestPlanSerializer
 
