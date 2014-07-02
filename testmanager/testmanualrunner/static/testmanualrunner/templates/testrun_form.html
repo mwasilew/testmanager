@@ -1,12 +1,12 @@
 <div class="row">
 	<div class="col-lg-12">
 
+		<form role="form" ng-submit="submit()">
+
 		<div class="page-header">
 			<button type="submit" class="pull-right btn btn-default">Create</button>
 			<h1><small>TestRun</small> {{ build.name }} {{ build.id }} </h1>
 		</div>
-
-		<form role="form" ng-submit="submit()">
 
 			<div class="form-group" ng-class="{'has-error':error.test_plan}">
 				<label class="control-label">TestPlan:</label>
