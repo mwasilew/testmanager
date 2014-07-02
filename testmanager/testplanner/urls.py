@@ -24,8 +24,10 @@ urlpatterns = [
     url(r'view/plan/$', views.TestPlanView.as_view()),
     url(r'view/plan/(?P<pk>[0-9]+)/$', views.TestPlanDetails.as_view()),
 
-    url(r'view/device/', views.DeviceView.as_view()),
-    url(r'view/definitions/(?P<device_name>.+)/', views.DefinitionView.as_view()),
+    url(r'view/device/$', views.DeviceView.as_view()),
+    url(r'view/device/(?P<pk>[0-9]+)/$', views.DeviceDetailsView.as_view()),
+
+    url(r'view/definitions/(?P<device_name>.+)/', views.DeviceDetailsView.as_view()),
 
     url(r'^$', views.Base.as_view()),
 ]
