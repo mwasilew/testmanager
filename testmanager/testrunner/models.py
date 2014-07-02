@@ -91,6 +91,9 @@ class JenkinsBuildStatus(models.Model):
 
 
 class JenkinsBuild(models.Model):
+    class Meta:
+        ordering = ['-id']
+
     name = models.CharField(max_length=1024)
     job = models.ForeignKey(JenkinsJob, related_name="builds")
     umbrella_build = models.ForeignKey("self", blank=True, null=True)
