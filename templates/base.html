@@ -1,59 +1,61 @@
 <!doctype html>
 <html lang="en">
-  
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" /> 
-    
-    <title>{% block title %}{% endblock %}</title>
 
-    {% block css_include %}
-      <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}bootstrap-3.2.0/css/bootstrap.min.css" />
-      <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}bootstrap-3.2.0/css/bootstrap-theme.min.css" />
-      <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}font-awesome-4.1.0/css/font-awesome.min.css" />
-      <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}main.css">
-    {% endblock %}
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    
-    {% block js_include %}
-      <script type="text/javascript" src="{{ STATIC_URL }}jquery-2.1.1.min.js"></script>
-      <script type="text/javascript" src="{{ STATIC_URL }}angular.js"></script>
-      <script type="text/javascript" src="{{ STATIC_URL }}angular-resource.js"></script>
-      <script type="text/javascript" src="{{ STATIC_URL }}angular-route.js"></script>
-      <script type="text/javascript" src="{{ STATIC_URL }}bootstrap-3.2.0/js/bootstrap.min.js"></script>
-    {% endblock %}
-    
-    
-  </head>
-  <body>
-    <div class="navbar navbar-default navbar-static-top" role="navigation">
-      <div class="container">
-	<div class="navbar-header">
-	  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-	    <span class="sr-only">Toggle navigation</span>
-	    <span class="icon-bar"></span>
-	    <span class="icon-bar"></span>
-	    <span class="icon-bar"></span>
-	  </button>
-	</div>
-	<div class="navbar-collapse collapse">
-	  <ul class="nav navbar-nav">
-	    {% block tools %}
-	      <li id="li-home"><a id="home-l" href="/">Home</a></li>
-	    {% endblock %}
-	  </ul>
-	  <ul class="nav navbar-nav navbar-right">
-	    {% include "_logout.html" %}
-	  </ul>
-	</div>
-      </div>
-    </div>
-    <div class="container">
-      <div id="errors-container"></div>
-      <div id="container-content">
-	{% block maincontent %}{% endblock %}
-      </div>
-    </div>
-  </body>
+		<title>{% block title %}{% endblock %}</title>
+
+		{% block css_include %}
+		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}bootstrap-3.2.0/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}bootstrap-3.2.0/css/bootstrap-theme.min.css" />
+		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}font-awesome-4.1.0/css/font-awesome.min.css" />
+		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}main.css">
+		{% endblock %}
+
+
+		{% block js_include %}
+		<script type="text/javascript" src="{{ STATIC_URL }}jquery-2.1.1.min.js"></script>
+		<script type="text/javascript" src="{{ STATIC_URL }}angular.js"></script>
+		<script type="text/javascript" src="{{ STATIC_URL }}angular-resource.js"></script>
+		<script type="text/javascript" src="{{ STATIC_URL }}angular-route.js"></script>
+		<script type="text/javascript" src="{{ STATIC_URL }}bootstrap-3.2.0/js/bootstrap.min.js"></script>
+		{% endblock %}
+
+
+	</head>
+	<body>
+
+		<div class="navbar navbar-default navbar-static-top" role="navigation">
+			<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+				</div>
+				<div class="navbar-collapse collapse">
+					<ul class="nav navbar-nav">
+						{% block tools %}
+						<li id="li-home"><a id="home-l" href="/">Home</a></li>
+						{% endblock %}
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
+						{% include "_logout.html" %}
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<div class="container">
+			<div id="errors-container"></div>
+			<div id="container-content">
+				{% block maincontent %}{% endblock %}
+			</div>
+		</div>
+	</body>
 </html>
