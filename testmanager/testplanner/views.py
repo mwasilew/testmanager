@@ -85,6 +85,10 @@ class TestPlanView(APIView):
         return Response(serializer.data)
 
 
+class TestDetails(generics.RetrieveUpdateDestroyAPIView):
+    queryset = models.TestPlan.objects.all()
+    serializer_class = TestPlanSerializer
+
 
 class DeviceView(generics.ListCreateAPIView):
     serializer_class = DeviceSerializer
