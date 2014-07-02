@@ -17,7 +17,6 @@
 # along with Testmanager.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from django.utils.text import slugify
 from django.views.generic import TemplateView
 
 from rest_framework.views import APIView
