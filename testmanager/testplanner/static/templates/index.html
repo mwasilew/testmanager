@@ -10,8 +10,8 @@
 			</thead>
 			<tbody>
 				<tr ng-repeat="plan in plans">
-					<td><a href="#">1</a></td>
-					<td><a href="#">{{ plan.name }}</a></td>
+					<td><a ng-href="#{{ plan.id }}">{{ plan.id }}</a></td>
+					<td><a ng-href="#{{ plan.id }}">{{ plan.name }}</a></td>
 					<td>{{ plan.owner }}</td>
 				</tr>
 			</tbody>
