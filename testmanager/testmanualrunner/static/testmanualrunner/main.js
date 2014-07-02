@@ -24,6 +24,10 @@ var app = angular.module('app', ['ngRoute', 'api'], function(
 			templateUrl: '/static/testmanualrunner/templates/testrun_form.html',
 			controller: 'New'
 		})
+		.when('/testrun/:id', {
+			templateUrl: '/static/testmanualrunner/templates/testrun_execute.html',
+			controller: 'Execute'
+		})
 		.when('/', {
 			templateUrl: '/static/testmanualrunner/templates/testrun_form.html',
 			controller: 'Index'
@@ -33,6 +37,10 @@ var app = angular.module('app', ['ngRoute', 'api'], function(
 
 function Index($scope, $window, $routeParams, TestRun) {
 	$scope.test_runs = TestRun.query();
+}
+
+function Execute($scope, $window, $routeParams, TestRun) {
+	$scope.test_run = TestRun.get({id:$routeParams.id});
 }
 
 function New($http, $scope, $location, $window, $routeParams, TestBuild) {
