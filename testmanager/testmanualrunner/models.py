@@ -22,3 +22,4 @@ class TestRunResult(models.Model):
 class TestStatus(models.Model):
     name = models.CharField(max_length=36)
     color = models.CharField(max_length=36)
+    icon = models.CharField(blank=True, max_length=36)
