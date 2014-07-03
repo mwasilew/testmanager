@@ -1,10 +1,7 @@
 from django.views.generic import TemplateView
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework import generics
 from rest_framework import serializers
-from rest_framework import status
 
 from testmanager.testmanualrunner import models
 from testmanager.testrunner import models as testrunner_models
@@ -53,6 +50,3 @@ class Build_List_View(generics.ListAPIView):
 class Build_Details_View(generics.RetrieveAPIView):
     queryset = testrunner_models.JenkinsBuild.objects.all()
     serializer_class = JenkinsBuild
-
-
-
