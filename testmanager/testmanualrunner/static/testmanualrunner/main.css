@@ -2,3 +2,11 @@
 	cursor: pointer;
 }
 
+.active-test {
+	background-color: #eee;
+}
+
+.active-test table {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}

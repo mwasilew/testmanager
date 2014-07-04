@@ -7,10 +7,10 @@
 
 
 		<div class="row">
-			<div class="col-md-5">
+			<div class="col-md-6">
 				<div class="list-group">
-					<a ng-style="{'color': test_definition.status.color}"
-					   ng-repeat="test_definition in test_plan.tests_definitions"
+					<a ng-style="{'color': get_status(test_definition).color }"
+					   ng-repeat-start="test_definition in test_plan.tests_definitions"
 					   ng-click="load_test_definition(test_definition)"
 					   ng-class="{'active': active_test_definition == test_definition}"
 
@@ -19,7 +19,7 @@
 						{{ test_definition.name }}
 
 						<button href="" title="Remove Status" class="pull-right btn btn-default btn-xs"
-						   ng-click='set_status(null, test_definition)'>
+								ng-click='set_status(null, test_definition)'>
 							<span class="glyphicon glyphicon-question-sign" class="glyphicon"></span>
 						</button>
 
@@ -30,18 +30,47 @@
 							   ng-click='set_status(status, test_definition)'
 							   ng-style="{'color': status.color}"
 							   class="btn btn-default btn-xs"
-							   ng-class="{active: test_definition.status == status}"
+							   ng-class="{active: get_status(test_definition).id == status.id}"
 							   ng-repeat="status in status_list">
 								<span ng-class="status.icon" class="glyphicon"></span>
 							</button>
 						</div>
-
 					</a>
+					<div ng-repeat-end class="list-group-item"
+						 ng-show="active_test_definition == test_definition"
+						 ng-class="{'active-test': active_test_definition == test_definition}"
+						 >
+
+						<form class="form-inline" role="form">
+							<div class="form-group form-group-sm">
+								<input type="email" class="form-control" id="exampleInputEmail2" placeholder="issue id">
+								<select class="form-control">
+									<option>Bugzilla - Linaro</option>
+									<option>Launchpad - Linaro</option>
+								</select>
+								<button type="submit" class="btn btn-default">+</button>
+							</div>
+						</form>
+
+						<table class="table">
+							<tbody>
+								<tr>
+									<td><a href="http://google.com">#1111</a></td>
+									<td>Some description</td>
+								</tr>
+								<tr>
+									<td><a href="#1111">http://google.com</a></td>
+									<td>Some description</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 				</div>
 			</div>
-			<pre class="col-md-7 well" style="border-color: ">
+			<pre class="col-md-6 well" style="border-color: ">
 
-{{ active_test_definition.test_file_name }}
+				{{ active_test_definition.test_file_name }}
+{{ active_test_definition.id }}
 
 metadata:
     name: serial-console

@@ -58,28 +58,32 @@ function Execute($scope, $window, $routeParams, $q, TestRun, TestPlan, Status, T
 		TestRun.get({id:$routeParams.id}).$promise
 	]).then(function(responses) {
 		$scope.status_list = responses[0];
+		$scope.status_by_id = _.indexBy(responses[0], 'id');
 		$scope.test_run = responses[1];
-
 		$scope.test_plan = $scope.test_run.test_plan;
 		$scope.active_test_definition = $scope.test_plan.tests_definitions[0];
 
-		$scope.tests_definitions_results = _.indexBy(
+		tests_results_by_id = _.indexBy(
 			$scope.test_run.tests_definitions_results,
 			'test_definition'
 		);
 
+		_.each($scope.test_run.test_plan.tests_definitions, function(test_definition) {
+			test_definition.result = tests_results_by_id[test_definition.id];
+		});
 	})
 
+	$scope.get_status = function(test_definition) {
+		return $scope.status_by_id[test_definition.result.status];
+	}
 
 	$scope.set_status = function(status, test_definition) {
-		test_run_result = $scope.tests_definitions_results[test_definition.id];
-		$id = test_run_result.id;
 		if (status) {
-			test_run_result.status = status.id;
+			test_definition.result.status = status.id;
 		} else {
-			test_run_result.status = null;
+			test_definition.result.status = null;
 		}
-		TestRunResult.update({id: $id}, test_run_result);
+		TestRunResult.update({id: test_definition.result.id}, test_definition.result);
 	}
 
 
