@@ -24,15 +24,13 @@ class TestRunResult(models.Model):
     class Meta:
         unique_together = ("test_run", "test_definition")
 
-    test_run = models.ForeignKey('TestRun')
+    test_run = models.ForeignKey('TestRun', related_name='tests_definitions_results')
     test_definition = models.ForeignKey('testplanner.TestDefinition')
 
     status = models.ForeignKey('TestStatus', null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-
 
 
 class TestStatus(models.Model):
