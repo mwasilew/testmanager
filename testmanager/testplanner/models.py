@@ -72,6 +72,10 @@ class TestPlan(models.Model):
         Test plan corresponds to single build,
         so different builds will have separate test plans.
     """
+    class Meta:
+        ordering = ['-id']
+
+
     name = models.CharField(max_length=128, unique=True)
     slug = models.SlugField(blank=True)
 
@@ -106,7 +110,7 @@ class TestDefinition(models.Model):
     scope = models.ManyToManyField(Scope)
     device = models.ManyToManyField(Device)
     default_timeout = models.IntegerField(default=3600)
-    default_parameters = JSONField(blank=True)
+    default_parameters = JSONField(blank=True, default={})
     is_automated = models.BooleanField(default=True)
 
     def __unicode__(self):
@@ -130,7 +134,7 @@ class TestPlanTestDefinition(models.Model):
     test_definition = models.ForeignKey(TestDefinition)
     test_plan = models.ForeignKey(TestPlan)
     sequence_number = models.PositiveIntegerField(null=True)
-    parameters = JSONField(blank=True)
+    parameters = JSONField(default={})
     timeout = models.IntegerField(null=True)
 
     def __unicode__(self):

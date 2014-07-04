@@ -17,17 +17,15 @@
 # along with Testmanager.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf.urls import url
-from testmanager.testplanner import views
+from testmanager.testmanualrunner import views
 
 
 urlpatterns = [
-    url(r'view/plan/$', views.TestPlanView.as_view()),
-    url(r'view/plan/(?P<pk>[0-9]+)/$', views.TestPlanDetails.as_view()),
+    url(r'view/testrun/$', views.TestRun_ListCreate_View.as_view()),
+    url(r'view/testrun/(?P<pk>[0-9]+)/$', views.TestRun_Details_View.as_view()),
 
-    url(r'view/device/$', views.DeviceView.as_view()),
-    url(r'view/device/(?P<pk>[0-9]+)/$', views.DeviceDetailsView.as_view()),
+    url(r'view/build/$', views.Build_List_View.as_view()),
+    url(r'view/build/(?P<pk>[0-9]+)/$', views.Build_Details_View.as_view()),
 
-    url(r'view/definitions/(?P<device_id>.+)/', views.DefinitionView.as_view()),
-
-    url(r'^$', views.Base.as_view()),
+    url(r'$', views.Base.as_view()),
 ]

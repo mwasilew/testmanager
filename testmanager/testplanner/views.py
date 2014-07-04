@@ -38,13 +38,30 @@ class DeviceSerializer(serializers.ModelSerializer):
 
 
 class TestPlanSerializer(serializers.ModelSerializer):
-    owner = serializers.RelatedField()
-    test_definitions = serializers.SerializerMethodField('get_test_definitions')
-
     class Meta:
         model = models.TestPlan
 
-    def get_test_definitions(self, obj):
+    owner = serializers.RelatedField()
+    tests_definitions = serializers.SerializerMethodField('get_tests_definitions')
+
+    def __init__(self, instance=None, data=None, *args, **kwargs):
+        if data:
+            self.tests_definitions = data.pop('tests_definitions', [])
+        else:
+            self.tests_definitions = []
+
+        super(TestPlanSerializer, self).__init__(instance, data, *args, **kwargs)
+
+    def save_object(self, obj, **kwargs):
+        obj.save(**kwargs)
+        obj.testplantestdefinition_set.all().delete()
+        for test_definition_id in self.tests_definitions:
+            models.TestPlanTestDefinition.objects.create(
+                test_plan=obj,
+                test_definition_id=test_definition_id
+            )
+
+    def get_tests_definitions(self, obj):
         query = models.TestDefinition.objects.filter(
             testplantestdefinition__test_plan=obj
         )
@@ -61,8 +78,8 @@ class TestDefinitionSerializer(serializers.ModelSerializer):
 class DefinitionView(APIView):
     serializer_class = TestDefinitionSerializer
 
-    def get(self, request, device_name, format=None):
-        query = models.TestDefinition.objects.filter(device__name=device_name)
+    def get(self, request, device_id, format=None):
+        query = models.TestDefinition.objects.filter(device__id=device_id)
         serializer = self.serializer_class(query)
         return Response(serializer.data)
 
@@ -73,18 +90,10 @@ class TestPlanView(generics.ListCreateAPIView):
 
     def post(self, request, format=None):
         serializer = TestPlanSerializer(data=request.DATA)
-        definitions = request.DATA.pop('definitions', [])
 
         if serializer.is_valid():
             serializer.object.owner = request.user
             serializer.save()
-
-            for test_definition_id in definitions:
-                models.TestPlanTestDefinition.objects.create(
-                    test_plan=serializer.object,
-                    test_definition_id=test_definition_id
-                )
-
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -96,6 +105,11 @@ class TestPlanDetails(generics.RetrieveUpdateDestroyAPIView):
 
 
 class DeviceView(generics.ListCreateAPIView):
+    serializer_class = DeviceSerializer
+    queryset = models.Device.objects.all()
+
+
+class DeviceDetailsView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = DeviceSerializer
     queryset = models.Device.objects.all()
 

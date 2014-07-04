@@ -13,6 +13,7 @@ angular.module('api', ['ngResource'])
 
 
 
+
 var app = angular.module('app', ['ngRoute', 'api'], function(
 	$locationProvider,
 	$routeProvider,
@@ -43,26 +44,62 @@ function Index($scope, $window, $routeParams, TestPlan) {
 	$scope.plans = TestPlan.query();
 }
 
-function Edit($scope, $window, $routeParams, TestPlan, Device) {
+function Edit($scope, $window, $routeParams, $q, TestPlan, Device, Definitions) {
 	$scope.availableDevices = Device.query();
-	$scope.testPlan = TestPlan.get({id:$routeParams.testPlanId});
-}
+	$scope.testPlan = TestPlan.get({id:$routeParams.testPlanId}, function(testPlan) {
+		$scope.device = Device.get({id:testPlan.device}, function() {
+			$scope.testDefinitions = Definitions.query({deviceName:$scope.device.id}, function(tests_definitions) {
+				_.each($scope.testPlan.tests_definitions, function(element) {
+					_.find(tests_definitions, { 'id': element.id }).active = true;
+				})
+			});
+		});
+	});
 
-function New($scope, $window, $routeParams, $location, Device, TestPlan, Definitions) {
-	$scope.availableDevices = Device.query();
+	$scope.deviceSelected = function() {
+		$scope.testDefinitions = Definitions.query({deviceName:$scope.device.id});
+	}
 
-	$scope.device = {};
-	$scope.testPlan = {definitions:[]};
+	$scope.selectDefinition = function(testDefinition) {
+		testDefinition.active = !testDefinition.active;
+	}
 
 	$scope.submit = function() {
-		$scope.testPlan.device = $scope.device.id || '';
-		var testPlan = new TestPlan($scope.testPlan);
+		$scope.testPlan.device = $scope.device.id;
+		$scope.testPlan.tests_definitions = [];
 
 		angular.forEach($scope.testDefinitions, function(value, key) {
 			if (value.active) {
 				this.push(value.id);
 			}
-		}, testPlan.definitions);
+		}, $scope.testPlan.tests_definitions);
+
+		$scope.testPlan.$save().then(function() {
+			$location.path('/');
+		}, function(error) {
+			$scope.error = error.data
+		})
+	}
+
+}
+
+function New($scope, $window, $routeParams, $location, Device, TestPlan, Definitions) {
+	$scope.availableDevices = Device.query();
+
+	$scope.testPlan = {
+		tests_definitions:[],
+		device: {}
+	};
+
+	$scope.submit = function() {
+		var testPlan = new TestPlan($scope.testPlan);
+		testPlan.device = $scope.device.id
+
+		angular.forEach($scope.testDefinitions, function(value, key) {
+			if (value.active) {
+				this.push(value.id);
+			}
+		}, testPlan.tests_definitions);
 
 		testPlan.$save().then(function() {
 			$location.path('/');
@@ -72,7 +109,7 @@ function New($scope, $window, $routeParams, $location, Device, TestPlan, Definit
 	}
 
 	$scope.deviceSelected = function() {
-		$scope.testDefinitions = Definitions.query({deviceName:$scope.device.name});
+		$scope.testDefinitions = Definitions.query({deviceName:$scope.device.id});
 	}
 
 	$scope.selectDefinition = function(testDefinition) {
