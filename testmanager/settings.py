@@ -189,6 +189,27 @@ LAVA_JOB_RUNNING_STATUSES = ['']
 # it is introduced in testmanager import scripts
 JENKINS_BUILD_RUNNING_STATUSES = ['RUNNING', 'ERROR']
 
+TRACKERS = {
+    "Linaro Bugzilla": {
+        "type": "bugzilla",
+        "url" : "https://bugs.linaro.org/",
+        "username": None,
+        "password": None,
+    },
+    "Linaro Jira": {
+        "type": "jira",
+        "url" : "https://cards.linaro.org/",
+        "username": None,
+        "password": None,
+    },
+    "Launchpad": {
+        "type": "launchpad",
+        "cache_dir": "/tmp/launchpadlib/cache/"
+    }
+}
+
+
+
 try:
     from local_settings import *
 except ImportError:

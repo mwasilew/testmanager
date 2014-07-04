@@ -231,11 +231,10 @@ class Bug(models.Model):
     def get_bug(self):
         if not self._data and self.id:
             kwargs = settings.TRACKERS[self.tracker]
-            kwargs.pop("type")
-            self._data = getattr(self, "_get_%_bug" % self.tracker)(**kwargs)
+            self._data = getattr(self, "_get_%s_bug" % kwargs['type'])(**kwargs)
         return self._data
 
-    def _get_bugzilla_bug(self, url, username=None, password=None):
+    def _get_bugzilla_bug(self, type, url, username=None, password=None):
         import requests
         from lxml import etree
         from lxml.etree import fromstring
@@ -246,9 +245,16 @@ class Bug(models.Model):
                 auth=('user', 'pass'))
         else:
             response = requests.get(
-                "%sshow_bug.cgi?id=%s&ctype=xml" % (url, self.alias))
+                "%sshow_bug.cgi?id=%s&ctype=xml" % (url, self.alias)
+            )
+
+
         parser = etree.XMLParser(ns_clean=True, recover=True, encoding='utf-8')
         h = fromstring(response.text.encode('utf-8'), parser=parser)
+        bug = h.find(".//bug")
+        if 'NotFound' in bug.values():
+            return {}
+
         short_desc = h.find(".//short_desc")
         bug_status = h.find(".//bug_status")
         bug_severity= h.find(".//bug_severity")
@@ -256,12 +262,12 @@ class Bug(models.Model):
         return {
             'id': self.alias,
             'description': short_desc.text,
-            'weblink': "%sshow_bug.cgi?id=%s" % url,
+            'weblink': "%sshow_bug.cgi?id=%s" % (url, self.alias),
             'severity': bug_severity.text,
             'status': bug_status.text
         }
 
-    def _get_jira_bug(self, url, username=None, password=None):
+    def _get_jira_bug(self, type, url, username=None, password=None):
         from jira.client import JIRA
         options={'server': url, 'verify': False}
         if username and password:
@@ -276,7 +282,7 @@ class Bug(models.Model):
                 'severity': jira_bug.fields.priority,
                 'status': jira_bug.fields.status}
 
-    def get_launchpad_bug(self, cache_dir):
+    def _get_launchpad_bug(self, type, cache_dir):
         from launchpadlib.launchpad import Launchpad
 
         lp = Launchpad.login_anonymously(
@@ -300,3 +306,6 @@ class Bug(models.Model):
             'status': lp_status
         }
 
+    def __unicode__(self):
+        data = self.get_bug()
+        return "%s:%s %s" % (self.alias, self.tracker, data)
