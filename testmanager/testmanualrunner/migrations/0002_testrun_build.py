@@ -8,6 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('testmanualrunner', '0001_initial'),
+        ('testrunner', '0001_initial'),
     ]
 
     operations = [
