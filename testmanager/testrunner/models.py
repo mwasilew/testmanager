@@ -247,7 +247,7 @@ class Bug(models.Model):
         return {'bug_id': self.bug_id,
                 'bug_description': short_desc.text,
                 'bug_weblink': "%sshow_bug.cgi?id=%s" % base_url,
-                'bug_severity': bug_seeverity.text,
+                'bug_severity': bug_severity.text,
                 'bug_status': bug_status.text}
 
 
@@ -260,9 +260,9 @@ class Bug(models.Model):
         from jira.client import JIRA
         options={'server': base_url, 'verify': False}
         if username and password:
-            jira = JIRA(options=options, basic_auth=(username, password)) 
+            jira = JIRA(options=options, basic_auth=(username, password))
         else:
-            jira = JIRA(options=optionsn) 
+            jira = JIRA(options=options)
         jira_bug = jira.issue(self.bug_id)
         jira_bug_weblink = "%sbrowse/%s" % (base_url, self.bug_id)
         return {'bug_id': self.bug_id,
@@ -271,9 +271,9 @@ class Bug(models.Model):
                 'bug_severity': jira_bug.fields.priority,
                 'bug_status': jira_bug.fields.status}
 
-    def get_LINARO_JIRA_bug(self)
+    def get_LINARO_JIRA_bug(self):
         base_url = "https://cards.linaro.org/"
-        return get_jira_bug(base_url)
+        return self.get_jira_bug(base_url)
 
     def get_LAUNCHPAD_bug(self):
         from launchpadlib.launchpad import Launchpad
@@ -295,4 +295,4 @@ class Bug(models.Model):
                 'bug_status': lp_status}
 
     def get_bug(self):
-        return getattr(self, "get_%_bug" % self.tracker_type)(self)
+        return getattr(self, "get_%_bug" % self.tracker_type)()
