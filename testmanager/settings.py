@@ -173,9 +173,13 @@ STATICFILES_DIRS = (
 
 STATIC_URL = '/static/'
 REPOSITORIES_HOME = '/tmp'
-# URL used to fetch the job and bundle details using lava_tool (including LAVA username)
-# example: https://username@lava.server/RPC2/
+# URL used to fetch the job and bundle details
+# example: https://lava.server/RPC2/
 LAVA_SERVER_URL = ''
+# LAVA username
+LAVA_SERVER_USERNAME = ''
+# LAVA API token used for authentication
+LAVA_SERVER_TOKEN = ''
 # regexp used for parsing Jenkins job description in order to get LAVA job ID
 LAVA_JOB_ID_REGEXP = ''
 # list of LAVA status names meaning the jobs is running

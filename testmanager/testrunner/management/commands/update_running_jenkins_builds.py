@@ -41,4 +41,5 @@ class Command(BaseCommand):
             jenkins_job = jenkins[build.job.name]
             #log.debug("checking Jenkins build {0}".format(build.name.decode('ascii', 'ignore')))
             log.debug("checking Jenkins build {0}".format(''.join([x for x in build.name if ord(x) < 128])))
+            log.debug("Jenkins build object pk {0}".format(build.pk))
             fetch_jenkins_builds(build.job, jenkins_job, build.number)
