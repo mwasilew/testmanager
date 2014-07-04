@@ -19,6 +19,7 @@
 import re
 from django.db import models
 from django.core.urlresolvers import reverse
+from django.conf import settings
 
 
 class JenkinsService(models.Model):
@@ -217,100 +218,85 @@ class Bug(models.Model):
     JIRA = "jira"
     LAUNCHPAD = "launchpad"
 
-    TRACKERS = (
-        ("Linaro Bugzilla", BUGZILLA),
-        ("Launchpad", LAUNCHPAD),
-        ("Launchpad", JIRA),
-        # ("bugzilla", "Linaro Bugzilla"),
-        # ("bugzilla", "Linaro Bugzilla"),
-
-        # (LINARO_JIRA, "Linaro Jira"),
-        # (LAUNCHPAD, "Launchpad"),
-
-        # (LINARO_BUGZILLA, "Linaro Bugzilla"),
-        # (LINARO_JIRA, "Linaro Jira"),
-        # (LAUNCHPAD, "Launchpad"),
-
-    )
-
-    CHOICES = [(a[0], a[1]) for a in TRACKERS]
-
     alias = models.CharField(max_length=32)
-    kind = models.CharField(max_length=16, choices=CHOICES)
+    tracker = models.CharField(max_length=16, choices=[(a,a) for a in settings.TRACKERS.keys()])
 
     class Meta:
-        unique_together = ("alias", "kind")
+        unique_together = ("alias", "tracker")
 
-#     def get_bug(self):
-#         return getattr(self, "get_%_bug" % self.kind)()
+    def __init__(self, *args, **kwargs):
+        super(Bug, self).__init__(*args, **kwargs)
+        self._data = {}
 
-#     def _get_bugzilla_bug(self, base_url, username=None, password=None):
-#         import requests
-#         from lxml import etree
-#         from lxml.etree import fromstring
+    def get_bug(self):
+        if not self._data and self.id:
+            kwargs = settings.TRACKERS[self.tracker]
+            kwargs.pop("type")
+            self._data = getattr(self, "_get_%_bug" % self.kind)(**kwargs)
+        return self._data
 
-#         if username and password:
-#             response = requests.get(
-#                 "%sshow_bug.cgi?id=%s&ctype=xml" % (base_url, self.alias),
-#                 auth=('user', 'pass'))
-#         else:
-#             response = requests.get(
-#                 "%sshow_bug.cgi?id=%s&ctype=xml" % (base_url, self.alias))
-#         parser = etree.XMLParser(ns_clean=True, recover=True, encoding='utf-8')
-#         h = fromstring(response.text.encode('utf-8'), parser=parser)
-#         short_desc = h.find(".//short_desc")
-#         bug_status = h.find(".//bug_status")
-#         bug_severity= h.find(".//bug_severity")
+    def _get_bugzilla_bug(self, url, username=None, password=None):
+        import requests
+        from lxml import etree
+        from lxml.etree import fromstring
 
-#         return {
-#             'id': self.alias,
-#             'description': short_desc.text,
-#             'weblink': "%sshow_bug.cgi?id=%s" % base_url,
-#             'severity': bug_severity.text,
-#             'status': bug_status.text
-#         }
+        if username and password:
+            response = requests.get(
+                "%sshow_bug.cgi?id=%s&ctype=xml" % (url, self.alias),
+                auth=('user', 'pass'))
+        else:
+            response = requests.get(
+                "%sshow_bug.cgi?id=%s&ctype=xml" % (url, self.alias))
+        parser = etree.XMLParser(ns_clean=True, recover=True, encoding='utf-8')
+        h = fromstring(response.text.encode('utf-8'), parser=parser)
+        short_desc = h.find(".//short_desc")
+        bug_status = h.find(".//bug_status")
+        bug_severity= h.find(".//bug_severity")
 
+        return {
+            'id': self.alias,
+            'description': short_desc.text,
+            'weblink': "%sshow_bug.cgi?id=%s" % url,
+            'severity': bug_severity.text,
+            'status': bug_status.text
+        }
 
-# # #     def get_LINARO_BUGZILLA_bug(self):
-# # #         # fetches bug from Linaro bugzilla
-# # #         base_url = 'https://bugs.linaro.org/'
-# # #         return self.get_bugzilla_bug(base_url)
+    def _get_jira_bug(self, url, username=None, password=None):
+        from jira.client import JIRA
+        options={'server': url, 'verify': False}
+        if username and password:
+            jira = JIRA(options=options, basic_auth=(username, password))
+        else:
+            jira = JIRA(options=options)
+        jira_bug = jira.issue(self.alias)
+        jira_bug_weblink = "%sbrowse/%s" % (url, self.alias)
+        return {'alias': self.alias,
+                'description': jira_bug.fields.summary,
+                'weblink': jira_bug_weblink,
+                'severity': jira_bug.fields.priority,
+                'status': jira_bug.fields.status}
 
-# # #     def get_jira_bug(self, base_url, username=None, password=None):
-# # #         from jira.client import JIRA
-# # #         options={'server': base_url, 'verify': False}
-# # #         if username and password:
-# # #             jira = JIRA(options=options, basic_auth=(username, password))
-# # #         else:
-# # #             jira = JIRA(options=options)
-# # #         jira_bug = jira.issue(self.alias)
-# # #         jira_bug_weblink = "%sbrowse/%s" % (base_url, self.alias)
-# # #         return {'alias': self.alias,
-# # #                 'bug_description': jira_bug.fields.summary,
-# # #                 'bug_weblink': jira_bug_weblink,
-# # #                 'bug_severity': jira_bug.fields.priority,
-# # #                 'bug_status': jira_bug.fields.status}
+    def get_launchpad_bug(self, cache_dir):
+        from launchpadlib.launchpad import Launchpad
 
-# # #     def get_LINARO_JIRA_bug(self):
-# # #         base_url = "https://cards.linaro.org/"
-# # #         return self.get_jira_bug(base_url)
+        lp = Launchpad.login_anonymously(
+            'qa-reports.linaro.org',
+            'production',
+            cache_dir,
+            version='devel'
+        )
+        lp_bug = lp.bugs[int(self.alias)]
+        lp_severity = ''
+        lp_status = ''
+        for task in lp_bug.bug_tasks:
+            lp_severity += "%s: %s | " % (task.bug_target_display_name, task.importance)
+            lp_status += "%s: %s | " % (task.bug_target_display_name, task.status)
 
-# # #     def get_LAUNCHPAD_bug(self):
-# # #         from launchpadlib.launchpad import Launchpad
-# # #         cachedir = "/tmp/launchpadlib/cache/"
-# # #         lp = Launchpad.login_anonymously('qa-reports.linaro.org',
-# # #                                          'production',
-# # #                                          cachedir,
-# # #                                          version='devel')
-# # #         lp_bug = lp.bugs[int(self.alias)]
-# # #         lp_severity = ''
-# # #         lp_status = ''
-# # #         for task in lp_bug.bug_tasks:
-# # #             lp_severity += "%s: %s | " % (task.bug_target_display_name, task.importance)
-# # #             lp_status += "%s: %s | " % (task.bug_target_display_name, task.status)
-# # #         return {'alias': self.alias,
-# # #                 'bug_description': lp_bug.title,
-# # #                 'bug_weblink': lp_bug.web_link,
-# # #                 'bug_severity': lp_severity,
-# # #                 'bug_status': lp_status}
+        return {
+            'alias': self.alias,
+            'description': lp_bug.title,
+            'weblink': lp_bug.web_link,
+            'severity': lp_severity,
+            'status': lp_status
+        }
 
