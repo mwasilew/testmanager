@@ -10,7 +10,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('testrunner', '__first__'),
     ]
 
     operations = [
@@ -95,7 +94,6 @@ class Migration(migrations.Migration):
                 ('description', models.TextField()),
                 ('external_url', models.URLField(null=True, blank=True)),
                 ('default_timeout', models.IntegerField(default=3600)),
-                ('automated_build_url', models.ForeignKey(to='testrunner.JenkinsJob', blank=True)),
                 ('device', models.ForeignKey(to='testplanner.Device')),
                 ('owner', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
