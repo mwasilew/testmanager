@@ -8,15 +8,31 @@ class TestRun(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def save(self, *args, **kwargs):
+        obj = super(TestRun, self).save(*args, **kwargs)
+
+        for testplan_testdefinition in self.test_plan.testplantestdefinition_set.all():
+            TestRunResult.objects.create(
+                test_run=self,
+                test_definition=testplan_testdefinition.test_definition
+            )
+
+        return obj
+
 
 class TestRunResult(models.Model):
+    class Meta:
+        unique_together = ("test_run", "test_definition")
+
     test_run = models.ForeignKey('TestRun')
     test_definition = models.ForeignKey('testplanner.TestDefinition')
 
-    status = models.ForeignKey('TestStatus', null=True)
+    status = models.ForeignKey('TestStatus', null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+
 
 
 class TestStatus(models.Model):
