@@ -232,7 +232,7 @@ class Bug(models.Model):
         if not self._data and self.id:
             kwargs = settings.TRACKERS[self.tracker]
             kwargs.pop("type")
-            self._data = getattr(self, "_get_%_bug" % self.kind)(**kwargs)
+            self._data = getattr(self, "_get_%_bug" % self.tracker)(**kwargs)
         return self._data
 
     def _get_bugzilla_bug(self, url, username=None, password=None):

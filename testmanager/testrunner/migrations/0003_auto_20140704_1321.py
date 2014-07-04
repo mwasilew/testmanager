@@ -17,10 +17,6 @@ class Migration(migrations.Migration):
             field=models.CharField(default=None, max_length=16, choices=[(b'Linaro Bugzilla', b'Linaro Bugzilla'), (b'Launchpad', b'Launchpad'), (b'Linaro Jira', b'Linaro Jira')]),
             preserve_default=False,
         ),
-        migrations.RemoveField(
-            model_name='bug',
-            name='kind',
-        ),
         migrations.AlterUniqueTogether(
             name='bug',
             unique_together=set([(b'alias', b'tracker')]),
