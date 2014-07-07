@@ -95,6 +95,7 @@ class JenkinsBuild(models.Model):
 
     name = models.CharField(max_length=1024)
     job = models.ForeignKey(JenkinsJob, related_name="builds")
+    tag = models.ForeignKey('Tag', related_name="tags", blank=True, null=True)
     umbrella_build = models.ForeignKey("self", blank=True, null=True)
     number = models.IntegerField()
     status = models.ForeignKey(JenkinsBuildStatus)
@@ -309,3 +310,8 @@ class Bug(models.Model):
     def __unicode__(self):
         data = self.get_bug()
         return "%s:%s %s" % (self.alias, self.tracker, data)
+
+
+
+class Tag(models.Model):
+    name = models.CharField(max_length=128, unique=True)
