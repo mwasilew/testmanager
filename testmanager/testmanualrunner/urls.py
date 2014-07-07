@@ -33,7 +33,7 @@ urlpatterns = [
     url(r'view/testrunresult/(?P<pk>[0-9]+)/$', views.TestRunResult_Details_View.as_view()),
     url(r'view/testrunresult/$', views.TestRunResult_ListCreate_View.as_view()),
 
-    # url(r'view/testdefinition/(?P<test_definition_id>[0-9]+)/$', views.DefinitionYamlFile.as_view()),
+    url(r'view/testrunresult/(?P<pk>[0-9]+)/bug/$', views.Bug.as_view()),
 
     url(r'$', views.Base.as_view()),
 ]

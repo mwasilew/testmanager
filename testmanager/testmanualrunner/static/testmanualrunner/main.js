@@ -19,7 +19,12 @@ angular.module('api', ['ngResource'])
 			update: { method: 'PUT' }
 		});
 	})
-
+	.factory('Bug', function($resource) {
+		return $resource(URL + 'testrunresult/:id/', null, {
+			add: { method: 'POST' },
+			remove: { method: 'DELETE' },
+		});
+	})
 
 
 var app = angular.module('app', ['ngRoute', 'api'], function(
@@ -52,7 +57,7 @@ function Index($scope, $window, $routeParams, TestRun) {
 	$scope.test_runs = TestRun.query();
 }
 
-function Execute($scope, $window, $routeParams, $q, TestRun, TestPlan, Status, TestRunResult) {
+function Execute($scope, $window, $routeParams, $q, TestRun, TestPlan, Status, TestRunResult, Bug) {
 	$q.all([
 		Status.query().$promise,
 		TestRun.get({id:$routeParams.id}).$promise
@@ -86,9 +91,13 @@ function Execute($scope, $window, $routeParams, $q, TestRun, TestPlan, Status, T
 		TestRunResult.update({id: test_definition.result.id}, test_definition.result);
 	}
 
-
 	$scope.load_test_definition = function(test_definition) {
 		$scope.active_test_definition = test_definition;
+	}
+
+	$scope.add_bug = function(Bug) {
+		debugger
+		// $scope.active_test_definition = test_definition;
 	}
 
 }

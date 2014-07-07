@@ -38,16 +38,18 @@
 					</a>
 					<div ng-repeat-end class="list-group-item"
 						 ng-show="active_test_definition == test_definition"
-						 ng-class="{'active-test': active_test_definition == test_definition}"
-						 >
+						 ng-class="{'active-test': active_test_definition == test_definition}">
 
-						<form class="form-inline" role="form">
+						<form class="form-inline" role="form" ng-submit="add_bug()">
 							<div class="form-group form-group-sm">
-								<input type="email" class="form-control" id="exampleInputEmail2" placeholder="issue id">
+								<input type="email" class="form-control" id="exampleInputEmail2"
+									   placeholder="issue id">
+
 								<select class="form-control">
 									<option>Bugzilla - Linaro</option>
 									<option>Launchpad - Linaro</option>
 								</select>
+
 								<button type="submit" class="btn btn-default">+</button>
 							</div>
 						</form>

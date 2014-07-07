@@ -37,4 +37,11 @@ urlpatterns = patterns(
 
     # compare test results
     url(r'^compare_results/$', views.compare_results, name='compare_results'),
+
+
+    url(r'^tag/$', views.Tag_ListCreate_View.as_view()),
+    url(r'^tag/(?P<pk>[0-9]+)/$', views.Tag_Details_View.as_view()),
+
+    url(r'^build/(?P<pk>[0-9]+)/$', views.JenkinsBuild_Details_View.as_view()),
+    url(r'^build/$', views.JenkinsBuild_ListCreate_View.as_view()),
 )

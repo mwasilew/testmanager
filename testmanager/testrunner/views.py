@@ -27,8 +27,10 @@ from django.template import RequestContext, loader
 
 from testmanager.testrunner.models import (
     JenkinsJob,
+    JenkinsBuild,
     LavaJob,
     LavaJobTestResult,
+    Tag
 )
 from testmanager.testrunner.forms import ResultComparisonForm
 
@@ -53,19 +55,25 @@ def jenkins_job_view(request, job_name):
     })
     return HttpResponse(template.render(context))
 
+
 @login_required
 def jenkins_build_view(request, job_name, build_number):
+
     jenkins_job = get_object_or_404(JenkinsJob, name=job_name)
-    jenkins_build = jenkins_job.builds.filter(number = build_number)
-    jenkins_umbrella_build = jenkins_build.filter(is_umbrella = True)
+    jenkins_build = jenkins_job.builds.filter(number=build_number)
+    jenkins_umbrella_build = jenkins_build.filter(is_umbrella=True)
+
     if jenkins_umbrella_build.all():
         jenkins_build = jenkins_umbrella_build
+
     template = loader.get_template('testrunner/jenkins_build_view.html')
+
     context = RequestContext(request, {
         'jenkins_build': jenkins_build,
         'lava_url': settings.LAVA_JOB_ID_REGEXP.rsplit("/", 1)[0],
     })
     return HttpResponse(template.render(context))
+
 
 @login_required
 def lava_job_view(request, job_name, build_number, lava_job_number):
@@ -76,6 +84,7 @@ def lava_job_view(request, job_name, build_number, lava_job_number):
         'lava_url': settings.LAVA_JOB_ID_REGEXP.rsplit("/", 1)[0],
     })
     return HttpResponse(template.render(context))
+
 
 @login_required
 def compare_results(request):
@@ -105,3 +114,23 @@ def compare_results(request):
             })
             return HttpResponse(template.render(context))
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
+
+
+from rest_framework import generics
+
+
+class Tag_ListCreate_View(generics.ListCreateAPIView):
+    model = Tag
+
+
+class Tag_Details_View(generics.ListCreateAPIView):
+    model = Tag
+
+
+class JenkinsBuild_ListCreate_View(generics.ListCreateAPIView):
+    model = JenkinsBuild
+
+
+class JenkinsBuild_Details_View(generics.RetrieveUpdateDestroyAPIView):
+    model = JenkinsBuild
+

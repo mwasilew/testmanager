@@ -1,1 +1,11 @@
 {% extends 'base.html' %}
+
+{% block js_include %}
+  {{ block.super }}
+
+  <script type="text/javascript" src="{{ STATIC_URL }}testrunner/main.js"></script>
+{% endblock %}
+
+
+{% block maincontent %}
+{% endblock %}

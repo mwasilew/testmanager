@@ -117,6 +117,15 @@ class JenkinsBuild(models.Model):
             return hwpack_name_search.group('device_name')
         return None
 
+    def save(self, *args, **kwargs):
+        super(JenkinsBuild, self).save(*args, **kwargs)
+
+        if self.is_umbrella:
+            for build in self.jenkinsbuild_set.all():
+                if build != self:
+                    build.tag = self.tag
+                    build.save()
+
 
 class LavaJobStatus(models.Model):
     name = models.CharField(max_length=16)

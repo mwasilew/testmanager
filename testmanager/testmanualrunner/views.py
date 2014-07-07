@@ -70,7 +70,6 @@ class JenkinsBuild(serializers.ModelSerializer):
         model = testrunner_models.JenkinsBuild
 
 
-
 class TestStatus(serializers.ModelSerializer):
     class Meta:
         model = models.TestStatus
@@ -118,10 +117,10 @@ class TestRunResult_ListCreate_View(generics.ListCreateAPIView):
     serializer_class = TestRunResult
 
 
-# class DefinitionYamlFile(APIView):
-    # def get(self, request, test_definition_id, format=None):
-    #     test_plan_test_definition = testplanner_models.TestPlanTestDefinition(pk=test_definition_id)
-    #     import pdb; pdb.set_trace()
-    # snippets = Snippet.objects.all()
-    # serializer = SnippetSerializer(snippets, many=True)
-    # return Response(serializer.data)
+class Bug(APIView):
+
+    def post(self, request, testrunresult_pk, format=None):
+        import pdb; pdb.set_trace()
+
+    def delete(self, request, testrunresult_pk, format=None):
+        import pdb; pdb.set_trace()

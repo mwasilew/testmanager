@@ -1,4 +1,5 @@
-var URL = "/planner/view/";
+var URL = "/testplanner/view/";
+
 
 angular.module('api', ['ngResource'])
 	.factory('Device', function($resource) {
