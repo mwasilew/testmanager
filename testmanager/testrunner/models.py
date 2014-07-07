@@ -279,8 +279,8 @@ class Bug(models.Model):
         return {'alias': self.alias,
                 'description': jira_bug.fields.summary,
                 'weblink': jira_bug_weblink,
-                'severity': jira_bug.fields.priority,
-                'status': jira_bug.fields.status}
+                'severity': jira_bug.fields.priority.name,
+                'status': jira_bug.fields.status.name}
 
     def _get_launchpad_bug(self, type, cache_dir):
         from launchpadlib.launchpad import Launchpad
