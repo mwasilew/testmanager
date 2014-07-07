@@ -84,8 +84,6 @@ class TestPlan(models.Model):
     external_url = models.URLField(blank=True, null=True)
     default_timeout = models.IntegerField(default=3600)
 
-    # Jenkins job link
-    automated_build_url = models.ForeignKey('testrunner.JenkinsJob', blank=True, null=True)
     device = models.ForeignKey(Device)
 
     def save(self, *args, **kwargs):
