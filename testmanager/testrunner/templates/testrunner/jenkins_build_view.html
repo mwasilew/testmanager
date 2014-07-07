@@ -1,7 +1,7 @@
 {% extends 'testrunner/base.html' %}
 
 {% block maincontent %}
-  
+
   {% if jenkins_build %}
     <div class="row">
       <form action="/testrunner/compare_results/" method="GET">
@@ -44,7 +44,7 @@
                   <div class="col-lg-9 col-lg-offset-3">
                     <div class="page-header">
                       <h4>
-			{{ lavajob.device_type.name }} 
+			{{ lavajob.device_type.name }}
 			<a href="{{ lavajob.get_absolute_url }}">#{{ lavajob.number }}</a>
 		      </h4>
                     </div>
@@ -83,5 +83,5 @@
       </form>
     </div>
   {% endif %}
-  
+
 {% endblock %}
