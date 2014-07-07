@@ -28,6 +28,7 @@ urlpatterns = patterns(
     url(r'^testrunner/', include('testmanager.testrunner.urls', app_name="testrunner")),
     url(r'^testplanner/',include('testmanager.testplanner.urls', app_name="testplanner")),
     url(r'^testmanualrunner/', include('testmanager.testmanualrunner.urls', app_name="testmanualrunner")),
+    url(r'^testreporter/', include('testmanager.testreporter.urls', app_name="testreporter")),
 
     url(r'^admin/', include(admin.site.urls)),
 

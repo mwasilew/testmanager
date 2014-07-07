@@ -116,14 +116,23 @@ def compare_results(request):
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
 
-from rest_framework import generics
+from rest_framework import generics, serializers
+
+
+class TagSerializer(serializers.ModelSerializer):
+    builds = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
+    class Meta:
+        model = Tag
 
 
 class Tag_ListCreate_View(generics.ListCreateAPIView):
+    serializer_class = TagSerializer
     model = Tag
 
 
-class Tag_Details_View(generics.ListCreateAPIView):
+class Tag_Details_View(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = TagSerializer
     model = Tag
 
 

@@ -46,5 +46,4 @@ var APP = angular.module('app', ['ngRoute', 'api'], function(
 
 	$interpolateProvider.startSymbol('//');
 	$interpolateProvider.endSymbol('//');
-
 });

@@ -1,9 +1,6 @@
 APP.controller('JenkinsBuild', ['$scope', 'Tag', 'Build', function($scope, Tag, Build) {
 
 	$scope.tags = Tag.query();
-	$scope.new_tag = function() {
-		// debugger
-	}
 
 	$scope._tags = {};
 	$scope.select_tag = function(tag) {

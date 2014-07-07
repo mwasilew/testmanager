@@ -17,3 +17,31 @@
 # along with Testmanager.  If not, see <http://www.gnu.org/licenses/>.
 
 # Create your views here.
+
+from rest_framework import generics
+from rest_framework import serializers
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
+from django.views.generic import TemplateView
+
+from testmanager.testrunner import models as testrunner_models
+from testmanager.testrunner import views as testrunner_views
+
+
+class BuildSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = testrunner_models.JenkinsBuild
+
+
+class Base(TemplateView):
+    template_name='testreporter/base.html'
+
+
+class Report_View(APIView):
+    def get(self, request, tag_id, format=None):
+        return Response({
+            "builds": BuildSerializer(testrunner_models.JenkinsBuild.objects.filter(tag_id=tag_id)).data,
+            "tag": testrunner_views.TagSerializer(testrunner_models.Tag.objects.get(id=tag_id)).data
+        })
