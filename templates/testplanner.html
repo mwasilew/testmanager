@@ -2,15 +2,17 @@
 
 {% block css_include %}
   {{ block.super }}
-
+  
   <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/testplanner.css">
 {% endblock %}
+
 
 {% block js_include %}
   {{ block.super }}
 
   <script type="text/javascript" src="{{ STATIC_URL }}js/testplanner.js"></script>
 {% endblock %}
+
 
 {% block maincontent %}
   <div ng-view></div>
