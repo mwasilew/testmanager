@@ -12,7 +12,9 @@ angular.module('api', ['ngResource'])
 		return $resource('/testplanner/view/device/:id/', {}, {});
 	})
 	.factory('TestPlan', function($resource) {
-		return $resource('/testplanner/view/plan/:id/', {}, {});
+		return $resource('/testplanner/view/plan/:id/', {}, {
+			update: { method: 'PUT' }
+		});
 	})
 	.factory('Definitions', function($resource) {
 		return $resource('/testplanner/view/definitions/:deviceName/', {}, {});

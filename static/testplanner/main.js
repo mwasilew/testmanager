@@ -27,7 +27,7 @@ function Index($scope, $window, $routeParams, TestPlan) {
 
 }
 
-function Edit($scope, $window, $routeParams, $q, TestPlan, Device, Definitions) {
+function Edit($scope, $location, $window, $routeParams, $q, TestPlan, Device, Definitions) {
 	$scope.availableDevices = Device.query();
 	$scope.testPlan = TestPlan.get({id:$routeParams.testPlanId}, function(testPlan) {
 		$scope.device = Device.get({id:testPlan.device}, function() {
@@ -57,7 +57,7 @@ function Edit($scope, $window, $routeParams, $q, TestPlan, Device, Definitions) 
 			}
 		}, $scope.testPlan.tests_definitions);
 
-		$scope.testPlan.$save().then(function() {
+		$scope.testPlan.$update({id:$scope.testPlan.id}).then(function() {
 			$location.path('/');
 		}, function(error) {
 			$scope.error = error.data
