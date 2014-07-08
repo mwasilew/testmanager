@@ -24,11 +24,14 @@ angular.module('api', ['ngResource'])
 			update: { method: 'PUT' }
 		});
 	})
-	.factory('Bug', function($resource) {
-		return $resource(URL + 'testrunresult/:id/', null, {
+	.factory('TestRunResultBug', function($resource) {
+		return $resource('/testmanualrunner/view/testrunresult/:id/bug/', null, {
 			add: { method: 'POST' },
 			remove: { method: 'DELETE' },
 		});
+	})
+	.factory('Trackers', function($resource) {
+		return $resource('/testrunner/trackers/', null, {});
 	})
 	.factory('Tag', function($resource) {
 		return $resource('/testrunner/tag/:id/', null, null);

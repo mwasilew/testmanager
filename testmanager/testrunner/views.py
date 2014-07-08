@@ -30,7 +30,8 @@ from testmanager.testrunner.models import (
     JenkinsBuild,
     LavaJob,
     LavaJobTestResult,
-    Tag
+    Tag,
+    Bug
 )
 from testmanager.testrunner.forms import ResultComparisonForm
 
@@ -117,13 +118,24 @@ def compare_results(request):
 
 
 from rest_framework import generics, serializers
-
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
 class TagSerializer(serializers.ModelSerializer):
     builds = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Tag
+
+
+class BugSerializer(serializers.ModelSerializer):
+    data = serializers.SerializerMethodField('get_data')
+
+    class Meta:
+        model = Bug
+
+    def get_data(self, obj):
+        return obj.get_bug()
 
 
 class Tag_ListCreate_View(generics.ListCreateAPIView):
@@ -143,3 +155,9 @@ class JenkinsBuild_ListCreate_View(generics.ListCreateAPIView):
 class JenkinsBuild_Details_View(generics.RetrieveUpdateDestroyAPIView):
     model = JenkinsBuild
 
+
+class Trackers_Types_View(APIView):
+    def get(self, request, format=None):
+        return Response([
+            {"name": a, "type": b["type"]} for a,b in settings.TRACKERS.items()
+        ])

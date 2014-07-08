@@ -239,8 +239,9 @@ class Bug(models.Model):
 
     def get_bug(self):
         if not self._data and self.id:
-            kwargs = settings.TRACKERS[self.tracker]
-            self._data = getattr(self, "_get_%s_bug" % kwargs['type'])(**kwargs)
+            if self.tracker in settings.TRACKERS:
+                kwargs = settings.TRACKERS[self.tracker]
+                self._data = getattr(self, "_get_%s_bug" % kwargs['type'])(**kwargs)
         return self._data
 
     def _get_bugzilla_bug(self, type, url, username=None, password=None):
@@ -257,7 +258,6 @@ class Bug(models.Model):
                 "%sshow_bug.cgi?id=%s&ctype=xml" % (url, self.alias)
             )
 
-
         parser = etree.XMLParser(ns_clean=True, recover=True, encoding='utf-8')
         h = fromstring(response.text.encode('utf-8'), parser=parser)
         bug = h.find(".//bug")
@@ -268,13 +268,22 @@ class Bug(models.Model):
         bug_status = h.find(".//bug_status")
         bug_severity= h.find(".//bug_severity")
 
-        return {
-            'id': self.alias,
-            'description': short_desc.text,
-            'weblink': "%sshow_bug.cgi?id=%s" % (url, self.alias),
-            'severity': bug_severity.text,
-            'status': bug_status.text
-        }
+        try:
+            return {
+                'id': self.alias,
+                'description': short_desc.text,
+                'weblink': "%sshow_bug.cgi?id=%s" % (url, self.alias),
+                'severity': bug_severity.text,
+                'status': bug_status.text
+            }
+        except AttributeError:
+            return {
+                'id': self.alias,
+                'description': "Bad Issue",
+                'weblink': "",
+                'severity': "",
+                'status': ""
+            }
 
     def _get_jira_bug(self, type, url, username=None, password=None):
         from jira.client import JIRA

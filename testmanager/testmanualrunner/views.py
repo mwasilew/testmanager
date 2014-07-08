@@ -4,22 +4,25 @@ from django.views.generic import TemplateView
 from rest_framework import generics
 from rest_framework import serializers
 from rest_framework.views import APIView
+from rest_framework.response import Response
+
 
 from testmanager.testmanualrunner import models
 from testmanager.testrunner import models as testrunner_models
+from testmanager.testrunner import views as testrunner_views
 
 
 class Base(TemplateView):
     template_name='testmanualrunner.html'
 
 
-class TestRunResult(serializers.ModelSerializer):
+class TestRunResultSerializer(serializers.ModelSerializer):
+    bugs = testrunner_views.BugSerializer(many=True, read_only=True)
     class Meta:
         model = models.TestRunResult
 
 
 class TestRunSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = models.TestRun
 
@@ -69,19 +72,23 @@ class TestStatus_Details_View(generics.RetrieveAPIView):
 
 class TestRunResult_Details_View(generics.RetrieveUpdateDestroyAPIView):
     queryset = models.TestRunResult.objects.all()
-    serializer_class = TestRunResult
+    serializer_class = TestRunResultSerializer
 
 
 class TestRunResult_ListCreate_View(generics.ListCreateAPIView):
     queryset = models.TestRunResult.objects.all()
-    serializer_class = TestRunResult
+    serializer_class = TestRunResultSerializer
     filter_fields = ('test_run',)
 
 
-class Bug(APIView):
+class TestRunResultBug(APIView):
 
-    def post(self, request, testrunresult_pk, format=None):
-        import pdb; pdb.set_trace()
+    def post(self, request, pk, format=None):
+        test_run_result = models.TestRunResult.objects.get(pk=pk)
+        bug, created = test_run_result.bugs.get_or_create(**request.DATA)
+        data = testrunner_views.BugSerializer(bug).data
+        data['created'] = created
+        return Response(data)
 
     def delete(self, request, testrunresult_pk, format=None):
-        import pdb; pdb.set_trace()
+        pass #

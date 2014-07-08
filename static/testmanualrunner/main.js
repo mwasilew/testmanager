@@ -20,13 +20,16 @@ function Index($scope, $window, $routeParams, TestRun) {
 	$scope.test_runs = TestRun.query();
 }
 
-function Execute($scope, $window, $routeParams, $q, TestRun, TestPlan, Status, TestRunResult, Bug, Build) {
+function Execute($scope, $window, $routeParams, $q,
+				 TestRun, TestPlan, Status, TestRunResult, TestRunResultBug, Build, Trackers) {
 	$q.all([
 		Status.query().$promise,
-		TestRun.get({id:$routeParams.id}).$promise
+		TestRun.get({id:$routeParams.id}).$promise,
+		Trackers.query().$promise
 	]).then(function(responses) {
 		$scope.statuses = responses[0];
 		$scope.test_run = responses[1];
+		$scope.trackers = responses[2];
 
 		$scope.statuses_by_id = _.indexBy(responses[0], 'id');
 
@@ -71,10 +74,21 @@ function Execute($scope, $window, $routeParams, $q, TestRun, TestPlan, Status, T
 		$scope.active_test_definition = test_definition;
 	}
 
-	// $scope.add_bug = function(Bug) {
-	// 	debugger
-	// 	// $scope.active_test_definition = test_definition;
-	// }
+	$scope.add_bug = function(alias, tracker, test_definition) {
+		var test_run_result = $scope.test_run_results_by_test_definition[test_definition.id];
+		TestRunResultBug.add(
+			{id:test_run_result.id},
+			{alias:alias, tracker:tracker}).$promise
+			.then(function(bug) {
+				if (bug.created) {
+					test_run_result.bugs.push(bug)
+				}
+			});
+	}
+
+	$scope.get_test_run_results = function(test_definition) {
+		return $scope.test_run_results_by_test_definition[test_definition.id];
+	}
 
 }
 

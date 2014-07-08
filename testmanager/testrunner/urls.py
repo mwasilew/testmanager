@@ -43,4 +43,7 @@ urlpatterns = [
 
     url(r'^build/(?P<pk>[0-9]+)/$', views.JenkinsBuild_Details_View.as_view()),
     url(r'^build/$', views.JenkinsBuild_ListCreate_View.as_view()),
+
+    url(r'^trackers/$', views.Trackers_Types_View.as_view()),
+
 ]
