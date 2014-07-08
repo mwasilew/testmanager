@@ -8,8 +8,14 @@ angular.module('api', ['ngResource'])
 	.factory('Status', function($resource) {
 		return $resource(URL + 'status/:id/', {}, {});
 	})
+	.factory('Device', function($resource) {
+		return $resource('/testplanner/view/device/:id/', {}, {});
+	})
 	.factory('TestPlan', function($resource) {
 		return $resource('/testplanner/view/plan/:id/', {}, {});
+	})
+	.factory('Definitions', function($resource) {
+		return $resource('/testplanner/view/definitions/:deviceName/', {}, {});
 	})
 	.factory('TestRunResult', function($resource) {
 		return $resource(URL + 'testrunresult/:id/', null, {

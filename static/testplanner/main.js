@@ -1,48 +1,30 @@
-var URL = "/testplanner/view/";
-
-
-angular.module('api', ['ngResource'])
-	.factory('Device', function($resource) {
-		return $resource(URL + 'device/:id/', {}, {});
-	})
-	.factory('TestPlan', function($resource) {
-		return $resource(URL + 'plan/:id/', {}, {});
-	})
-	.factory('Definitions', function($resource) {
-		return $resource(URL + 'definitions/:deviceName/', {}, {});
-	});
-
-
-
-
-var app = angular.module('app', ['ngRoute', 'api'], function(
-	$locationProvider,
-	$routeProvider,
-	$resourceProvider,
-	$httpProvider) {
-
-	$httpProvider.defaults.xsrfCookieName = 'csrftoken';
-    $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
-	$resourceProvider.defaults.stripTrailingSlashes = false;
+APP.config(['$routeProvider', function($routeProvider) {
 
 	$routeProvider
 		.when('/', {
-			templateUrl: '/static/templates/index.html',
+			templateUrl: '/static/testplanner/templates/index.html',
 			controller: 'Index'
 		})
 		.when('/new', {
-			templateUrl: '/static/templates/new.html',
+			templateUrl: '/static/testplanner/templates/new.html',
 			controller: 'New'
 		})
 		.when('/:testPlanId', {
-			templateUrl: '/static/templates/new.html',
+			templateUrl: '/static/testplanner/templates/new.html',
 			controller: 'Edit'
 		})
 
-});
+  }]);
 
 function Index($scope, $window, $routeParams, TestPlan) {
 	$scope.plans = TestPlan.query();
+
+	$scope.remove = function(plan) {
+		TestPlan.remove({id:plan.id}, function() {
+			$scope.plans = TestPlan.query();
+		});
+	};
+
 }
 
 function Edit($scope, $window, $routeParams, $q, TestPlan, Device, Definitions) {

@@ -1,23 +1,39 @@
 <div class="row">
-	<div class="col-lg-12">
-		<table class="table table-striped">
-			<thead>
-				<tr>
-					<th>#</th>
-					<th>Name</th>
-					<th>Owner</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr ng-repeat="plan in plans">
-					<td><a ng-href="#{{ plan.id }}">{{ plan.id }}</a></td>
-					<td><a ng-href="#{{ plan.id }}">{{ plan.name }}</a></td>
-					<td>{{ plan.owner }}</td>
-				</tr>
-			</tbody>
-		</table>
+  <div class="col-lg-12">
+    <table class="table table-striped">
+      <thead>
+	<tr>
+	  <th>#</th>
+	  <th>Name</th>
+	  <th>Owner</th>
+	  <th></th>
+	</tr>
+      </thead>
+      <tbody>
+	<tr ng-repeat="plan in plans" ng-class="{warning: plan.to_remove}">
+	  <td><a ng-href="#//plan.id//">//plan.id//</a></td>
+	  <td><a ng-href="#//plan.id//">//plan.name//</a></td>
+	  <td>//plan.owner//</td>
+	  <th>
+	    <a href="" ng-click="plan.to_remove = true" ng-hide="plan.to_remove">
+	      <span class="pull-right glyphicon glyphicon-trash"></span>
+	    </a>
 
-		<a href="#/new" class="btn btn-default btn-sm pull-right" role="button">Create Test Plan</a>
-	</div>
+	    <a href="" ng-click="plan.to_remove = false" ng-show="plan.to_remove" title="cancel">
+	      <span style="color:green" class="pull-right glyphicon glyphicon-remove "></span> 
+	    </a>
+	     
+	    <a href="" ng-click="remove(plan)" ng-show="plan.to_remove" title="remove">
+	      <span style="color:red" class="pull-right glyphicon glyphicon-ok"></span>
+	    </a>
+
+	    
+	  </th>
+	</tr>
+      </tbody>
+    </table>
+
+    <a href="#/new" class="btn btn-default btn-sm pull-right" role="button">Create Test Plan</a>
+  </div>
 </div>
 
