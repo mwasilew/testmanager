@@ -1,6 +1,16 @@
+<div class="page-header">
+  <h1>Test Plans</h1>
+</div>
+
+
 <div class="row">
   <div class="col-lg-12">
-    <table class="table table-striped">
+    
+    <p class="text-center" ng-hide="plans.length">
+      No test plans yet
+    </p>
+    
+    <table class="table table-striped" ng-show="plans.length">
       <thead>
 	<tr>
 	  <th>#</th>
@@ -33,7 +43,7 @@
       </tbody>
     </table>
 
-    <a href="#/new" class="btn btn-default btn-sm pull-right btn-success" role="button">	
+    <a title="Create" href="#/new" class="btn btn-default btn-sm pull-right btn-success" role="button">	
       <span class="glyphicon glyphicon-plus"></span>
     </a>
     
