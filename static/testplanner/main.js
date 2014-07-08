@@ -71,8 +71,9 @@ function New($scope, $window, $routeParams, $location, Device, TestPlan, Definit
 
 	$scope.testPlan = {
 		tests_definitions:[],
-		device: {}
 	};
+
+	$scope.device = {};
 
 	$scope.submit = function() {
 		var testPlan = new TestPlan($scope.testPlan);
