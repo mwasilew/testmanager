@@ -36,15 +36,22 @@
 		</tbody>
 	      </table>
 	      
-	      <button type="submit" class="btn btn-default pull-right">Compare</button> 
-	      <div class="pull-right">
+
+	      <div class="btn-group pull-right">
+		<a ng-href="" class="btn btn-default">Execute</a> 
+		<button type="submit" class="btn btn-default">Compare</button> 
+	      </div>
+	      
+	      <div class="pull-left">
 	      	<select  
 		   ng-model="_tags[{{ subbuild.id }}]"    
 		   ng-model="tag"  
 		   ng-change="select_tag(_tags[{{ subbuild.id }}])"  
 		   ng-init="_tags[{{ subbuild.id }}] = {{ subbuild.tag.id |default:"null" }}; build_id = {{ subbuild.id }}"  
 		   ng-options="tag.id as tag.name for tag in tags" class="form-control"> 
-		</select> 
+		   <option value="">-- select tag --</option>
+		</select>
+
 	      </div>
 
               {% for lavajob in subbuild.lavajob_set.all %}
