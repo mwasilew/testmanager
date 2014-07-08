@@ -16,11 +16,10 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Testmanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls import patterns, url, include
+from django.conf.urls import url
 from testmanager.testrunner import views
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url(r'^$', views.index),
 
     url(r'^jenkins_job/(?P<job_name>[0-9a-zA-Z_\-]+)$',
@@ -44,4 +43,4 @@ urlpatterns = patterns(
 
     url(r'^build/(?P<pk>[0-9]+)/$', views.JenkinsBuild_Details_View.as_view()),
     url(r'^build/$', views.JenkinsBuild_ListCreate_View.as_view()),
-)
+]
