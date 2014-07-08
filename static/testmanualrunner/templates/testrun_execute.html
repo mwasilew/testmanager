@@ -15,7 +15,10 @@
 	     ng-class="{'active': active_test_definition == test_definition}"
 	     class="list-group-item">
 
-	     // test_definition.name //
+	     // test_definition.name //  
+	     <div class="pull-left"> 
+	       <span class="badge">// get_test_run_results(test_definition).bugs.length //</span>  
+	     </div>
 
 	     <button href="" title="Remove Status" class="pull-right btn btn-default btn-xs"
 		     ng-click='set_status(null, test_definition)'>
@@ -64,7 +67,6 @@
 		     <td><a ng-href="//bug.data.weblink//"><b>// bug.data.description //</a><b></td>
 
 		     <td>
-
 		       <a href="" ng-click="bug.to_remove = true" ng-hide="bug.to_remove">
 			 <span class="pull-right glyphicon glyphicon-trash"></span>
 		       </a>

@@ -108,7 +108,6 @@ function Execute($scope, $window, $routeParams, $q,
 					test_run_result.bugs.splice(index, 1);
 				}
 			});
-
 	}
 
 	$scope.get_test_run_results = function(test_definition) {
