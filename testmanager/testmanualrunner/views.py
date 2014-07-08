@@ -7,48 +7,10 @@ from rest_framework.views import APIView
 
 from testmanager.testmanualrunner import models
 from testmanager.testrunner import models as testrunner_models
-from testmanager.testplanner import views as testplanner_views, models as testplanner_models
-
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
-from rest_framework.compat import smart_text
 
 
 class Base(TemplateView):
     template_name='testmanualrunner.html'
-
-
-#### serializers ####
-
-class RelatedObject(serializers.RelatedField):
-
-    def __init__(self, *args, **kwargs):
-        self.serializer = kwargs.pop("serializer", None)
-        assert self.serializer, 'serializer is required'
-        super(RelatedObject, self).__init__(*args, **kwargs)
-
-    def label_from_instance(self, obj):
-        return "%s - %s" % (smart_text(obj), obj.pk)
-
-    def prepare_value(self, obj):
-        return obj.pk
-
-    def to_native(self, pk):
-        return self.serializer(pk).data
-
-    def from_native(self, data):
-        if self.queryset is None:
-            raise Exception('Writable related fields must include a `queryset` argument')
-
-        try:
-            return self.queryset.get(pk=data)
-        except ObjectDoesNotExist:
-            msg = self.error_messages['does_not_exist'] % smart_text(data)
-            raise ValidationError(msg)
-        except (TypeError, ValueError):
-            received = type(data).__name__
-            msg = self.error_messages['incorrect_type'] % received
-            raise ValidationError(msg)
-
 
 
 class TestRunResult(serializers.ModelSerializer):
@@ -56,10 +18,7 @@ class TestRunResult(serializers.ModelSerializer):
         model = models.TestRunResult
 
 
-class TestRun(serializers.ModelSerializer):
-    test_plan = RelatedObject(read_only=True, serializer=testplanner_views.TestPlanSerializer)
-    tests_definitions_results = TestRunResult(many=True, read_only=True)
-    build = serializers.PrimaryKeyRelatedField(read_only=True)
+class TestRunSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.TestRun
@@ -74,17 +33,18 @@ class TestStatus(serializers.ModelSerializer):
     class Meta:
         model = models.TestStatus
 
+
 #### views ####
 
 
 class TestRun_ListCreate_View(generics.ListCreateAPIView):
-    queryset = models.TestRun.objects.all()
-    serializer_class = TestRun
+    serializer_class = TestRunSerializer
+    model = models.TestRun
 
 
 class TestRun_Details_View(generics.RetrieveUpdateDestroyAPIView):
-    queryset = models.TestRun.objects.all()
-    serializer_class = TestRun
+    serializer_class = TestRunSerializer
+    model = models.TestRun
 
 
 class Build_List_View(generics.ListAPIView):
@@ -115,6 +75,7 @@ class TestRunResult_Details_View(generics.RetrieveUpdateDestroyAPIView):
 class TestRunResult_ListCreate_View(generics.ListCreateAPIView):
     queryset = models.TestRunResult.objects.all()
     serializer_class = TestRunResult
+    filter_fields = ('test_run',)
 
 
 class Bug(APIView):
