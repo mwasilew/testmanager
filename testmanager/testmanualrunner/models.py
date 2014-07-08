@@ -26,7 +26,7 @@ class TestRunResult(models.Model):
     test_definition = models.ForeignKey('testplanner.TestDefinition')
 
     status = models.ForeignKey('TestStatus', null=True, blank=True)
-    bugs = models.ManyToManyField("testrunner.Bug")
+    bugs = models.ManyToManyField('testrunner.Bug', blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
