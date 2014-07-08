@@ -199,7 +199,7 @@ TRACKERS = {
     "Linaro Jira": {
         "type": "jira",
         "url" : "https://cards.linaro.org/",
-        "username": None, 
+        "username": None,
         "password": None,
     },
     "Launchpad": {
