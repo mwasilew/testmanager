@@ -106,7 +106,7 @@ class TestPlanDetails(generics.RetrieveUpdateDestroyAPIView):
 
 class DeviceView(generics.ListCreateAPIView):
     serializer_class = DeviceSerializer
-    queryset = models.Device.objects.all()
+    model = models.Device
 
 
 class DeviceDetailsView(generics.RetrieveUpdateDestroyAPIView):
