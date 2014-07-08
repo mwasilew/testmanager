@@ -1,41 +1,4 @@
-var URL = "/testmanualrunner/view/";
-
-
-angular.module('api', ['ngResource'])
-	.factory('TestRun', function($resource) {
-		return $resource(URL + 'testrun/:id/', {}, {});
-	})
-	.factory('TestBuild', function($resource) {
-		return $resource(URL + 'testrun/:id/', {}, {});
-	})
-	.factory('Status', function($resource) {
-		return $resource(URL + 'status/:id/', {}, {});
-	})
-	.factory('TestPlan', function($resource) {
-		return $resource('/testplanner/view/plan/:id/', {}, {});
-	})
-	.factory('TestRunResult', function($resource) {
-		return $resource(URL + 'testrunresult/:id/', null, {
-			update: { method: 'PUT' }
-		});
-	})
-	.factory('Bug', function($resource) {
-		return $resource(URL + 'testrunresult/:id/', null, {
-			add: { method: 'POST' },
-			remove: { method: 'DELETE' },
-		});
-	})
-
-
-var app = angular.module('app', ['ngRoute', 'api'], function(
-	$locationProvider,
-	$routeProvider,
-	$resourceProvider,
-	$httpProvider) {
-
-	$httpProvider.defaults.xsrfCookieName = 'csrftoken';
-    $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
-	$resourceProvider.defaults.stripTrailingSlashes = false;
+APP.config(['$routeProvider', function($routeProvider) {
 
 	$routeProvider
 		.when('/testrun/new/:build_id', {
@@ -50,8 +13,8 @@ var app = angular.module('app', ['ngRoute', 'api'], function(
 			templateUrl: '/static/testmanualrunner/templates/testrun_form.html',
 			controller: 'Index'
 		})
-});
 
+}]);
 
 function Index($scope, $window, $routeParams, TestRun) {
 	$scope.test_runs = TestRun.query();
@@ -132,5 +95,4 @@ function New($http, $scope, $location, $window, $routeParams, TestBuild) {
 			});
 
 	}
-
 }
