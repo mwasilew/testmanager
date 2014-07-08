@@ -50,7 +50,7 @@
 	<tbody>
 	  <tr ng-class="{info: definition.active}"
 	      ng-click="selectDefinition(definition); "
-	      ng-repeat="definition in testDefinitions | orderBy:order:true">
+	      ng-repeat="definition in testDefinitions | orderBy:'active || false':true">
 	      <td>// definition.id //</td>
 	      <td>// definition.name //</td>
 	      <td>// definition.test_id //</td>

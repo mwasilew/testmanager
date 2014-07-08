@@ -64,10 +64,6 @@ function Edit($scope, $window, $routeParams, $q, TestPlan, Device, Definitions) 
 		})
 	}
 
-	$scope.order = function(e) {
-		return e.active || false;
-	}
-
 }
 
 function New($scope, $window, $routeParams, $location, Device, TestPlan, Definitions) {
