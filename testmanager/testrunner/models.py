@@ -221,7 +221,6 @@ class LavaJobTestResult(models.Model):
         return self.test_case_id
 
 
-
 class Bug(models.Model):
 
     BUGZILLA = "bugzilla"
@@ -317,8 +316,7 @@ class Bug(models.Model):
         }
 
     def __unicode__(self):
-        data = self.get_bug()
-        return "%s:%s %s" % (self.alias, self.tracker, data)
+        return "%s:%s" % (self.alias, self.tracker)
 
 
 
