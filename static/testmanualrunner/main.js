@@ -65,34 +65,25 @@ function Execute($scope, $window, $routeParams, $q, TestRun, TestPlan, Status, T
 
 }
 
-function New($http, $scope, $location, $window, $routeParams, TestBuild) {
-	var url = URL + 'build/' + $routeParams.build_id + '/';
+function New($scope, $q, $routeParams, $location, TestBuild, TestPlan, TestRun) {
 
-	$scope.test_plan = {id:null}
-
-	$http.get(url)
-		.then(function(response) {
-			$scope.build = response.data;
-			return $http.get("/testplanner/view/plan/");
-		})
-		.then(function(response) {
-			$scope.test_plan_list = response.data;
-		});
-
+	$q.all([
+		TestBuild.get({id: $routeParams.build_id }).$promise,
+		TestPlan.query().$promise
+	]).then(function(data) {
+		$scope.build = data[0];
+		$scope.test_plan_list = data[1];
+	});
 
 	$scope.submit = function() {
-
-		var data = {
-			test_plan: $scope.test_plan ? $scope.test_plan.id : null,
+		TestRun.save({
+			test_plan: $scope.test_plan,
 			build: $scope.build.id
-		};
-
-		$http.post(URL + "view/testrun/", data)
-			.success(function(data) {
-				$location.path('/testrun/' + data.id);
-			}).error(function(error) {
-				$scope.error = error;
-			});
+		}, function(data) {
+			$location.path('/testrun/' + data.id);
+		}, function(response) {
+			$scope.error = response.data
+		})
 
 	}
 }

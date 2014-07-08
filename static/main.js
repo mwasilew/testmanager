@@ -3,7 +3,7 @@ angular.module('api', ['ngResource'])
 		return $resource('testmanualrunner/view/testrun/:id/', {}, {});
 	})
 	.factory('TestBuild', function($resource) {
-		return $resource('testmanualrunner/view/testrun/:id/', {}, {});
+		return $resource('/testrunner/build/:id/', {}, {});
 	})
 	.factory('Status', function($resource) {
 		return $resource('testmanualrunner/view/status/:id/', {}, {});

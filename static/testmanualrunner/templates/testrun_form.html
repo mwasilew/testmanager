@@ -13,13 +13,13 @@
 	<span class="help-inline" ng-bind="error.test_plan"></span>
 	<select class="form-control input-sm"
 		ng-model="test_plan"
-		ng-options="d.name for d in test_plan_list"
-		ng-change="test_plan_selected(this)">
-		<option value="">-- No Test Plan --</option>
+		ng-options="value.id as value.name for value in test_plan_list">
+		<option value="">-- select testplan --</option>
 	</select>
       </div>
 
       <p ng-show="test_plan.tests_definitions">
+	<b>Description:</b>
 	// test_plan.description //
       </p>
 
