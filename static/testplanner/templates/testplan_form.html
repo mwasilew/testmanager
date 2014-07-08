@@ -1,7 +1,16 @@
 <div class="row">
   <div class="col-lg-12">
 
+
     <form role="form" ng-submit="submit()">
+
+      <button type="submit" class="btn btn-default btn-sm input-sm pull-right">
+	Save
+      </button>
+
+      <div class="page-header">
+	<h1>TestPlan: <small>"//testPlan.name//"</small></h1>
+      </div>
 
       <div class="form-group" ng-class="{'has-error':error.name}">
 	<label class="control-label">name:</label>
@@ -35,23 +44,23 @@
 	    <th>Name</th>
 	    <th>Test Id</th>
 	    <th>File Name</th>
-	    <th></th>
 	  </tr>
 	</thead>
 	<tbody>
 	  <tr ng-class="{info: definition.active}"
-	      ng-click="selectDefinition(definition)"
+	      ng-click="selectDefinition(definition); "
 	      ng-repeat="definition in testDefinitions | orderBy:order:true">
 	      <td>// definition.id //</td>
 	      <td>// definition.name //</td>
 	      <td>// definition.test_id //</td>
 	      <td>// definition.test_file_name //</td>
-	      <td><input ng-model="definition.active" type="checkbox"></td>
 	  </tr>
 	</tbody>
       </table>
 
-      <button type="submit" class="btn btn-default btn-sm input-sm pull-right">Submit</button>
+      <button type="submit" class="btn btn-default btn-sm input-sm pull-right">
+	Save
+      </button>
 
     </form>
 
