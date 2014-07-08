@@ -14,7 +14,7 @@ from rest_framework.compat import smart_text
 
 
 class Base(TemplateView):
-    template_name='testmanualrunner/base.html'
+    template_name='testmanualrunner.html'
 
 
 #### serializers ####
