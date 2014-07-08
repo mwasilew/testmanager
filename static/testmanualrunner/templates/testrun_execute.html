@@ -1,118 +1,117 @@
 <div class="row">
-	<div class="col-lg-12">
+  <div class="col-lg-12">
 
-		<div class="page-header">
-			<h1><small>TestRun for:</small> {{ test_plan.name }} </h1>
-		</div>
+    <div class="page-header">
+      <h1>TestRun: <small>// test_plan.name // <b>#build:</b> // build.name // </small></h1>
+    </div>
 
 
-		<div class="row">
-			<div class="col-md-6">
-				<div class="list-group">
-					<a ng-style="{'color': get_status(test_definition).color }"
-					   ng-repeat-start="test_definition in test_plan.tests_definitions"
-					   ng-click="load_test_definition(test_definition)"
-					   ng-class="{'active': active_test_definition == test_definition}"
+    <div class="row">
+      <div class="col-md-6">
+	<div class="list-group">
+	  <a ng-style="{'color': get_status(test_definition).color }"
+	     ng-repeat-start="test_definition in test_plan.tests_definitions"
+	     ng-click="set_active_test_definition(test_definition)"
+	     ng-class="{'active': active_test_definition == test_definition}"
+	     class="list-group-item">
+	     
+	     // test_definition.name // 
 
-					   class="list-group-item">
+	     <button href="" title="Remove Status" class="pull-right btn btn-default btn-xs"
+		     ng-click='set_status(null, test_definition)'>
+		     <span class="glyphicon glyphicon-question-sign" class="glyphicon"></span>
+	     </button>
 
-						{{ test_definition.name }}
+	     <div class="btn-group pull-right">
 
-						<button href="" title="Remove Status" class="pull-right btn btn-default btn-xs"
-								ng-click='set_status(null, test_definition)'>
-							<span class="glyphicon glyphicon-question-sign" class="glyphicon"></span>
-						</button>
+	       <button href=""
+		       title="// status.name //"
+		       ng-click='set_status(status, test_definition)'
+		       ng-style="{'color': status.color}"
+		       class="btn btn-default btn-xs"
+		       ng-class="{active: get_status(test_definition) == status.id}"
+		       ng-repeat="status in statuses">
+		       <span ng-class="status.icon" class="glyphicon"></span>
+	       </button>
+	     </div>
+	  </a>
+	  <div ng-repeat-end class="list-group-item"
+	       ng-show="active_test_definition == test_definition"
+	       ng-class="{'active-test': active_test_definition == test_definition}">
 
-						<div class="btn-group pull-right">
+	       <form class="form-inline" role="form" ng-submit="add_bug()">
+		 <div class="form-group form-group-sm">
+		   <input type="email" class="form-control" id="exampleInputEmail2"
+			  placeholder="issue id">
 
-							<button href=""
-							   title="{{ status.name }}"
-							   ng-click='set_status(status, test_definition)'
-							   ng-style="{'color': status.color}"
-							   class="btn btn-default btn-xs"
-							   ng-class="{active: get_status(test_definition).id == status.id}"
-							   ng-repeat="status in status_list">
-								<span ng-class="status.icon" class="glyphicon"></span>
-							</button>
-						</div>
-					</a>
-					<div ng-repeat-end class="list-group-item"
-						 ng-show="active_test_definition == test_definition"
-						 ng-class="{'active-test': active_test_definition == test_definition}">
+			  <select class="form-control">
+			    <option>Bugzilla - Linaro</option>
+			    <option>Launchpad - Linaro</option>
+			  </select>
 
-						<form class="form-inline" role="form" ng-submit="add_bug()">
-							<div class="form-group form-group-sm">
-								<input type="email" class="form-control" id="exampleInputEmail2"
-									   placeholder="issue id">
+			  <button type="submit" class="btn btn-default">+</button>
+		 </div>
+	       </form>
 
-								<select class="form-control">
-									<option>Bugzilla - Linaro</option>
-									<option>Launchpad - Linaro</option>
-								</select>
+	       <table class="table">
+		 <tbody>
+		   <tr>
+		     <td><a href="http://google.com">#1111</a></td>
+		     <td>Some description</td>
+		   </tr>
+		   <tr>
+		     <td><a href="#1111">http://google.com</a></td>
+		     <td>Some description</td>
+		   </tr>
+		 </tbody>
+	       </table>
+	  </div>
+	</div>
+      </div>
+      <pre class="col-md-6 well" style="border-color: ">
 
-								<button type="submit" class="btn btn-default">+</button>
-							</div>
-						</form>
+	// active_test_definition.test_file_name //
+	// active_test_definition.id //
 
-						<table class="table">
-							<tbody>
-								<tr>
-									<td><a href="http://google.com">#1111</a></td>
-									<td>Some description</td>
-								</tr>
-								<tr>
-									<td><a href="#1111">http://google.com</a></td>
-									<td>Some description</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-			<pre class="col-md-6 well" style="border-color: ">
-
-				{{ active_test_definition.test_file_name }}
-{{ active_test_definition.id }}
-
-metadata:
-    name: serial-console
-    format: "Manual Test Definition 1.0"
-    description: "Test if the serial connection to the board works"
-    maintainer:
+	metadata:
+	name: serial-console
+	format: "Manual Test Definition 1.0"
+	description: "Test if the serial connection to the board works"
+	maintainer:
         - botao.sun@linaro.org
-    os:
+	os:
         - ubuntu
         - openembedded
-    scope:
+	scope:
         - functional
-    devices:
+	devices:
         - panda
         - panda-es
         - vexpress-a9
         - vexpress-tc2
         - arndale
-    environment:
+	environment:
         - manual-test
 
-run:
-    steps:
+	run:
+	steps:
         - "Connect the Serial Cable"
         - "Launch \"minicom\" in terminal of host PC:
-           $ minicom -D /dev/ttyUSB0 -w -C minicom_log.txt
-           $ sudo screen /dev/ttyUSB0 115200"
+        $ minicom -D /dev/ttyUSB0 -w -C minicom_log.txt
+        $ sudo screen /dev/ttyUSB0 115200"
         - "Boot the board"
         - "After boot sequence is complete type \"ls -l\""
 
-    expected:
+	expected:
         - "Boot log should be shown in serial console after powering the board"
         - "The boot log and command line prompt at the end should look like this:
-           Welcome to Linaro 13.09 (GNU/Linux 3.12.0-1-linaro-omap armv7l)
-           Documentation:  https://wiki.linaro.org/
-           root@linaro-developer:~#"
+        Welcome to Linaro 13.09 (GNU/Linux 3.12.0-1-linaro-omap armv7l)
+        Documentation:  https://wiki.linaro.org/
+        root@linaro-developer:~#"
         - "Input by keyboard in serial console should work and characters should be echoed back and displayed in minicom"
-			</pre>
-		</div>
+      </pre>
+    </div>
 
 
-	</div>
+  </div>
 </div>

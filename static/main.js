@@ -20,7 +20,7 @@ angular.module('api', ['ngResource'])
 		return $resource('/testplanner/view/definitions/:deviceName/', {}, {});
 	})
 	.factory('TestRunResult', function($resource) {
-		return $resource(URL + 'testrunresult/:id/', null, {
+		return $resource('/testmanualrunner/view/testrunresult/:id/', null, {
 			update: { method: 'PUT' }
 		});
 	})

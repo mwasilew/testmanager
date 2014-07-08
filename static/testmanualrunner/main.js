@@ -20,48 +20,61 @@ function Index($scope, $window, $routeParams, TestRun) {
 	$scope.test_runs = TestRun.query();
 }
 
-function Execute($scope, $window, $routeParams, $q, TestRun, TestPlan, Status, TestRunResult, Bug) {
+function Execute($scope, $window, $routeParams, $q, TestRun, TestPlan, Status, TestRunResult, Bug, Build) {
 	$q.all([
 		Status.query().$promise,
 		TestRun.get({id:$routeParams.id}).$promise
 	]).then(function(responses) {
-		$scope.status_list = responses[0];
-		$scope.status_by_id = _.indexBy(responses[0], 'id');
+		$scope.statuses = responses[0];
 		$scope.test_run = responses[1];
-		$scope.test_plan = $scope.test_run.test_plan;
-		$scope.active_test_definition = $scope.test_plan.tests_definitions[0];
 
-		tests_results_by_id = _.indexBy(
-			$scope.test_run.tests_definitions_results,
+		$scope.statuses_by_id = _.indexBy(responses[0], 'id');
+
+		return $q.all([
+			TestPlan.get({id:$scope.test_run.test_plan}).$promise,
+			Build.get({id:$scope.test_run.test_plan}),
+			TestRunResult.query({test_run:$scope.test_run.id}).$promise,
+		]);
+
+	}).then(function(responses) {
+		$scope.test_plan = responses[0];
+		$scope.build = responses[1];
+		$scope.test_run_results = responses[2];
+
+		$scope.test_run_results_by_test_definition = _.indexBy(
+			$scope.test_run_results,
 			'test_definition'
 		);
 
-		_.each($scope.test_run.test_plan.tests_definitions, function(test_definition) {
-			test_definition.result = tests_results_by_id[test_definition.id];
-		});
+		$scope.active_test_definition = $scope.test_plan.tests_definitions[0];
 	})
 
 	$scope.get_status = function(test_definition) {
-		return $scope.status_by_id[test_definition.result.status];
+		var status = $scope.test_run_results_by_test_definition[test_definition.id].status;
+		if (status) {
+			return $scope.statuses_by_id[status]
+		}
+		return {}
 	}
 
 	$scope.set_status = function(status, test_definition) {
+		var test_run_result = $scope.test_run_results_by_test_definition[test_definition.id];
 		if (status) {
-			test_definition.result.status = status.id;
+			test_run_result.status = status.id;
 		} else {
-			test_definition.result.status = null;
+			test_run_result.status = null;
 		}
-		TestRunResult.update({id: test_definition.result.id}, test_definition.result);
+		TestRunResult.update({id: test_run_result.id}, test_run_result);
 	}
 
-	$scope.load_test_definition = function(test_definition) {
+	$scope.set_active_test_definition = function(test_definition) {
 		$scope.active_test_definition = test_definition;
 	}
 
-	$scope.add_bug = function(Bug) {
-		debugger
-		// $scope.active_test_definition = test_definition;
-	}
+	// $scope.add_bug = function(Bug) {
+	// 	debugger
+	// 	// $scope.active_test_definition = test_definition;
+	// }
 
 }
 
