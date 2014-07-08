@@ -29,7 +29,7 @@ from testmanager.testplanner import models
 
 
 class Base(TemplateView):
-    template_name='testplanner/base.html'
+    template_name='testplanner.html'
 
 
 class DeviceSerializer(serializers.ModelSerializer):
