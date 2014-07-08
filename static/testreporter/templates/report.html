@@ -1,28 +1,28 @@
 <div class="page-header">
-	<h1>Report: <small>"//data.tag.name//"</small></h1>
+  <h1>Report: <small>"//data.tag.name//"</small></h1>
 </div>
 
 <form role="form">
-	<div class="form-group">
-		<textarea class="form-control" rows="4" placeholder="Notes" />
-	</div>
+  <div class="form-group">
+    <textarea class="form-control" rows="4" placeholder="Notes" />
+  </div>
 </form>
 
 <h2>Builds</h2>
 
 <table class="table">
-	<thead>
-		<tr>
-			<th>#</th>
-			<th>Number</th>
-			<th>Name</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr ng-repeat="build in data.builds">
-			<td>//build.id//</td>
-			<td>//build.number//</td>
-			<td>//build.name//</td>
-		</tr>
-	</tbody>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Number</th>
+      <th>Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="build in data.builds">
+      <td>//build.id//</td>
+      <td>//build.number//</td>
+      <td>//build.name//</td>
+    </tr>
+  </tbody>
 </table>
