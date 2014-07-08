@@ -6,11 +6,11 @@ APP.config(['$routeProvider', function($routeProvider) {
 			controller: 'Index'
 		})
 		.when('/new', {
-			templateUrl: '/static/testplanner/templates/new.html',
+			templateUrl: '/static/testplanner/templates/testplan_form.html',
 			controller: 'New'
 		})
 		.when('/:testPlanId', {
-			templateUrl: '/static/testplanner/templates/new.html',
+			templateUrl: '/static/testplanner/templates/testplan_form.html',
 			controller: 'Edit'
 		})
 
@@ -62,6 +62,10 @@ function Edit($scope, $window, $routeParams, $q, TestPlan, Device, Definitions) 
 		}, function(error) {
 			$scope.error = error.data
 		})
+	}
+
+	$scope.order = function(e) {
+		return e.active || false;
 	}
 
 }
