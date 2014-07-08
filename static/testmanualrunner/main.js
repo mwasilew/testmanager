@@ -78,12 +78,37 @@ function Execute($scope, $window, $routeParams, $q,
 		var test_run_result = $scope.test_run_results_by_test_definition[test_definition.id];
 		TestRunResultBug.add(
 			{id:test_run_result.id},
-			{alias:alias, tracker:tracker}).$promise
+			{alias:alias, tracker:tracker, action:"add"}).$promise
 			.then(function(bug) {
-				if (bug.created) {
-					test_run_result.bugs.push(bug)
+				missing = true;
+				_.each(test_run_result.bugs, function(value, i) {
+					if (value.id == bug.id) {
+						missing = false
+					}
+				});
+				if (missing) {
+					test_run_result.bugs.unshift(bug);
 				}
 			});
+	}
+
+	$scope.remove_bug = function(bug, test_definition) {
+		var test_run_result = $scope.test_run_results_by_test_definition[test_definition.id];
+		TestRunResultBug.remove(
+			{id:test_run_result.id},
+			{alias:bug.alias, tracker:bug.tracker, action:"remove"}).$promise
+			.then(function(bug) {
+				var index = null;
+				_.each(test_run_result.bugs, function(value, i) {
+					if (value.id == bug.id) {
+						index = i;
+					}
+				});
+				if (index) {
+					test_run_result.bugs.splice(index, 1);
+				}
+			});
+
 	}
 
 	$scope.get_test_run_results = function(test_definition) {

@@ -62,6 +62,22 @@
 		     <td><a ng-href="//bug.data.weblink//">// bug.alias //</a></td>
 		     <td><a ng-href="//bug.data.weblink//">// bug.tracker //</a></td>
 		     <td><a ng-href="//bug.data.weblink//"><b>// bug.data.description //</a><b></td>
+
+		     <td>
+
+		       <a href="" ng-click="bug.to_remove = true" ng-hide="bug.to_remove">
+			 <span class="pull-right glyphicon glyphicon-trash"></span>
+		       </a>
+		       
+		       <a href="" ng-click="bug.to_remove = false" ng-show="bug.to_remove" title="cancel">
+			 <span style="color:green" class="pull-right glyphicon glyphicon-remove "></span> 
+		       </a>
+	     
+		       <a href="" ng-click="remove_bug(bug, test_definition)" ng-show="bug.to_remove" title="remove">
+			 <span style="color:red" class="pull-right glyphicon glyphicon-ok"></span>
+		       </a>
+		       
+		     </td>
 		   </tr>
 		 </tbody>
 	       </table>

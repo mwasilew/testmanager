@@ -27,7 +27,7 @@ angular.module('api', ['ngResource'])
 	.factory('TestRunResultBug', function($resource) {
 		return $resource('/testmanualrunner/view/testrunresult/:id/bug/', null, {
 			add: { method: 'POST' },
-			remove: { method: 'DELETE' },
+			remove: { method: 'POST' },
 		});
 	})
 	.factory('Trackers', function($resource) {

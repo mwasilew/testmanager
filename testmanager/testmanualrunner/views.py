@@ -84,11 +84,14 @@ class TestRunResult_ListCreate_View(generics.ListCreateAPIView):
 class TestRunResultBug(APIView):
 
     def post(self, request, pk, format=None):
+        action = request.DATA.pop('action')
         test_run_result = models.TestRunResult.objects.get(pk=pk)
-        bug, created = test_run_result.bugs.get_or_create(**request.DATA)
+        bug, _ = testrunner_models.Bug.objects.get_or_create(**request.DATA)
         data = testrunner_views.BugSerializer(bug).data
-        data['created'] = created
-        return Response(data)
 
-    def delete(self, request, testrunresult_pk, format=None):
-        pass #
+        if action == "add":
+            test_run_result.bugs.add(bug)
+            return Response(data)
+        else:
+            test_run_result.bugs.remove(bug)
+            return Response(data)

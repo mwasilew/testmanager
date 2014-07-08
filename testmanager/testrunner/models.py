@@ -231,7 +231,7 @@ class Bug(models.Model):
     tracker = models.CharField(max_length=16, choices=[(a,a) for a in settings.TRACKERS.keys()])
 
     class Meta:
-        unique_together = ("alias", "tracker")
+        unique_together = [("alias", "tracker")]
 
     def __init__(self, *args, **kwargs):
         super(Bug, self).__init__(*args, **kwargs)
