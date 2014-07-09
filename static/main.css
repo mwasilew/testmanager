@@ -24,3 +24,8 @@
 	cursor: pointer;
 	cursor: hand;
 }
+
+.panel-heading select {
+	width: 200px;
+	margin-top: -5px;
+}
