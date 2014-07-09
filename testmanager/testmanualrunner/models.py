@@ -3,15 +3,27 @@ from django.db import models
 
 class TestRun(models.Model):
     test_plan = models.ForeignKey('testplanner.TestPlan')
-    build = models.ForeignKey('testrunner.JenkinsBuild')
+    build = models.ForeignKey('testrunner.JenkinsBuild', related_name="testruns")
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def get_results(self):
+        statuses = TestStatus.objects.all().values_list("name", flat=True)
+        ret = []
+        for status in statuses:
+            ret.append((
+                status,
+                self.tests_definitions_results.filter(status__name=status).count()
+            ))
+
+        return ret
+
+
     def save(self, *args, **kwargs):
         created = self.id
         super(TestRun, self).save(*args, **kwargs)
-        
+
         if not created:
             for testplan_testdefinition in self.test_plan.testplantestdefinition_set.all():
                 TestRunResult.objects.create(

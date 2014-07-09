@@ -35,6 +35,7 @@ from testmanager.testrunner.models import (
     Bug
 )
 from testmanager.testrunner.forms import ResultComparisonForm
+from testmanager.testmanualrunner.models import TestStatus
 
 
 @login_required
@@ -62,7 +63,7 @@ def jenkins_job_view(request, job_name):
 def jenkins_build_view(request, job_name, build_number):
 
     jenkins_job = get_object_or_404(JenkinsJob, name=job_name)
-    jenkins_build = jenkins_job.builds.filter(number=build_number)
+    jenkins_build = jenkins_job.builds.filter(number=build_number).prefetch_related("testruns")
     jenkins_umbrella_build = jenkins_build.filter(is_umbrella=True)
 
     if jenkins_umbrella_build.all():
@@ -73,6 +74,7 @@ def jenkins_build_view(request, job_name, build_number):
     context = RequestContext(request, {
         'jenkins_build': jenkins_build,
         'lava_url': settings.LAVA_JOB_ID_REGEXP.rsplit("/", 1)[0],
+        'statuses': TestStatus.objects.all()
     })
     return HttpResponse(template.render(context))
 
