@@ -9,13 +9,15 @@ class TestRun(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
+        created = self.id
         super(TestRun, self).save(*args, **kwargs)
-
-        for testplan_testdefinition in self.test_plan.testplantestdefinition_set.all():
-            TestRunResult.objects.create(
-                test_run=self,
-                test_definition=testplan_testdefinition.test_definition
-            )
+        
+        if not created:
+            for testplan_testdefinition in self.test_plan.testplantestdefinition_set.all():
+                TestRunResult.objects.create(
+                    test_run=self,
+                    test_definition=testplan_testdefinition.test_definition
+                )
 
 
 class TestRunResult(models.Model):
