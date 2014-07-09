@@ -332,3 +332,6 @@ class Bug(models.Model):
 class Tag(models.Model):
     name = models.CharField(max_length=128, unique=True)
     description = models.TextField(blank=True, null=True)
+
+    class Meta:
+        ordering = ['-id']
