@@ -4,8 +4,12 @@ APP.config(['$routeProvider', function($routeProvider) {
 			templateUrl: '/static/testreporter/templates/index.html',
 			controller: 'Index'
 		})
+		.when('/new', {
+			templateUrl: '/static/testreporter/templates/tag_form.html',
+			controller: 'New'
+		})
 		.when('/:id', {
-		templateUrl: '/static/testreporter/templates/report.html',
+			templateUrl: '/static/testreporter/templates/report.html',
 			controller: 'Report'
 		});
 
@@ -14,17 +18,25 @@ APP.config(['$routeProvider', function($routeProvider) {
 
 function Index($scope, $window, $routeParams, Tag) {
 	$scope.tags = Tag.query();
-
-	$scope.submit = function() {
-		Tag.save($scope.tag, function() {
-			$scope.tags = Tag.query();
-			$scope.tag = {};
-		})
-	}
 }
 
 function Report($scope, $window, $routeParams, $http, Tag) {
 	$http.get('/testreporter/report/'+ $routeParams.id +'/').success(function(data) {
 		$scope.data = data;
 	});
+}
+
+function New($scope, $window, $routeParams, $location, Tag) {
+	$scope.tag = {};
+	$scope.submit = function() {
+		Tag.save(
+			$scope.tag,
+			function() {
+				$location.path('/');
+			},
+			function(error) {
+				$scope.error = error.data
+			}
+		)
+	}
 }
