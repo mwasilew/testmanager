@@ -30,6 +30,7 @@ from testmanager.testrunner.models import (
     JenkinsBuild,
     LavaJob,
     LavaJobTestResult,
+    LavaJobResult,
     Tag,
     Bug
 )
@@ -121,6 +122,7 @@ from rest_framework import generics, serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
+
 class TagSerializer(serializers.ModelSerializer):
     builds = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
@@ -136,6 +138,11 @@ class BugSerializer(serializers.ModelSerializer):
 
     def get_data(self, obj):
         return obj.get_bug()
+
+
+class LavaJobSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LavaJob
 
 
 class Tag_ListCreate_View(generics.ListCreateAPIView):

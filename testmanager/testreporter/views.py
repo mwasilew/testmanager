@@ -25,14 +25,14 @@ from rest_framework.response import Response
 
 from django.views.generic import TemplateView
 
-from testmanager.testrunner import models as testrunner_models
+from testmanager.testrunner.models import JenkinsBuild, LavaJob, LavaJobResult, Tag
 from testmanager.testrunner import views as testrunner_views
 
 
 class BuildSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = testrunner_models.JenkinsBuild
+        model = JenkinsBuild
 
 
 class Base(TemplateView):
@@ -41,7 +41,23 @@ class Base(TemplateView):
 
 class Report_View(APIView):
     def get(self, request, tag_id, format=None):
+
+        tag = Tag.objects.get(id=tag_id)
+        builds = JenkinsBuild.objects.filter(tag=tag)
+        lava_jobs = LavaJob.objects.filter(jenkins_build__in=builds)
+        lava_jobs_results = LavaJobResult.objects\
+                                         .filter(lava_job__in=lava_jobs)\
+                                         .select_related("test_definition")\
+                                         .prefetch_related("lavajobtestresult_set")
+
+        automatic_tests_results = [{
+            "name": a.test_definition.name,
+            "results": a.get_resultset_count_by_status()} for a in lava_jobs_results
+        ]
+
         return Response({
-            "builds": BuildSerializer(testrunner_models.JenkinsBuild.objects.filter(tag_id=tag_id)).data,
-            "tag": testrunner_views.TagSerializer(testrunner_models.Tag.objects.get(id=tag_id)).data
+            "builds": BuildSerializer(builds).data,
+            "tag": testrunner_views.TagSerializer(tag).data,
+            "lava_jobs": testrunner_views.LavaJobSerializer(lava_jobs).data,
+            "lava_results": automatic_tests_results
         })

@@ -30,6 +30,42 @@
       </tbody>
     </table>
 
+    <h2>Lava jobs</h2>
+
+    <table class="table">
+      <thead>
+	<tr>
+	  <th>#</th>
+	  <th>Number</th>
+	</tr>
+      </thead>
+      <tbody>
+	<tr ng-repeat="lava_job in data.lava_jobs">
+	  <td>//lava_job.id//</td>
+	  <td>//lava_job.number//</td>
+	</tr>
+      </tbody>
+    </table>
+
+    <h2>Lava results</h2>
+
+    <table class="table">
+      <thead>
+	<tr>
+	  <th>Number</th>
+	  <th>Pass</th>
+	  <th>Fail</th>
+	</tr>
+      </thead>
+      <tbody>
+	<tr ng-repeat="result in data.lava_results">
+	  <td>//result.name//</td>
+	  <td>//result.results.pass//</td>
+	  <td>//result.results.fail//</td>
+	</tr>
+      </tbody>
+    </table>
+
   </div>
 </div>
 
