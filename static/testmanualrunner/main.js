@@ -98,13 +98,13 @@ function Execute($scope, $window, $routeParams, $q,
 			{id:test_run_result.id},
 			{alias:bug.alias, tracker:bug.tracker, action:"remove"}).$promise
 			.then(function(bug) {
-				var index = null;
+				var index = -1;
 				_.each(test_run_result.bugs, function(value, i) {
 					if (value.id == bug.id) {
 						index = i;
 					}
 				});
-				if (index) {
+				if (index != -1) {
 					test_run_result.bugs.splice(index, 1);
 				}
 			});
