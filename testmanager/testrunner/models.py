@@ -95,7 +95,9 @@ class JenkinsBuild(models.Model):
 
     name = models.CharField(max_length=1024)
     job = models.ForeignKey(JenkinsJob, related_name="builds")
-    tag = models.ForeignKey('Tag', related_name="builds", blank=True, null=True)
+
+    tags = models.ManyToManyField('Tag', blank=True, related_name="builds")
+
     umbrella_build = models.ForeignKey("self", blank=True, null=True)
     number = models.IntegerField()
     status = models.ForeignKey(JenkinsBuildStatus)

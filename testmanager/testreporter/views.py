@@ -43,7 +43,7 @@ class Report_View(APIView):
     def get(self, request, tag_id, format=None):
 
         tag = Tag.objects.get(id=tag_id)
-        builds = JenkinsBuild.objects.filter(tag=tag)
+        builds = JenkinsBuild.objects.filter(tags=tag)
         lava_jobs = LavaJob.objects.filter(jenkins_build__in=builds)
         lava_jobs_results = LavaJobResult.objects\
                                          .filter(lava_job__in=lava_jobs)\

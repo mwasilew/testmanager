@@ -16,16 +16,18 @@
           {% for subbuild in build.jenkinsbuild_set.all %}
 	    <div class="panel panel-default">
 
+	      
 	      <div class="panel-heading">
-		<select class="form-control pull-right input-sm"
+		<select multiple class="form-control pull-right input-sm"
 			ng-model="_tags[{{ subbuild.id }}]"
 			ng-model="tag"
-			ng-change="select_tag(_tags[{{ subbuild.id }}])"
-			ng-init="_tags[{{ subbuild.id }}] = {{ subbuild.tag.id |default:"null" }}; build_id = {{ subbuild.id }}"
+			ng-change="select_tag(_tags[{{ subbuild.id }}], {{ subbuild.id }})"
+			ng-init="_tags[{{ subbuild.id }}] = [{% for tag in subbuild.tags.all %}{{ tag.id }}{% if not forloop.last %},{% else %}{% endif %}{% endfor %}]; build_id = {{ subbuild.id }}"
 			ng-options="tag.id as 'tag: ' + tag.name for tag in tags">
 			<option value="">-- select tag --</option>
 		</select>
-		{{ subbuild.get_hwpack_name }}
+		
+		<b>{{ subbuild.get_hwpack_name }}</b>
 
 	      </div>
 
