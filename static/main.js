@@ -34,7 +34,9 @@ angular.module('api', ['ngResource'])
 		return $resource('/testrunner/trackers/', null, {});
 	})
 	.factory('Tag', function($resource) {
-		return $resource('/testrunner/tag/:id/', null, null);
+		return $resource('/testrunner/tag/:id/', null, {
+			update: { method: 'PUT' }
+		});
 	})
 	.factory('Build', function($resource) {
 		return $resource('/testrunner/build/:id/', null, {

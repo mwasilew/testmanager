@@ -24,13 +24,18 @@ function Index($scope, $window, $routeParams, Tag) {
 			$scope.tags = Tag.query();
 		});
 	};
-
 }
 
 function Report($scope, $window, $routeParams, $http, Tag) {
+	$scope.tag = Tag.get({id:$routeParams.id})
 	$http.get('/testreporter/report/'+ $routeParams.id +'/').success(function(data) {
 		$scope.data = data;
 	});
+
+	$scope.submit = function() {
+		Tag.update({id:$scope.tag.id}, $scope.tag)
+	}
+
 }
 
 function New($scope, $window, $routeParams, $location, Tag) {
