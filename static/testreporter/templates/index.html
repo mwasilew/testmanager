@@ -1,5 +1,5 @@
 <div class="page-header">
-  <a title="Create" href="#/new" class="btn btn-default btn-sm pull-right btn-success" role="button">	
+  <a title="Create" href="#/new" class="btn btn-default btn-sm pull-right btn-success" role="button">
     <span class="glyphicon glyphicon-plus"></span>
   </a>
 
@@ -22,13 +22,30 @@
       <tbody>
 	<tr ng-repeat="tag in tags">
 	  <td><a ng-href="#//tag.id//">//tag.id//</a></td>
-	  <td><a ng-href="#//tag.id//">//tag.name//</a></td>
-	  <td title="builds attached"><span class="badge pull-right">//tag.builds.length//</span></td>
+	  <td class="text-left">
+	    <span title="builds attached" class="badge">//tag.builds.length//</span>
+	    <a ng-href="#//tag.id//">//tag.name//</a>
+	  </td>
+	  <td>
+	    <a href="" ng-click="tag.to_remove = true" ng-hide="tag.to_remove">
+	      <span class="pull-right glyphicon glyphicon-trash"></span>
+	    </a>
+
+	    <a href="" ng-click="tag.to_remove = false" ng-show="tag.to_remove" title="cancel">
+	      <span style="color:green" class="pull-right glyphicon glyphicon-remove "></span>
+	    </a>
+
+	    <a href="" ng-click="remove(tag)" ng-show="tag.to_remove" title="remove">
+	      <span style="color:red" class="pull-right glyphicon glyphicon-ok"></span>
+	    </a>
+
+	  </td>
+
 	</tr>
       </tbody>
     </table>
 
-    <a title="Create" href="#/new" class="btn btn-default btn-sm pull-right btn-success" role="button">	
+    <a title="Create" href="#/new" class="btn btn-default btn-sm pull-right btn-success" role="button">
       <span class="glyphicon glyphicon-plus"></span>
     </a>
 

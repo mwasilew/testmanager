@@ -18,6 +18,13 @@ APP.config(['$routeProvider', function($routeProvider) {
 
 function Index($scope, $window, $routeParams, Tag) {
 	$scope.tags = Tag.query();
+
+	$scope.remove = function(tag) {
+		Tag.remove({id:tag.id}, function() {
+			$scope.tags = Tag.query();
+		});
+	};
+
 }
 
 function Report($scope, $window, $routeParams, $http, Tag) {
