@@ -37,6 +37,8 @@ from testmanager.testrunner.models import (
 from testmanager.testrunner.forms import ResultComparisonForm
 from testmanager.testmanualrunner.models import TestStatus
 
+from testmanager.views import LoginRequiredMixin
+
 
 @login_required
 def index(request):
@@ -147,25 +149,25 @@ class LavaJobSerializer(serializers.ModelSerializer):
         model = LavaJob
 
 
-class Tag_ListCreate_View(generics.ListCreateAPIView):
+class Tag_ListCreate_View(LoginRequiredMixin, generics.ListCreateAPIView):
     serializer_class = TagSerializer
     model = Tag
 
 
-class Tag_Details_View(generics.RetrieveUpdateDestroyAPIView):
+class Tag_Details_View(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     serializer_class = TagSerializer
     model = Tag
 
 
-class JenkinsBuild_ListCreate_View(generics.ListCreateAPIView):
+class JenkinsBuild_ListCreate_View(LoginRequiredMixin, generics.ListCreateAPIView):
     model = JenkinsBuild
 
 
-class JenkinsBuild_Details_View(generics.RetrieveUpdateDestroyAPIView):
+class JenkinsBuild_Details_View(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     model = JenkinsBuild
 
 
-class Trackers_Types_View(APIView):
+class Trackers_Types_View(LoginRequiredMixin, APIView):
     def get(self, request, format=None):
         return Response([
             {"name": a, "type": b["type"]} for a,b in settings.TRACKERS.items()

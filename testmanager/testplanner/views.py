@@ -24,11 +24,12 @@ from rest_framework.response import Response
 from rest_framework import generics
 from rest_framework import serializers
 from rest_framework import status
-
 from testmanager.testplanner import models
 
+from testmanager.views import LoginRequiredMixin
 
-class Base(TemplateView):
+
+class Base(LoginRequiredMixin, TemplateView):
     template_name='testplanner.html'
 
 
@@ -75,7 +76,7 @@ class TestDefinitionSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'test_id', 'test_file_name')
 
 
-class DefinitionView(APIView):
+class DefinitionView(LoginRequiredMixin, APIView):
     serializer_class = TestDefinitionSerializer
 
     def get(self, request, device_id, format=None):
@@ -84,7 +85,7 @@ class DefinitionView(APIView):
         return Response(serializer.data)
 
 
-class TestPlanView(generics.ListCreateAPIView):
+class TestPlanView(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = models.TestPlan.objects.all()
     serializer_class = TestPlanSerializer
 
@@ -99,17 +100,17 @@ class TestPlanView(generics.ListCreateAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class TestPlanDetails(generics.RetrieveUpdateDestroyAPIView):
+class TestPlanDetails(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = models.TestPlan.objects.all()
     serializer_class = TestPlanSerializer
 
 
-class DeviceView(generics.ListCreateAPIView):
+class DeviceView(LoginRequiredMixin, generics.ListCreateAPIView):
     serializer_class = DeviceSerializer
     model = models.Device
 
 
-class DeviceDetailsView(generics.RetrieveUpdateDestroyAPIView):
+class DeviceDetailsView(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     serializer_class = DeviceSerializer
     queryset = models.Device.objects.all()
 

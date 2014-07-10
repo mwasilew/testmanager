@@ -11,9 +11,7 @@ from testmanager.testmanualrunner import models
 from testmanager.testrunner import models as testrunner_models
 from testmanager.testrunner import views as testrunner_views
 
-
-class Base(TemplateView):
-    template_name='testmanualrunner.html'
+from testmanager.views import LoginRequiredMixin
 
 
 class TestRunResultSerializer(serializers.ModelSerializer):
@@ -40,48 +38,52 @@ class TestStatus(serializers.ModelSerializer):
 #### views ####
 
 
-class TestRun_ListCreate_View(generics.ListCreateAPIView):
+class Base(LoginRequiredMixin, TemplateView):
+    template_name='testmanualrunner.html'
+
+
+class TestRun_ListCreate_View(LoginRequiredMixin, generics.ListCreateAPIView):
     serializer_class = TestRunSerializer
     model = models.TestRun
 
 
-class TestRun_Details_View(generics.RetrieveUpdateDestroyAPIView):
+class TestRun_Details_View(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     serializer_class = TestRunSerializer
     model = models.TestRun
 
 
-class Build_List_View(generics.ListAPIView):
+class Build_List_View(LoginRequiredMixin, generics.ListAPIView):
     queryset = testrunner_models.JenkinsBuild.objects.all()
     serializer_class = JenkinsBuild
 
 
-class Build_Details_View(generics.RetrieveAPIView):
+class Build_Details_View(LoginRequiredMixin, generics.RetrieveAPIView):
     queryset = testrunner_models.JenkinsBuild.objects.all()
     serializer_class = JenkinsBuild
 
 
-class TestStatus_List_View(generics.ListAPIView):
+class TestStatus_List_View(LoginRequiredMixin, generics.ListAPIView):
     queryset = models.TestStatus.objects.all()
     serializer_class = TestStatus
 
 
-class TestStatus_Details_View(generics.RetrieveAPIView):
+class TestStatus_Details_View(LoginRequiredMixin, generics.RetrieveAPIView):
     queryset = models.TestStatus.objects.all()
     serializer_class = TestStatus
 
 
-class TestRunResult_Details_View(generics.RetrieveUpdateDestroyAPIView):
+class TestRunResult_Details_View(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = models.TestRunResult.objects.all()
     serializer_class = TestRunResultSerializer
 
 
-class TestRunResult_ListCreate_View(generics.ListCreateAPIView):
+class TestRunResult_ListCreate_View(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = models.TestRunResult.objects.all()
     serializer_class = TestRunResultSerializer
     filter_fields = ('test_run',)
 
 
-class TestRunResultBug(APIView):
+class TestRunResultBug(LoginRequiredMixin, APIView):
 
     def post(self, request, pk, format=None):
         action = request.DATA.pop('action')
