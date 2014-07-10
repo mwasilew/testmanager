@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block js_include %}
+  {{ block.super }}
+  
+  <script type="text/javascript" src="{{ STATIC_URL }}testreporter/main.js"></script>
+{% endblock %}
+
+{% block maincontent %}
+  <div id="testreporter" ng-view></div>
+{% endblock %}

@@ -16,21 +16,27 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Testmanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls import url
-from testmanager.testmanualrunner import views
+from rest_framework import serializers
+from testmanager.testmanualrunner import models
+from testmanager.testrunner.serializers import BugSerializer
+from testmanager.testplanner.serializers import TestPlanSerializer
 
 
-urlpatterns = [
-    url(r'view/testrun/$', views.TestRun_ListCreate_View.as_view()),
-    url(r'view/testrun/(?P<pk>[0-9]+)/$', views.TestRun_Details_View.as_view()),
+class TestRunSerializer(serializers.ModelSerializer):
+    result = serializers.Field(source='get_results')
+    test_plan = TestPlanSerializer()
 
-    url(r'view/status/$', views.TestStatus_List_View.as_view()),
-    url(r'view/status/(?P<pk>[0-9]+)/$', views.TestStatus_Details_View.as_view()),
+    class Meta:
+        model = models.TestRun
 
-    url(r'view/testrunresult/(?P<pk>[0-9]+)/$', views.TestRunResult_Details_View.as_view()),
-    url(r'view/testrunresult/$', views.TestRunResult_ListCreate_View.as_view()),
 
-    url(r'view/testrunresult/(?P<pk>[0-9]+)/bug/$', views.TestRunResultBug.as_view()),
+class TestRunResultSerializer(serializers.ModelSerializer):
+    bugs = BugSerializer(many=True, read_only=True)
+    class Meta:
+        model = models.TestRunResult
 
-    url(r'$', views.Base.as_view()),
-]
+
+class TestStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.TestStatus
+

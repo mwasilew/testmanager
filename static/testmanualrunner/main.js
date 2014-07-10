@@ -116,10 +116,10 @@ function Execute($scope, $window, $routeParams, $q,
 
 }
 
-function New($scope, $q, $routeParams, $location, TestBuild, TestPlan, TestRun) {
+function New($scope, $q, $routeParams, $location, Build, TestPlan, TestRun) {
 
 	$q.all([
-		TestBuild.get({id: $routeParams.build_id }).$promise,
+		Build.get({id: $routeParams.build_id }).$promise,
 		TestPlan.query().$promise
 	]).then(function(data) {
 		$scope.build = data[0];

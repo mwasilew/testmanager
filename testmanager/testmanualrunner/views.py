@@ -1,41 +1,36 @@
+# Copyright (C) 2014 Linaro Limited
+#
+# Author: Milosz Wasilewski <milosz.wasilewski@linaro.org>
+#
+# This file is part of Testmanager.
+#
+# Testmanager is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License version 3
+# as published by the Free Software Foundation
+#
+# Testmanager is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Testmanager.  If not, see <http://www.gnu.org/licenses/>.
+
 from __future__ import unicode_literals
 from django.views.generic import TemplateView
 
 from rest_framework import generics
-from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-
+from testmanager.views import LoginRequiredMixin
 from testmanager.testmanualrunner import models
 from testmanager.testrunner import models as testrunner_models
-from testmanager.testrunner import views as testrunner_views
 
-from testmanager.views import LoginRequiredMixin
-
-
-class TestRunResultSerializer(serializers.ModelSerializer):
-    bugs = testrunner_views.BugSerializer(many=True, read_only=True)
-    class Meta:
-        model = models.TestRunResult
-
-
-class TestRunSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.TestRun
-
-
-class JenkinsBuild(serializers.ModelSerializer):
-    class Meta:
-        model = testrunner_models.JenkinsBuild
-
-
-class TestStatus(serializers.ModelSerializer):
-    class Meta:
-        model = models.TestStatus
-
-
-#### views ####
+from testmanager.testmanualrunner.serializers import (
+    TestStatusSerializer, TestRunSerializer, TestRunResultSerializer
+)
+from testmanager.testrunner.serializers import BugSerializer
 
 
 class Base(LoginRequiredMixin, TemplateView):
@@ -52,33 +47,23 @@ class TestRun_Details_View(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPI
     model = models.TestRun
 
 
-class Build_List_View(LoginRequiredMixin, generics.ListAPIView):
-    queryset = testrunner_models.JenkinsBuild.objects.all()
-    serializer_class = JenkinsBuild
-
-
-class Build_Details_View(LoginRequiredMixin, generics.RetrieveAPIView):
-    queryset = testrunner_models.JenkinsBuild.objects.all()
-    serializer_class = JenkinsBuild
-
-
 class TestStatus_List_View(LoginRequiredMixin, generics.ListAPIView):
-    queryset = models.TestStatus.objects.all()
-    serializer_class = TestStatus
+    serializer_class = TestStatusSerializer
+    model = models.TestStatus
 
 
 class TestStatus_Details_View(LoginRequiredMixin, generics.RetrieveAPIView):
-    queryset = models.TestStatus.objects.all()
-    serializer_class = TestStatus
+    serializer_class = TestStatusSerializer
+    model = models.TestStatus
 
 
 class TestRunResult_Details_View(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
-    queryset = models.TestRunResult.objects.all()
     serializer_class = TestRunResultSerializer
+    model = models.TestRunResult
 
 
 class TestRunResult_ListCreate_View(LoginRequiredMixin, generics.ListCreateAPIView):
-    queryset = models.TestRunResult.objects.all()
+    model = models.TestRunResult
     serializer_class = TestRunResultSerializer
     filter_fields = ('test_run',)
 
@@ -89,7 +74,7 @@ class TestRunResultBug(LoginRequiredMixin, APIView):
         action = request.DATA.pop('action')
         test_run_result = models.TestRunResult.objects.get(pk=pk)
         bug, _ = testrunner_models.Bug.objects.get_or_create(**request.DATA)
-        data = testrunner_views.BugSerializer(bug).data
+        data = BugSerializer(bug).data
 
         if action == "add":
             test_run_result.bugs.add(bug)

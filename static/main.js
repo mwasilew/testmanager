@@ -2,9 +2,6 @@ angular.module('api', ['ngResource'])
 	.factory('TestRun', function($resource) {
 		return $resource('testmanualrunner/view/testrun/:id/', {}, {});
 	})
-	.factory('TestBuild', function($resource) {
-		return $resource('/testrunner/build/:id/', {}, {});
-	})
 	.factory('Status', function($resource) {
 		return $resource('testmanualrunner/view/status/:id/', {}, {});
 	})
