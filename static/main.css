@@ -24,13 +24,3 @@
 	cursor: pointer;
 	cursor: hand;
 }
-
-.panel .panel-heading select {
-	width: 200px;
-	margin-top: -5px;
-	height: 59px;
-}
-
-.panel .panel-heading {
-	height: 70px;
-}
