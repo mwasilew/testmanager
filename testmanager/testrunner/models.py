@@ -259,7 +259,7 @@ class Bug(models.Model):
             if username and password:
                 response = requests.get(
                     "%sshow_bug.cgi?id=%s&ctype=xml" % (url, self.alias),
-                    auth=('user', 'pass'))
+                    auth=(username, password))
             else:
                 response = requests.get(
                     "%sshow_bug.cgi?id=%s&ctype=xml" % (url, self.alias)
