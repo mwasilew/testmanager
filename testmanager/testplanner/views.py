@@ -15,6 +15,7 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Testmanager.  If not, see <http://www.gnu.org/licenses/>.
+from os import path
 from django.views.generic import TemplateView
 
 from rest_framework.views import APIView
@@ -38,6 +39,16 @@ class DefinitionView(LoginRequiredMixin, APIView):
         query = models.TestDefinition.objects.filter(device__id=device_id)
         serializer = self.serializer_class(query)
         return Response(serializer.data)
+
+
+class Definition_Yaml_View(LoginRequiredMixin, APIView):
+
+    def get(self, request, pk, format=None):
+        obj = models.TestDefinition.objects.get(pk=pk)
+        location = path.join(obj.repository.local_dir, obj.test_file_name)
+        return Response({
+            "yaml": open(location,'r').read()
+        })
 
 
 class TestPlanView(LoginRequiredMixin, generics.ListCreateAPIView):
@@ -68,5 +79,4 @@ class DeviceView(LoginRequiredMixin, generics.ListCreateAPIView):
 class DeviceDetailsView(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     serializer_class = serializers.DeviceSerializer
     queryset = models.Device.objects.all()
-
 

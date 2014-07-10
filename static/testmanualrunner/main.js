@@ -21,7 +21,9 @@ function Index($scope, $window, $routeParams, TestRun) {
 }
 
 function Execute($scope, $window, $routeParams, $q,
-				 TestRun, TestPlan, Status, TestRunResult, TestRunResultBug, Build, Trackers) {
+				 TestRun, TestPlan, Status, TestRunResult, TestRunResultBug,
+				 Build, DefinitionYaml, Trackers) {
+
 	$q.all([
 		Status.query().$promise,
 		TestRun.get({id:$routeParams.id}).$promise,
@@ -48,7 +50,7 @@ function Execute($scope, $window, $routeParams, $q,
 			'test_definition'
 		);
 
-		$scope.active_test_definition = $scope.test_plan.tests_definitions[0];
+		$scope.set_active_test_definition($scope.test_plan.tests_definitions[0]);
 	})
 
 	$scope.get_status = function(test_definition) {
@@ -71,6 +73,9 @@ function Execute($scope, $window, $routeParams, $q,
 
 	$scope.set_active_test_definition = function(test_definition) {
 		$scope.active_test_definition = test_definition;
+		DefinitionYaml.get({id:test_definition.id}, function(data) {
+			$scope.yaml = jsyaml.load(data.yaml)
+		});
 	}
 
 	$scope.add_bug = function(alias, tracker, test_definition) {

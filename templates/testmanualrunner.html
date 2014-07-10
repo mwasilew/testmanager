@@ -9,6 +9,8 @@
 {% block js_include %}
   {{ block.super }}
 
+  <script type="text/javascript" src="{{ STATIC_URL }}libs/js-yaml.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}libs/esprima.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}testmanualrunner/main.js"></script>
 {% endblock %}
 

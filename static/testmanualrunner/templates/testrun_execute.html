@@ -3,11 +3,11 @@
 
     <div class="page-header">
       <h1>
-	  <button ng-hide="test_run.closed" ng-click="close(true)" type="button" 
-		  class="btn btn-success btn-sm">Close</button>
-	  <button ng-show="test_run.closed" ng-click="close(false)" type="button" 
-		  class="btn btn-danger btn-sm">Open</button>
-	// test_plan.name //
+	<button ng-hide="test_run.closed" ng-click="close(true)" type="button" 
+		class="btn btn-success btn-sm">Close</button>
+		<button ng-show="test_run.closed" ng-click="close(false)" type="button" 
+			class="btn btn-danger btn-sm">Open</button>
+			// test_plan.name //
       </h1>
       <h5>
 	// build.name //
@@ -30,15 +30,15 @@
 	  </a>
 	  <div ng-repeat-end class="list-group-item bugs" ng-show="active_test_definition == test_definition && get_test_run_results(test_definition).bugs.length > 0"
 	       ng-class="{'active-test': active_test_definition == test_definition}">
-	    <table class="table"> 
+	       <table class="table"> 
 
-	    	<tr ng-repeat="bug in get_test_run_results(test_definition).bugs"> 
-	    	  <td><a ng-href="//bug.data.weblink//">// bug.alias //</a></td> 
-	    	  <td><a ng-href="//bug.data.weblink//">// bug.tracker //</a></td> 
-	    	  <td><a ng-href="//bug.data.weblink//"><b>// bug.data.description //</a><b></td> 
-	    	</tr> 
+	    	 <tr ng-repeat="bug in get_test_run_results(test_definition).bugs"> 
+	    	   <td><a target="blank" ng-href="//bug.data.weblink//">// bug.alias //</a></td> 
+	    	   <td><a target="blank" ng-href="//bug.data.weblink//">// bug.tracker //</a></td> 
+	    	   <td><a target="blank" ng-href="//bug.data.weblink//"><b>// bug.data.description //</a><b></td> 
+	    	 </tr> 
 
-	    </table> 
+	       </table> 
 	  </div>
 	</div>
 
@@ -117,54 +117,10 @@
 	</div>
       </div>
       
-      <pre class="col-md-5 well" style="border-color: ">
-
-	**** Not implemented ****
-
-	// active_test_definition.test_file_name //
-	// active_test_definition.id //
-
-	**** Not implemented ****
-
-	metadata:
-	name: serial-console
-	format: "Manual Test Definition 1.0"
-	description: "Test if the serial connection to the board works"
-	maintainer:
-        - botao.sun@linaro.org
-	os:
-        - ubuntu
-        - openembedded
-	scope:
-        - functional
-	devices:
-        - panda
-        - panda-es
-        - vexpress-a9
-        - vexpress-tc2
-        - arndale
-	environment:
-        - manual-test
-
-	run:
-	steps:
-        - "Connect the Serial Cable"
-        - "Launch \"minicom\" in terminal of host PC:
-        $ minicom -D /dev/ttyUSB0 -w -C minicom_log.txt
-        $ sudo screen /dev/ttyUSB0 115200"
-        - "Boot the board"
-        - "After boot sequence is complete type \"ls -l\""
-
-	expected:
-        - "Boot log should be shown in serial console after powering the board"
-        - "The boot log and command line prompt at the end should look like this:
-        Welcome to Linaro 13.09 (GNU/Linux 3.12.0-1-linaro-omap armv7l)
-        Documentation:  https://wiki.linaro.org/
-        root@linaro-developer:~#"
-        - "Input by keyboard in serial console should work and characters should be echoed back and displayed in minicom"
-      </pre>
+      <div class="col-md-5">
+	<pre class="well">// yaml //</pre>
+      </div>
     </div>
-
-
+    
   </div>
 </div>
