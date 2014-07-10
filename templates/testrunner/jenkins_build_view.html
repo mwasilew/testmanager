@@ -52,7 +52,7 @@
 		    </table>
 
 		    {% if subbuild.testruns.count %}
-		      <h4>Manual results</h4>
+		      <h3>Manual test results</h3>
                       <table id="job-status" class="table table-striped table-condensed">
 			<thead>
 			  <tr>
@@ -81,6 +81,7 @@
                       </table>
 		    {% endif %}
 
+		    <h3>Automated test results</h3>
 		    {% for lavajob in subbuild.lavajob_set.all %}
 		      <h4>
 			{{ lavajob.device_type.name }}
