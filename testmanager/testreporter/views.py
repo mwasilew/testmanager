@@ -31,8 +31,11 @@ from testmanager.testmanualrunner.serializers import TestRunSerializer
 class Base(LoginRequiredMixin, TemplateView):
     template_name='testreporter/base.html'
 
+class Public(TemplateView):
+    template_name='testreporter/public.html'
 
-class Report_View(LoginRequiredMixin, APIView):
+
+class Report_View(APIView):
 
     def get(self, request, tag_id, format=None):
 
@@ -47,3 +50,4 @@ class Report_View(LoginRequiredMixin, APIView):
             "lava_jobs": LavaJobSerializer(lava_jobs).data,
             "testruns": TestRunSerializer(testruns).data,
         })
+

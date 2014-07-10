@@ -9,10 +9,9 @@ APP.config(['$routeProvider', function($routeProvider) {
 			controller: 'New'
 		})
 		.when('/:id', {
-			templateUrl: '/static/testreporter/templates/report.html',
+			templateUrl: '/static/testreporter/templates/report_private.html',
 			controller: 'Report'
 		});
-
   }]);
 
 
