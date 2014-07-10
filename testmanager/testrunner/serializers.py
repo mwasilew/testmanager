@@ -22,6 +22,8 @@ from testmanager.testrunner import models
 
 
 class BuildSerializer(serializers.ModelSerializer):
+    absolute_url = serializers.Field(source='get_absolute_url')
+
     class Meta:
         model = models.JenkinsBuild
 
@@ -43,6 +45,7 @@ class LavaJobResultSerializer(serializers.ModelSerializer):
 
 class LavaJobSerializer(serializers.ModelSerializer):
     results = LavaJobResultSerializer(source="lavajobresult_set", many=True)
+    absolute_url = serializers.Field(source='get_absolute_url')
 
     class Meta:
         model = models.LavaJob

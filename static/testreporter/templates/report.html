@@ -36,48 +36,36 @@
       </thead>
       <tbody>
 	<tr ng-repeat="build in data.builds">
-	  <td>//build.id//</td>
-	  <td>//build.number//</td>
-	  <td>//build.name//</td>
+	  <td><a ng-href="//build.absolute_url//">//build.id//</a></td>
+	  <td><a ng-href="//build.absolute_url//">//build.number//</a></td>
+	  <td><a ng-href="//build.absolute_url//">//build.name//</a></td>
 	</tr>
       </tbody>
     </table>
 
-    <h2>Lava jobs</h2>
-
-    <table class="table">
-      <thead>
-	<tr>
-	  <th>#</th>
-	  <th>Number</th>
-	</tr>
-      </thead>
-      <tbody>
-	<tr ng-repeat="lava_job in data.lava_jobs">
-	  <td>//lava_job.id//</td>
-	  <td>//lava_job.number//</td>
-	</tr>
-      </tbody>
-    </table>
-
-    <h2>Lava results</h2>
-
-    <table class="table">
-      <thead>
-	<tr>
-	  <th>Number</th>
-	  <th>Pass</th>
-	  <th>Fail</th>
-	</tr>
-      </thead>
-      <tbody>
-	<tr ng-repeat="result in data.lava_results">
-	  <td>//result.name//</td>
-	  <td>//result.results.pass//</td>
-	  <td>//result.results.fail//</td>
-	</tr>
-      </tbody>
-    </table>
+    <div ng-repeat="lava_job in data.lava_jobs">
+      <h2>
+	Lava job <a ng-href="//lava_job.absolute_url//">//lava_job.id//</a> 
+	<small ng-hide="lava_job.results.length"> - Empty</small>
+      </h2>
+      <table class="table" ng-show="lava_job.results.length">
+	<thead>
+	  <tr>
+	    <th>Number</th>
+	    <th>Pass</th>
+	    <th>Fail</th>
+	  </tr>
+	</thead>
+	<tbody>
+	  <tr ng-repeat="result in lava_job.results">
+	    <td>//result.name//</td>
+	    <td>//result.results.pass//</td>
+	    <td>//result.results.fail//</td>
+	  </tr>
+	</tbody>
+      </table>
+      
+    </div>
 
   </div>
 </div>
