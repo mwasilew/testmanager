@@ -30,7 +30,7 @@ from testmanager.testrunner import models as testrunner_models
 from testmanager.testmanualrunner.serializers import (
     TestStatusSerializer, TestRunSerializer, TestRunResultSerializer
 )
-from testmanager.testrunner.serializers import BuildSerializer, BugSerializer
+from testmanager.testrunner.serializers import BugSerializer
 
 
 class Base(LoginRequiredMixin, TemplateView):
@@ -47,31 +47,23 @@ class TestRun_Details_View(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPI
     model = models.TestRun
 
 
-class Build_List_View(LoginRequiredMixin, generics.ListAPIView):
-    serializer_class = BuildSerializer
-
-
-class Build_Details_View(LoginRequiredMixin, generics.RetrieveAPIView):
-    serializer_class = BuildSerializer
-
-
 class TestStatus_List_View(LoginRequiredMixin, generics.ListAPIView):
-    queryset = models.TestStatus.objects.all()
     serializer_class = TestStatusSerializer
+    model = models.TestStatus
 
 
 class TestStatus_Details_View(LoginRequiredMixin, generics.RetrieveAPIView):
-    queryset = models.TestStatus.objects.all()
     serializer_class = TestStatusSerializer
+    model = models.TestStatus
 
 
 class TestRunResult_Details_View(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
-    queryset = models.TestRunResult.objects.all()
     serializer_class = TestRunResultSerializer
+    model = models.TestRunResult
 
 
 class TestRunResult_ListCreate_View(LoginRequiredMixin, generics.ListCreateAPIView):
-    queryset = models.TestRunResult.objects.all()
+    model = models.TestRunResult
     serializer_class = TestRunResultSerializer
     filter_fields = ('test_run',)
 
