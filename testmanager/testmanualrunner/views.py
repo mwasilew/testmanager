@@ -6,16 +6,14 @@ from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-
 from testmanager.testmanualrunner import models
 from testmanager.testrunner import models as testrunner_models
-from testmanager.testrunner import views as testrunner_views
-
 from testmanager.views import LoginRequiredMixin
+from testmanager.testrunner.serializers import BugSerializer
 
 
 class TestRunResultSerializer(serializers.ModelSerializer):
-    bugs = testrunner_views.BugSerializer(many=True, read_only=True)
+    bugs = BugSerializer(many=True, read_only=True)
     class Meta:
         model = models.TestRunResult
 
@@ -89,7 +87,7 @@ class TestRunResultBug(LoginRequiredMixin, APIView):
         action = request.DATA.pop('action')
         test_run_result = models.TestRunResult.objects.get(pk=pk)
         bug, _ = testrunner_models.Bug.objects.get_or_create(**request.DATA)
-        data = testrunner_views.BugSerializer(bug).data
+        data = BugSerializer(bug).data
 
         if action == "add":
             test_run_result.bugs.add(bug)

@@ -16,21 +16,18 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Testmanager.  If not, see <http://www.gnu.org/licenses/>.
 
-# Create your views here.
 from django.views.generic import TemplateView
 
-from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from testmanager.testrunner.models import JenkinsBuild, LavaJob, LavaJobResult, Tag
-from testmanager.testrunner import views as testrunner_views
 from testmanager.views import LoginRequiredMixin
-
-
-class BuildSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = JenkinsBuild
+from testmanager.testrunner.models import (
+    JenkinsBuild, LavaJob, LavaJobResult, Tag
+)
+from testmanager.testrunner.serializers import (
+    BuildSerializer, TagSerializer, LavaJobSerializer
+)
 
 
 class Base(LoginRequiredMixin, TemplateView):
@@ -56,7 +53,7 @@ class Report_View(LoginRequiredMixin, APIView):
 
         return Response({
             "builds": BuildSerializer(builds).data,
-            "tag": testrunner_views.TagSerializer(tag).data,
-            "lava_jobs": testrunner_views.LavaJobSerializer(lava_jobs).data,
+            "tag": TagSerializer(tag).data,
+            "lava_jobs": LavaJobSerializer(lava_jobs).data,
             "lava_results": automatic_tests_results
         })

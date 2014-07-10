@@ -35,6 +35,7 @@ from testmanager.testrunner.models import (
     Bug
 )
 from testmanager.testrunner.forms import ResultComparisonForm
+from testmanager.testrunner.serializers import TagSerializer
 from testmanager.testmanualrunner.models import TestStatus
 
 from testmanager.views import LoginRequiredMixin
@@ -122,31 +123,9 @@ def compare_results(request):
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
 
-from rest_framework import generics, serializers
+from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
-
-class TagSerializer(serializers.ModelSerializer):
-    builds = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-
-    class Meta:
-        model = Tag
-
-
-class BugSerializer(serializers.ModelSerializer):
-    data = serializers.SerializerMethodField('get_data')
-
-    class Meta:
-        model = Bug
-
-    def get_data(self, obj):
-        return obj.get_bug()
-
-
-class LavaJobSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = LavaJob
 
 
 class Tag_ListCreate_View(LoginRequiredMixin, generics.ListCreateAPIView):
