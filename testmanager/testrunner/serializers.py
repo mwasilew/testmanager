@@ -33,7 +33,17 @@ class TagSerializer(serializers.ModelSerializer):
         model = models.Tag
 
 
+class LavaJobResultSerializer(serializers.ModelSerializer):
+    name = serializers.Field(source='test_definition.name')
+    results = serializers.Field(source='get_resultset_count_by_status')
+
+    class Meta:
+        model = models.LavaJobResult
+
+
 class LavaJobSerializer(serializers.ModelSerializer):
+    results = LavaJobResultSerializer(source="lavajobresult_set", many=True)
+
     class Meta:
         model = models.LavaJob
 

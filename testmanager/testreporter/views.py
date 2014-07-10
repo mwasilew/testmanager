@@ -22,12 +22,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from testmanager.views import LoginRequiredMixin
-from testmanager.testrunner.models import (
-    JenkinsBuild, LavaJob, LavaJobResult, Tag
-)
-from testmanager.testrunner.serializers import (
-    BuildSerializer, TagSerializer, LavaJobSerializer
-)
+from testmanager.testrunner.models import JenkinsBuild, LavaJob, Tag
+from testmanager.testrunner.serializers import BuildSerializer, TagSerializer, LavaJobSerializer
 
 
 class Base(LoginRequiredMixin, TemplateView):
@@ -41,19 +37,9 @@ class Report_View(LoginRequiredMixin, APIView):
         tag = Tag.objects.get(id=tag_id)
         builds = JenkinsBuild.objects.filter(tags=tag)
         lava_jobs = LavaJob.objects.filter(jenkins_build__in=builds)
-        lava_jobs_results = LavaJobResult.objects\
-                                         .filter(lava_job__in=lava_jobs)\
-                                         .select_related("test_definition")\
-                                         .prefetch_related("lavajobtestresult_set")
-
-        automatic_tests_results = [{
-            "name": a.test_definition.name,
-            "results": a.get_resultset_count_by_status()} for a in lava_jobs_results
-        ]
 
         return Response({
             "builds": BuildSerializer(builds).data,
             "tag": TagSerializer(tag).data,
             "lava_jobs": LavaJobSerializer(lava_jobs).data,
-            "lava_results": automatic_tests_results
         })
