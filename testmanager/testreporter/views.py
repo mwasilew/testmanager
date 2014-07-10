@@ -17,16 +17,14 @@
 # along with Testmanager.  If not, see <http://www.gnu.org/licenses/>.
 
 # Create your views here.
+from django.views.generic import TemplateView
 
 from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from django.views.generic import TemplateView
-
 from testmanager.testrunner.models import JenkinsBuild, LavaJob, LavaJobResult, Tag
 from testmanager.testrunner import views as testrunner_views
-
 from testmanager.views import LoginRequiredMixin
 
 
