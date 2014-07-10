@@ -22,6 +22,15 @@
 	padding-bottom: 50px;
 }
 
-#testmanualrunner .disabed .active {
+#testmanualrunner .open .active {
 	color: #777;
+}
+
+#testmanualrunner .open table td,
+#testmanualrunner .closed table td {
+	border-top: 0px;
+}
+
+#testmanualrunner .open .badge {
+	margin-right: 10px;
 }
