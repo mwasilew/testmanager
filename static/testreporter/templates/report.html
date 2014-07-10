@@ -12,7 +12,7 @@
 	<span class="help-inline" ng-bind="error.description"></span>
 	<textarea class="form-control" ng-model="tag.description" rows="3"></textarea>
       </div>
-      
+
       <button type="submit" class="btn btn-default btn-sm input-sm pull-right">
 	Save
       </button>
@@ -43,11 +43,15 @@
       </tbody>
     </table>
 
+    <hr/>
+
+    <h2>Lava Jobs</h2>
+
     <div ng-repeat="lava_job in data.lava_jobs">
-      <h2>
-	Lava job <a ng-href="//lava_job.absolute_url//">//lava_job.id//</a> 
+      <h3>
+	Lava job <a ng-href="//lava_job.absolute_url//">//lava_job.id//</a>
 	<small ng-hide="lava_job.results.length"> - Empty</small>
-      </h2>
+      </h3>
       <table class="table" ng-show="lava_job.results.length">
 	<thead>
 	  <tr>
@@ -64,8 +68,29 @@
 	  </tr>
 	</tbody>
       </table>
-      
     </div>
+
+    <hr/>
+
+    <h2>Manual Testruns</h2>
+
+    <table class="table">
+      <thead>
+	<tr>
+	  <th>Test Plan</th>
+	  <th ng-repeat="name in data.testruns[0].result">
+	    // name[0] //
+	  </th>
+	</tr>
+      </thead>
+      <tbody>
+	<tr ng-repeat="testrun in data.testruns">
+	  <td><a ng-href='/testplanner/#//testrun.test_plan.id//'>//testrun.test_plan.name//</a></td>
+	  <td ng-repeat="name in testrun.result">// name[1] //</td>
+	  <td>//result.results.fail//</td>
+	</tr>
+      </tbody>
+    </table>
 
   </div>
 </div>
