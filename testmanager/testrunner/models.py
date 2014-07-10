@@ -231,6 +231,10 @@ class Bug(models.Model):
 
     alias = models.CharField(max_length=32)
     tracker = models.CharField(max_length=16, choices=[(a,a) for a in settings.TRACKERS.keys()])
+    summary = models.CharField(max_length=1024, null=True, blank=True)
+    status = models.CharField(max_length=1024, null=True, blank=True)
+    severity = models.CharField(max_length=1024, null=True, blank=True)
+    web_link = models.URLField(null=True, blank=True)
 
     class Meta:
         unique_together = [("alias", "tracker")]
@@ -247,88 +251,101 @@ class Bug(models.Model):
         return self._data
 
     def _get_bugzilla_bug(self, type, url, username=None, password=None):
-        import requests
-        from lxml import etree
-        from lxml.etree import fromstring
+        if not self.summary:
+            import requests
+            from lxml import etree
+            from lxml.etree import fromstring
 
-        if username and password:
-            response = requests.get(
-                "%sshow_bug.cgi?id=%s&ctype=xml" % (url, self.alias),
-                auth=('user', 'pass'))
-        else:
-            response = requests.get(
-                "%sshow_bug.cgi?id=%s&ctype=xml" % (url, self.alias)
-            )
+            if username and password:
+                response = requests.get(
+                    "%sshow_bug.cgi?id=%s&ctype=xml" % (url, self.alias),
+                    auth=('user', 'pass'))
+            else:
+                response = requests.get(
+                    "%sshow_bug.cgi?id=%s&ctype=xml" % (url, self.alias)
+                )
 
-        parser = etree.XMLParser(ns_clean=True, recover=True, encoding='utf-8')
-        h = fromstring(response.text.encode('utf-8'), parser=parser)
-        bug = h.find(".//bug")
-        if 'NotFound' in bug.values():
-            return {}
+            parser = etree.XMLParser(ns_clean=True, recover=True, encoding='utf-8')
+            h = fromstring(response.text.encode('utf-8'), parser=parser)
+            bug = h.find(".//bug")
+            if 'NotFound' in bug.values():
+                return {}
 
-        short_desc = h.find(".//short_desc")
-        bug_status = h.find(".//bug_status")
-        bug_severity= h.find(".//bug_severity")
+            short_desc = h.find(".//short_desc")
+            bug_status = h.find(".//bug_status")
+            bug_severity= h.find(".//bug_severity")
+            try:
+                self.summary = short_desc.text
+                self.status = bug_status.text
+                self.severity = bug_severity.text
+                self.web_link = "%sshow_bug.cgi?id=%s" % (url, self.alias)
+                self.save()
+            except AttributeError:
+                self.summary = ">>Bug not found or private<<"
+                self.save()
 
-        try:
-            return {
-                'id': self.alias,
-                'description': short_desc.text,
-                'weblink': "%sshow_bug.cgi?id=%s" % (url, self.alias),
-                'severity': bug_severity.text,
-                'status': bug_status.text
-            }
-        except AttributeError:
-            return {
-                'id': self.alias,
-                'description': "Bad Issue",
-                'weblink': "",
-                'severity': "",
-                'status': ""
-            }
+        return {
+            'id': self.alias,
+            'description': self.summary,
+            'weblink': self.web_link,
+            'severity': self.severity,
+            'status': self.status
+        }
 
     def _get_jira_bug(self, type, url, username=None, password=None):
-        from jira.client import JIRA
-        options={'server': url, 'verify': False}
-        if username and password:
-            jira = JIRA(options=options, basic_auth=(username, password))
-        else:
-            jira = JIRA(options=options)
-        jira_bug = jira.issue(self.alias)
-        jira_bug_weblink = "%sbrowse/%s" % (url, self.alias)
+        if not self.summary:
+            from jira.client import JIRA
+            options={'server': url, 'verify': False}
+            if username and password:
+                jira = JIRA(options=options, basic_auth=(username, password))
+            else:
+                jira = JIRA(options=options)
+            jira_bug = jira.issue(self.alias)
+            self.summary = jira_bug.fields.summary
+            self.status = jira_bug.fields.status.name
+            self.severity = jira_bug.fields.priority.name
+            self.web_link = "%sbrowse/%s" % (url, self.alias)
+            self.save()
+
         return {'alias': self.alias,
-                'description': jira_bug.fields.summary,
-                'weblink': jira_bug_weblink,
-                'severity': jira_bug.fields.priority.name,
-                'status': jira_bug.fields.status.name}
+                'description': self.summary,
+                'weblink': self.web_link,
+                'severity': self.severity,
+                'status': self.status}
 
     def _get_launchpad_bug(self, type, cache_dir):
-        from launchpadlib.launchpad import Launchpad
+        if not self.summary:
+            from launchpadlib.launchpad import Launchpad
 
-        lp = Launchpad.login_anonymously(
-            'qa-reports.linaro.org',
-            'production',
-            cache_dir,
-            version='devel'
-        )
-        lp_bug = lp.bugs[int(self.alias)]
-        lp_severity = ''
-        lp_status = ''
-        for task in lp_bug.bug_tasks:
-            lp_severity += "%s: %s | " % (task.bug_target_display_name, task.importance)
-            lp_status += "%s: %s | " % (task.bug_target_display_name, task.status)
+            lp = Launchpad.login_anonymously(
+                'qa-reports.linaro.org',
+                'production',
+                cache_dir,
+                version='devel'
+            )
+            lp_bug = lp.bugs[int(self.alias)]
+            lp_severity = ''
+            lp_status = ''
+            for task in lp_bug.bug_tasks:
+                lp_severity += "%s: %s | " % (task.bug_target_display_name, task.importance)
+                lp_status += "%s: %s | " % (task.bug_target_display_name, task.status)
+
+            self.summary = lp_bug.title
+            self.status = lp_status
+            self.severity = lp_severity
+            self.web_link = lp_bug.web_link
+            self.save()
 
         return {
             'alias': self.alias,
-            'description': lp_bug.title,
-            'weblink': lp_bug.web_link,
-            'severity': lp_severity,
-            'status': lp_status
+            'description': self.summary,
+            'weblink': self.web_link,
+            'severity': self.severity,
+            'status': self.status
         }
 
     def __unicode__(self):
         return "%s:%s" % (self.alias, self.tracker)
-
 
 
 class Tag(models.Model):
