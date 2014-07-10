@@ -1,6 +1,8 @@
 angular.module('api', ['ngResource'])
 	.factory('TestRun', function($resource) {
-		return $resource('testmanualrunner/view/testrun/:id/', {}, {});
+		return $resource('testmanualrunner/view/testrun/:id/', {}, {
+			update: { method: 'PUT' }
+		});
 	})
 	.factory('Status', function($resource) {
 		return $resource('testmanualrunner/view/status/:id/', {}, {});

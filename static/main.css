@@ -21,3 +21,7 @@
 #testreporter {
 	padding-bottom: 50px;
 }
+
+#testmanualrunner .disabed .active {
+	color: #777;
+}

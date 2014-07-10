@@ -34,15 +34,14 @@ function Execute($scope, $window, $routeParams, $q,
 		$scope.statuses_by_id = _.indexBy(responses[0], 'id');
 
 		return $q.all([
-			TestPlan.get({id:$scope.test_run.test_plan}).$promise,
-			Build.get({id:$scope.test_run.test_plan}),
+			Build.get({id:$scope.test_run.build}),
 			TestRunResult.query({test_run:$scope.test_run.id}).$promise,
 		]);
 
 	}).then(function(responses) {
-		$scope.test_plan = responses[0];
-		$scope.build = responses[1];
-		$scope.test_run_results = responses[2];
+		$scope.build = responses[0];
+		$scope.test_run_results = responses[1];
+		$scope.test_plan = $scope.test_run.test_plan;
 
 		$scope.test_run_results_by_test_definition = _.indexBy(
 			$scope.test_run_results,
@@ -112,6 +111,11 @@ function Execute($scope, $window, $routeParams, $q,
 
 	$scope.get_test_run_results = function(test_definition) {
 		return $scope.test_run_results_by_test_definition[test_definition.id];
+	}
+
+	$scope.close = function(state) {
+		$scope.test_run.closed = state;
+		TestRun.update({id: $scope.test_run.id}, $scope.test_run);
 	}
 
 }

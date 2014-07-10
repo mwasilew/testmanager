@@ -5,8 +5,11 @@ class TestRun(models.Model):
     test_plan = models.ForeignKey('testplanner.TestPlan')
     build = models.ForeignKey('testrunner.JenkinsBuild', related_name="testruns")
 
+    closed = models.BooleanField(default=False)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
 
     def get_results(self):
         statuses = TestStatus.objects.all().values_list("name", flat=True)

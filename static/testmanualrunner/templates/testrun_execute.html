@@ -2,23 +2,55 @@
   <div class="col-lg-12">
 
     <div class="page-header">
-      <h1>TestRun: <small>// test_plan.name // <b>#build:</b> // build.name // </small></h1>
+      <h1>
+	  <button ng-hide="test_run.closed" ng-click="close(true)" type="button" 
+		  class="btn btn-success btn-sm">Close</button>
+	  <button ng-show="test_run.closed" ng-click="close(false)" type="button" 
+		  class="btn btn-danger btn-sm">Open</button>
+	// test_plan.name //
+      </h1>
+      <h5>
+	// build.name //
+      </h5>
     </div>
-
 
     <div class="row">
       <div class="col-md-7">
-	<div class="list-group">
+
+	<div class="list-group disabled" ng-show="test_run.closed">
+	  <a ng-style="{'color': get_status(test_definition).color }"
+	     ng-repeat-start="test_definition in test_plan.tests_definitions"
+	     ng-click="set_active_test_definition(test_definition)"
+	     ng-class="{'disabled': active_test_definition == test_definition}"
+	     class="list-group-item">
+
+	     <span class="badge">// get_test_run_results(test_definition).bugs.length //</span>   
+	     // test_definition.name //  
+
+	  </a>
+	  <div ng-repeat-end class="list-group-item" ng-show="active_test_definition == test_definition && get_test_run_results(test_definition).bugs.length > 0"
+	       ng-class="{'active-test': active_test_definition == test_definition}">
+	    <table class="table"> 
+
+	    	<tr ng-repeat="bug in get_test_run_results(test_definition).bugs"> 
+	    	  <td><a ng-href="//bug.data.weblink//">// bug.alias //</a></td> 
+	    	  <td><a ng-href="//bug.data.weblink//">// bug.tracker //</a></td> 
+	    	  <td><a ng-href="//bug.data.weblink//"><b>// bug.data.description //</a><b></td> 
+	    	</tr> 
+
+	    </table> 
+	  </div>
+	</div>
+
+	<div class="list-group" ng-hide="test_run.closed">
 	  <a ng-style="{'color': get_status(test_definition).color }"
 	     ng-repeat-start="test_definition in test_plan.tests_definitions"
 	     ng-click="set_active_test_definition(test_definition)"
 	     ng-class="{'active': active_test_definition == test_definition}"
 	     class="list-group-item">
 
+	     <span class="badge pull-left">// get_test_run_results(test_definition).bugs.length //</span>  
 	     // test_definition.name //  
-	     <div class="pull-left"> 
-	       <span class="badge">// get_test_run_results(test_definition).bugs.length //</span>  
-	     </div>
 
 	     <button href="" title="Remove Status" class="pull-right btn btn-default btn-xs"
 		     ng-click='set_status(null, test_definition)'>
@@ -27,8 +59,7 @@
 
 	     <div class="btn-group pull-right">
 
-	       <button href=""
-		       title="// status.name //"
+	       <button title="// status.name //"
 		       ng-click='set_status(status, test_definition)'
 		       ng-style="{'color': status.color}"
 		       class="btn btn-default btn-xs"
@@ -38,54 +69,54 @@
 	       </button>
 	     </div>
 	  </a>
-	  <div ng-repeat-end class="list-group-item"
-	       ng-show="active_test_definition == test_definition"
-	       ng-class="{'active-test': active_test_definition == test_definition}">
+	  <div ng-repeat-end class="list-group-item" ng-show="active_test_definition == test_definition" ng-class="{'active-test': active_test_definition == test_definition}">
 
-	       <form class="form-inline" role="form" ng-submit="add_bug(alias, tracker, test_definition)">
-		 <div class="form-group">
-		   <input type="text" ng-model="alias" class="form-control input-sm" placeholder="issue" />
+	    <form class="form-inline" role="form" ng-submit="add_bug(alias, tracker, test_definition)">
+	      <div class="form-group">
+		<input type="text" ng-model="alias" class="form-control input-sm" placeholder="issue" />
+		
+		<select class="form-control input-sm"
+			ng-model="tracker"
+			ng-options="t.name as t.name for t in trackers">
+			<option value="">-- select tracker --</option>
+		</select>
+		
+		<button title="add" type="submit" class="btn btn-sm btn-default btn-success"
+			ng-disabled="!(tracker && alias)">
+			<span class="glyphicon glyphicon-plus"></span>
+		</button>
+	      </div>
+	    </form>
 
-		   <select class="form-control input-sm"
-			   ng-model="tracker"
-			   ng-options="t.name as t.name for t in trackers">
-			   <option value="">-- select tracker --</option>
-		   </select>
-
-		   <button title="add" type="submit" class="btn btn-sm btn-default btn-success"
-			   ng-disabled="!(tracker && alias)">
-			   <span class="glyphicon glyphicon-plus"></span>
-		   </button>
-		 </div>
-	       </form>
-
-	       <table class="table">
-		 <tbody>
-		   <tr ng-repeat="bug in get_test_run_results(test_definition).bugs">
-		     <td><a ng-href="//bug.data.weblink//">// bug.alias //</a></td>
-		     <td><a ng-href="//bug.data.weblink//">// bug.tracker //</a></td>
-		     <td><a ng-href="//bug.data.weblink//"><b>// bug.data.description //</a><b></td>
-
-		     <td>
-		       <a href="" ng-click="bug.to_remove = true" ng-hide="bug.to_remove">
-			 <span class="pull-right glyphicon glyphicon-trash"></span>
-		       </a>
-		       
-		       <a href="" ng-click="bug.to_remove = false" ng-show="bug.to_remove" title="cancel">
-			 <span style="color:green" class="pull-right glyphicon glyphicon-remove "></span> 
-		       </a>
-	     
-		       <a href="" ng-click="remove_bug(bug, test_definition)" ng-show="bug.to_remove" title="remove">
-			 <span style="color:red" class="pull-right glyphicon glyphicon-ok"></span>
-		       </a>
-		       
-		     </td>
-		   </tr>
-		 </tbody>
-	       </table>
+	    <table class="table">
+	      <tbody>
+		<tr ng-repeat="bug in get_test_run_results(test_definition).bugs">
+		  <td><a ng-href="//bug.data.weblink//">// bug.alias //</a></td>
+		  <td><a ng-href="//bug.data.weblink//">// bug.tracker //</a></td>
+		  <td><a ng-href="//bug.data.weblink//"><b>// bug.data.description //</a><b></td>
+		  
+		  <td>
+		    <a href="" ng-click="bug.to_remove = true" ng-hide="bug.to_remove">
+		      <span class="pull-right glyphicon glyphicon-trash"></span>
+		    </a>
+		    
+		    <a href="" ng-click="bug.to_remove = false" ng-show="bug.to_remove" title="cancel">
+		      <span style="color:green" class="pull-right glyphicon glyphicon-remove "></span> 
+		    </a>
+		    
+		    <a href="" ng-click="remove_bug(bug, test_definition)" ng-show="bug.to_remove" title="remove">
+		      <span style="color:red" class="pull-right glyphicon glyphicon-ok"></span>
+		    </a>
+		    
+		  </td>
+		</tr>
+	      </tbody>
+	    </table>
+	    
 	  </div>
 	</div>
       </div>
+      
       <pre class="col-md-5 well" style="border-color: ">
 
 	**** Not implemented ****
