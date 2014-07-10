@@ -54,11 +54,11 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-
     'testmanager.testdashboard',
     'testmanager.testplanner',
     'testmanager.testrunner',
     'testmanager.testmanualrunner',
+    'testmanager.testreporter',
 
     'rest_framework',
 )

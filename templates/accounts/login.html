@@ -1,28 +1,53 @@
-{% extends "base.html" %}
+<!doctype html>
+<html lang="en">
 
-{% block maincontent %}
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<form role="form" method="post" class="well" id="login-view">
-	{% csrf_token %}
+    <title> TestManager </title>
 
-	{% if form.errors %}
-	<div class="alert alert-danger" role="alert">
-		Your username and password didn't match. Please try again.
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}libs/bootstrap-3.2.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}libs/bootstrap-3.2.0/css/bootstrap-theme.min.css"/>
+
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}main.css">
+
+  </head>
+
+  <body>
+
+      <div id="login" class="container">
+
+	<div class="page-header">
+	  <h1># TestManager</h1>
 	</div>
-	{% endif %}
 
-	<div class="form-group">
-		<label for="id_username">Login</label>
-		<input id="id_username" name="username" type="text" class="form-control" placeholder="Login">
-	</div>
+	<form role="form" method="post">
+	  {% csrf_token %}
 
-	<div class="form-group">
-		<label for="id_password">Password</label>
-		<input id="id_password" name="password" type="password" class="form-control" placeholder="Password"/>
-	</div>
+	  {% if form.errors %}
+	    <div class="alert alert-danger" role="alert">
+	      Your username and password didn't match. Please try again.
+	    </div>
+	  {% endif %}
 
-	<button type="submit" class="btn btn-success">Submit</button>
+	  <div class="form-group">
+	    <label for="id_username">Login</label>
+	    <input id="id_username" name="username" type="text" class="form-control" placeholder="Login">
+	  </div>
 
-</form>
+	  <div class="form-group">
+	    <label for="id_password">Password</label>
+	    <input id="id_password" name="password" type="password" class="form-control" placeholder="Password"/>
+	  </div>
 
-{% endblock %}
+	  <button type="submit" class="btn btn-success btn-block">Login</button>
+
+	</form>
+      </div>
+
+
+  </body>
+</html>
+

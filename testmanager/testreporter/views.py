@@ -17,29 +17,28 @@
 # along with Testmanager.  If not, see <http://www.gnu.org/licenses/>.
 
 # Create your views here.
+from django.views.generic import TemplateView
 
-from rest_framework import generics
 from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from django.views.generic import TemplateView
-
 from testmanager.testrunner.models import JenkinsBuild, LavaJob, LavaJobResult, Tag
 from testmanager.testrunner import views as testrunner_views
+from testmanager.views import LoginRequiredMixin
 
 
 class BuildSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = JenkinsBuild
 
 
-class Base(TemplateView):
+class Base(LoginRequiredMixin, TemplateView):
     template_name='testreporter/base.html'
 
 
-class Report_View(APIView):
+class Report_View(LoginRequiredMixin, APIView):
+
     def get(self, request, tag_id, format=None):
 
         tag = Tag.objects.get(id=tag_id)

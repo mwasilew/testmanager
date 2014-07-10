@@ -2,12 +2,11 @@ APP.controller('JenkinsBuild', ['$scope', 'Tag', 'Build', function($scope, Tag, 
 
 	$scope.tags = Tag.query();
 	$scope._tags = {};
-	
-	$scope.select_tag = function(tag, build_id) {
+
+	$scope.save_tags = function(tags, build_id) {
 		Build.get({id:build_id}, function(build) {
-			build.tags = tag;
+			build.tags = _.map(tags, function(val, key) { return val ? key : null });
 			Build.update({id:build_id}, build)
 		})
 	}
-
 }]);

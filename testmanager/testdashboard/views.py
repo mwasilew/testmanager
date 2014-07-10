@@ -20,10 +20,11 @@
 from django.views.generic import TemplateView
 
 from testmanager.testrunner.models import JenkinsJob
+from testmanager.views import LoginRequiredMixin
 
 
 
-class Main(TemplateView):
+class Main(LoginRequiredMixin, TemplateView):
     template_name='testdashboard/index.html'
 
     def get_context_data(self, **kwargs):
@@ -32,7 +33,7 @@ class Main(TemplateView):
         return context
 
 
-class Project(TemplateView):
+class Project(LoginRequiredMixin, TemplateView):
     template_name='testdashboard/project.html'
 
     def get_context_data(self, **kwargs):

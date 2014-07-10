@@ -2,35 +2,18 @@
     display: inline;
 }
 
-.login {
-    display: inline;
+#login{
+	width: 600px;
+	margin-top: 50px;
 }
 
-.logout {
-    display: inline;
-}
-
-
-#login-view {
-	margin: 60px auto;
-	width: 500px;
-}
-
-#login-view button {
-	width: 100%;
+#login .page-header {
+	text-align: center;
+	margin-bottom: 40px;
+	font-family: monospace;
 }
 
 .table-hover td {
 	cursor: pointer;
 	cursor: hand;
-}
-
-.panel .panel-heading select {
-	width: 200px;
-	margin-top: -5px;
-	height: 59px;
-}
-
-.panel .panel-heading {
-	height: 70px;
 }

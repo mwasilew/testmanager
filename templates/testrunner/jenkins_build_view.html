@@ -15,116 +15,124 @@
 
           {% for subbuild in build.jenkinsbuild_set.all %}
 	    <div class="panel panel-default">
-
 	      
 	      <div class="panel-heading">
-		<select multiple class="form-control pull-right input-sm"
-			ng-model="_tags[{{ subbuild.id }}]"
-			ng-model="tag"
-			ng-change="select_tag(_tags[{{ subbuild.id }}], {{ subbuild.id }})"
-			ng-init="_tags[{{ subbuild.id }}] = [{% for tag in subbuild.tags.all %}{{ tag.id }}{% if not forloop.last %},{% else %}{% endif %}{% endfor %}]; build_id = {{ subbuild.id }}"
-			ng-options="tag.id as 'tag: ' + tag.name for tag in tags">
-			<option value="">-- select tag --</option>
-		</select>
-		
 		<b>{{ subbuild.get_hwpack_name }}</b>
-
 	      </div>
 
 	      <div class="panel-body">
-		<table id="job-status" class="table table-striped table-condensed">
-		  <thead>
-		    <tr>
-		      <th>Build name</th>
-		      <th>Build status</th>
-		      <th>Build number</th>
-		      <th>Date</th>
-		      <th></th>
-		    </tr>
-		  </thead>
-		  <tbody id="job-status-body">
-		    <tr>
-		      <td>{{ subbuild.name }}</td>
-		      <td>{{ subbuild.status.name }}</td>
-		      <td>{{ subbuild.number }}</td>
-		      <td>{{ subbuild.timestamp }}</td>
-		      <td>
-			<a href="{{ jjob.get_last_build.get_absolute_url }}">
-			  <i class="fa fa-search"></i>
-			</a>
-		      </td>
-		    </tr>
-		  </tbody>
-		</table>
 
-		{% if subbuild.testruns.count %}
-                  <div class="col-lg-9 col-lg-offset-3">
-		    <h4>Manual results</h4>
-                    <table id="job-status" class="table table-striped table-condensed">
+		<div class="row">
+		  
+		  <div class="col-lg-9">
+
+		    <table id="job-status" class="table table-striped table-condensed">
 		      <thead>
-		    	<tr>
-		    	  <th>Testplan</th>
-			  <th>Created</th>
-			  {% for status in statuses %}
-			  <th> {{ status.name }} </th>
-			  {% endfor %}
-		    	</tr>
+			<tr>
+			  <th>Build name</th>
+			  <th>Build status</th>
+			  <th>Build number</th>
+			  <th>Date</th>
+			  <th></th>
+			</tr>
 		      </thead>
 		      <tbody id="job-status-body">
-			{% for testrun in subbuild.testruns.all %}
-		    	  <tr>
-		    	    <td> 
-			      <a href="/testmanualrunner/#/testrun/{{testrun.id}}">
-				{{ testrun.test_plan.name }}
-			      </a> 
-			    </td>
-			    <td> {{ testrun.created_at }}</td>
-			    {% for name, count in testrun.get_results %}
-			      <td> {{ count }} </td>
+			<tr>
+			  <td>{{ subbuild.name }}</td>
+			  <td>{{ subbuild.status.name }}</td>
+			  <td>{{ subbuild.number }}</td>
+			  <td>{{ subbuild.timestamp }}</td>
+			  <td>
+			    <a href="{{ jjob.get_last_build.get_absolute_url }}">
+			      <i class="fa fa-search"></i>
+			    </a>
+			  </td>
+			</tr>
+		      </tbody>
+		    </table>
+
+		    {% if subbuild.testruns.count %}
+		      <h4>Manual results</h4>
+                      <table id="job-status" class="table table-striped table-condensed">
+			<thead>
+			  <tr>
+		    	    <th>Testplan</th>
+			    <th>Created</th>
+			    {% for status in statuses %}
+			      <th> {{ status.name }} </th>
 			    {% endfor %}
-		    	  </tr>
-		    	{% endfor %}
-		      </tbody>
-                    </table>
-                  </div>
-		{% endif %}
+			  </tr>
+			</thead>
+			<tbody id="job-status-body">
+			  {% for testrun in subbuild.testruns.all %}
+		    	    <tr>
+		    	      <td> 
+				<a href="/testmanualrunner/#/testrun/{{testrun.id}}">
+				  {{ testrun.test_plan.name }}
+				</a> 
+			      </td>
+			      <td> {{ testrun.created_at }}</td>
+			      {% for name, count in testrun.get_results %}
+				<td> {{ count }} </td>
+			      {% endfor %}
+		    	    </tr>
+			  {% endfor %}
+			</tbody>
+                      </table>
+		    {% endif %}
 
-		{% for lavajob in subbuild.lavajob_set.all %}
-                  <div class="col-lg-9 col-lg-offset-3">
-		    <h4>
-		      {{ lavajob.device_type.name }}
-		      <a href="{{ lavajob.get_absolute_url }}">#{{ lavajob.number }}</a>
-		    </h4>
-                    <table id="job-status" class="table table-striped table-condensed">
-		      <thead>
-		    	<tr>
-		    	  <th>Test name</th>
-		    	  <th>Test status</th>
-		    	  <th>Pass</th>
-		    	  <th>Fail</th>
-		    	  <th>Compare</th>
-		    	</tr>
-		      </thead>
-		      <tbody id="job-status-body">
-		    	{% for testdef, testresult in lavajob.get_definitions_results %}
-		    	  <tr>
-		    	    <td>{{ testdef.name }}</td>
-		    	    <td>{% if testresult %} OK {% else %} Missing {% endif %}</td>
-		    	    <td>{{ testresult.get_resultset_count_by_status.pass }}</td>
-		    	    <td>{{ testresult.get_resultset_count_by_status.fail }}</td>
-		    	    <td>
-		    	      {% if testresult %}
-		    		<input type="checkbox" value="{{ testresult.pk }}" name="testresults"/>
-		    	      {% endif %}
-		    	    </td>
-		    	  </tr>
-		    	{% endfor %}
-		      </tbody>
-                    </table>
-                  </div>
-		{% endfor %}
+		    {% for lavajob in subbuild.lavajob_set.all %}
+		      <h4>
+			{{ lavajob.device_type.name }}
+			<a href="{{ lavajob.get_absolute_url }}">#{{ lavajob.number }}</a>
+		      </h4>
+                      <table id="job-status" class="table table-striped table-condensed">
+			<thead>
+			  <tr>
+		    	    <th>Test name</th>
+		    	    <th>Test status</th>
+		    	    <th>Pass</th>
+		    	    <th>Fail</th>
+		    	    <th>Compare</th>
+			  </tr>
+			</thead>
+			<tbody id="job-status-body">
+			  {% for testdef, testresult in lavajob.get_definitions_results %}
+		    	    <tr>
+		    	      <td>{{ testdef.name }}</td>
+		    	      <td>{% if testresult %} OK {% else %} Missing {% endif %}</td>
+		    	      <td>{{ testresult.get_resultset_count_by_status.pass }}</td>
+		    	      <td>{{ testresult.get_resultset_count_by_status.fail }}</td>
+		    	      <td>
+		    		{% if testresult %}
+		    		  <input type="checkbox" value="{{ testresult.pk }}" name="testresults"/>
+		    		{% endif %}
+		    	      </td>
+		    	    </tr>
+			  {% endfor %}
+			</tbody>
+                      </table>
+		    {% endfor %}
+		  </div>
 
-	      
+		  <div class="col-lg-3" ng-init="_tags[{{ subbuild.id }}] = { {% for tag in subbuild.tags.all %}{{ tag.id }}:true, {% endfor %} }; build_id = {{ subbuild.id }}">
+
+		    <div class="well">
+		      <b>Tags</b>
+		      
+		      <div ng-repeat="tag in tags" class="checkbox"> 
+			<label> 
+		    	  <input type="checkbox" ng-model="_tags[{{ subbuild.id }}][tag.id]" /> 
+			  //tag.name//
+			</label> 
+		      </div> 
+		      
+		      <a href="" ng-click="save_tags(_tags[{{ subbuild.id }}],{{ subbuild.id }})" 
+			 class="btn btn-default btn-sm">Save</a>
+		    </div>
+
+		  </div>
+		</div>
 	      </div>
 
 	      <div class="panel-footer">
