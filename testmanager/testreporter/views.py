@@ -22,7 +22,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from testmanager.views import LoginRequiredMixin
-from testmanager.testrunner.models import JenkinsBuild, LavaJob, Tag
+from testmanager.testrunner.models import LavaJob, Tag
 from testmanager.testrunner.serializers import BuildSerializer, TagSerializer, LavaJobSerializer
 
 
@@ -33,13 +33,11 @@ class Base(LoginRequiredMixin, TemplateView):
 class Report_View(LoginRequiredMixin, APIView):
 
     def get(self, request, tag_id, format=None):
-
-        tag = Tag.objects.get(id=tag_id)
-        builds = JenkinsBuild.objects.filter(tags=tag)
-        lava_jobs = LavaJob.objects.filter(jenkins_build__in=builds)
+        tag = Tag.objects.get(id=tag_id).prefetch_related('builds')
+        lava_jobs = LavaJob.objects.filter(jenkins_build__in=tag.builds)
 
         return Response({
-            "builds": BuildSerializer(builds).data,
             "tag": TagSerializer(tag).data,
+            "builds": BuildSerializer(tag.builds).data,
             "lava_jobs": LavaJobSerializer(lava_jobs).data,
         })
