@@ -10,3 +10,28 @@
 	margin-top: 10px;
 	margin-bottom: 10px;
 }
+
+.results.open .active {
+	color: #777;
+}
+
+.results .bugs {
+	margin: 0;
+	padding: 0 5px;
+	background-color: #eee;
+}
+
+.results .bugs table td {
+	margin: 0;
+	border: 0;
+}
+
+
+.open table td,
+.closed table td {
+	border-top: 0px;
+}
+
+.open .badge {
+	margin-right: 10px;
+}

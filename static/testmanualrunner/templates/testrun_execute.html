@@ -17,7 +17,7 @@
     <div class="row">
       <div class="col-md-7">
 
-	<div class="list-group closed" ng-show="test_run.closed">
+	<div class="list-group results closed" ng-show="test_run.closed">
 	  <a ng-style="{'color': get_status(test_definition).color }"
 	     ng-repeat-start="test_definition in test_plan.tests_definitions"
 	     ng-click="set_active_test_definition(test_definition)"
@@ -28,7 +28,7 @@
 	     // test_definition.name //  
 
 	  </a>
-	  <div ng-repeat-end class="list-group-item" ng-show="active_test_definition == test_definition && get_test_run_results(test_definition).bugs.length > 0"
+	  <div ng-repeat-end class="list-group-item bugs" ng-show="active_test_definition == test_definition && get_test_run_results(test_definition).bugs.length > 0"
 	       ng-class="{'active-test': active_test_definition == test_definition}">
 	    <table class="table"> 
 
