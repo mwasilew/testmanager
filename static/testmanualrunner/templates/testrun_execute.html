@@ -32,10 +32,10 @@
 	       ng-class="{'active-test': active_test_definition == test_definition}">
 	    <table class="table"> 
 
-	    	<tr ng-repeat="bug in get_test_run_results(test_definition).bugs"> 
-	    	  <td><a ng-href="//bug.data.weblink//">// bug.alias //</a></td> 
-	    	  <td><a ng-href="//bug.data.weblink//">// bug.tracker //</a></td> 
-	    	  <td><a ng-href="//bug.data.weblink//"><b>// bug.data.description //</a><b></td> 
+	    	<tr ng-repeat="bug in get_test_run_results(test_definition).bugs">
+	    	  <td><a ng-href="//bug.data.weblink//">// bug.tracker //</a></td>
+	    	  <td><a ng-href="//bug.data.weblink//">// bug.alias //</a></td>
+	    	  <td><a ng-href="//bug.data.weblink//"><b>// bug.data.description //</a><b></td>
 	    	</tr> 
 
 	    </table> 
