@@ -1,4 +1,5 @@
 from django.db import models
+from testmanager.testrunner.models import Bug
 
 
 class TestRun(models.Model):
@@ -22,6 +23,9 @@ class TestRun(models.Model):
 
         return ret
 
+    def get_bug_count(self):
+        b = Bug.objects.filter(testrunresult__in=list(self.tests_definitions_results.all()))
+        return b.distinct().count()
 
     def save(self, *args, **kwargs):
         created = self.id

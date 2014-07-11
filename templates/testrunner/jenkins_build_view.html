@@ -61,6 +61,7 @@
 			    {% for status in statuses %}
 			      <th> {{ status.name }} </th>
 			    {% endfor %}
+			      <th> bugs </th>
 			  </tr>
 			</thead>
 			<tbody id="job-status-body">
@@ -75,6 +76,7 @@
 			      {% for name, count in testrun.get_results %}
 				<td> {{ count }} </td>
 			      {% endfor %}
+				<td> {{ testrun.get_bug_count }} </td>
 		    	    </tr>
 			  {% endfor %}
 			</tbody>
