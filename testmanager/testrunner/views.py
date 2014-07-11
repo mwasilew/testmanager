@@ -184,7 +184,6 @@ class Fetch_LavaJob(LoginRequiredMixin, APIView):
                 })
             else:
                 return Response({
-                    "reload": True,
                     "data": "",
                     "error": message
                 })

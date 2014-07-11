@@ -84,17 +84,24 @@
 		    <h3>
 		      Automated test results
 		    </h3>
-		    <div class="input-group pull-right" ng-controller="FetchLavaJob">
-		      <div class="form-group" ng-class="{'has-error':lavajob_fetch_error}">
-			<p class="help-block" ng-bind="lavajob_fetch_error"></p>
-			<input type="text" ng-model="lavajob_id" class="form-control input-sm"
-			       placeholder="Lava ID">
-			       <span class="input-group-btn">
-				 <button ng-disabled="!lavajob_id" ng-click="fetch({{ subbuild.id }})" 
-					 class="btn btn-default btn-sm" type="button">
-					 Fetch More
-				 </button>
-			       </span>
+
+		    <div class="row">
+		      <div class="col-md-5" ng-controller="FetchLavaJob">
+
+			  <div class="form-group" ng-class="{'has-error':lavajob_fetch_error}">
+			    <p class="help-block" ng-bind="lavajob_fetch_error"></p>
+			    <div class="input-group">
+			      <input type="text" class="form-control input-sm" placeholder="Lava ID" 
+				     ng-model="lavajob_id"/ >
+				     <span class="input-group-btn">
+				       <a href="" ng-click="fetch({{ subbuild.id }})" 
+					       class="btn btn-default btn-sm" ng-disabled="!lavajob_id">
+					       Fetch Lava Job
+				       </a>
+				     </span>
+			    </div>
+			  </div>
+			
 		      </div>
 		    </div>
 
