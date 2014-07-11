@@ -187,6 +187,8 @@ class LavaJobResult(models.Model):
     test_definition = models.ForeignKey('testplanner.TestDefinition')
     test_revision = models.ForeignKey('testplanner.TestDefinitionRevision', blank=True, null=True)
 
+    bugs = models.ManyToManyField('Bug', blank=True)
+
     def __unicode__(self):
         return "%s result for %s" % (self.lava_job.__unicode__(), self.test_definition.__unicode__())
 
