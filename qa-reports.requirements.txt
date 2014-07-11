@@ -16,4 +16,4 @@ https://www.djangoproject.com/download/1.7c1/tarball/
 djangorestframework
 django-filter
 jira-python==0.16
-
+Markdown==2.4.1
