@@ -27,9 +27,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from testmanager.views import LoginRequiredMixin
-from testmanager.testrunner.models import JenkinsJob, JenkinsBuild, LavaJob, LavaJobTestResult, Tag
+from testmanager.testrunner.models import JenkinsJob, JenkinsBuild, LavaJob, LavaJobTestResult, Tag, Bug
 from testmanager.testrunner.forms import ResultComparisonForm
-from testmanager.testrunner.serializers import TagSerializer
+from testmanager.testrunner.serializers import TagSerializer, LavaJobSimpleSerializer, BugSerializer
 from testmanager.testmanualrunner.models import TestStatus
 
 
@@ -134,6 +134,12 @@ class JenkinsBuild_Details_View(LoginRequiredMixin, generics.RetrieveUpdateDestr
     model = JenkinsBuild
 
 
+class LavaJob_Details_View(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = LavaJobSimpleSerializer
+    model = LavaJob
+    lookup_field = "number"
+
+
 class Trackers_Types_View(LoginRequiredMixin, APIView):
     def get(self, request, format=None):
         return Response([
@@ -191,3 +197,19 @@ class Fetch_LavaJob(LoginRequiredMixin, APIView):
 
     def put(self, *args, **kwargs):
         return self.get(*args, **kwargs)
+
+
+class LavaJobBug(LoginRequiredMixin, APIView):
+
+    def post(self, request, number, format=None):
+        action = request.DATA.pop('action')
+        lavajob = LavaJob.objects.get(number=number)
+        bug, _ = Bug.objects.get_or_create(**request.DATA)
+        data = BugSerializer(bug).data
+
+        if action == "add":
+            lavajob.bugs.add(bug)
+            return Response(data)
+        else:
+            lavajob.bugs.remove(bug)
+            return Response(data)

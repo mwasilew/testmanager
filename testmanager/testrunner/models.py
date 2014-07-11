@@ -142,6 +142,7 @@ class LavaJob(models.Model):
     status = models.ForeignKey(LavaJobStatus)
     test_definitions = models.ManyToManyField('testplanner.TestDefinition')
     device_type = models.ForeignKey('testplanner.Device')
+    bugs = models.ManyToManyField('Bug', blank=True)
     submit_time = models.DateTimeField(null=True, blank=True)
     start_time = models.DateTimeField(null=True, blank=True)
 
@@ -186,8 +187,6 @@ class LavaJobResult(models.Model):
     lava_job = models.ForeignKey(LavaJob)
     test_definition = models.ForeignKey('testplanner.TestDefinition')
     test_revision = models.ForeignKey('testplanner.TestDefinitionRevision', blank=True, null=True)
-
-    bugs = models.ManyToManyField('Bug', blank=True)
 
     def __unicode__(self):
         return "%s result for %s" % (self.lava_job.__unicode__(), self.test_definition.__unicode__())

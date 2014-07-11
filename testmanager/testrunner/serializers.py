@@ -63,3 +63,10 @@ class BugSerializer(serializers.ModelSerializer):
 
     def get_data(self, obj):
         return obj.get_bug()
+
+
+class LavaJobSimpleSerializer(serializers.ModelSerializer):
+    bugs = BugSerializer(many=True)
+
+    class Meta:
+        model = models.LavaJob

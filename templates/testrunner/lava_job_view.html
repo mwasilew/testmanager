@@ -8,6 +8,54 @@
     <br/>
     <h3>Jenkins build: <a href="{{ lava_job.jenkins_build.job.service.url }}job/{{ lava_job.jenkins_build.job.name }}/{{ lava_job.jenkins_build.number }}">{{ lava_job.jenkins_build.name }}</a></h3>
     <h3>LAVA job: <a href="{{ lava_url }}/{{ lava_job.number }}">{{ lava_job.device_type.name }} ({{ lava_job.number }})</a></h3>
+
+    <div class="well" ng-init="init({{lava_job.number}})" ng-controller="LavaJobBugsss">
+      
+      <form class="form-inline" role="form" ng-submit="add_bug(alias, tracker)">
+	<div class="form-group">
+	  <input type="text" ng-model="alias" class="form-control input-sm" placeholder="issue" />
+	  
+	  <select class="form-control input-sm"
+		  ng-model="tracker"
+		  ng-options="t.name as t.name for t in trackers">
+		  <option value="">-- select tracker --</option>
+	  </select>
+	  
+	  <button title="add" type="submit" class="btn btn-sm btn-default btn-success"
+		  ng-disabled="!(tracker && alias)">
+		  <span class="glyphicon glyphicon-plus"></span>
+	  </button>
+	</div>
+      </form>
+
+      <table class="table">
+	<tbody>
+	  <tr ng-repeat="bug in lavajob.bugs">
+	    <td><a ng-href="//bug.data.weblink//">// bug.alias //</a></td>
+	    <td><a ng-href="//bug.data.weblink//">// bug.tracker //</a></td>
+	    <td><a ng-href="//bug.data.weblink//"><b>// bug.data.description //</a><b></td>
+	    
+	    <td>
+	      <a href="" ng-click="bug.to_remove = true" ng-hide="bug.to_remove">
+		<span class="pull-right glyphicon glyphicon-trash"></span>
+	      </a>
+	      
+	      <a href="" ng-click="bug.to_remove = false" ng-show="bug.to_remove" title="cancel">
+		<span style="color:green" class="pull-right glyphicon glyphicon-remove "></span> 
+	      </a>
+	      
+	      <a href="" ng-click="remove_bug(bug)" ng-show="bug.to_remove" title="remove">
+		<span style="color:red" class="pull-right glyphicon glyphicon-ok"></span>
+	      </a>
+	      
+	    </td>
+	  </tr>
+	</tbody>
+      </table>
+	
+    </div>
+
+
     <ul>
       {% for testdef, testresult in lava_job.get_definitions_results %}
         <li {% if not testresult %} style="color:red"{% endif %}> {{ testdef.name }} - {% if testresult %} OK ({{ testresult.get_resultset_total }} {% for status_name, status_count in testresult.get_resultset_count_by_status.items %} | {{ status_name }}: {{ status_count }}{% endfor %}) {% else %} Missing {% endif %} 
