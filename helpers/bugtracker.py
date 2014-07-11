@@ -1,4 +1,7 @@
 from testmanager.testrunner.models import Bug
+import logging
+
+log = logging.getLogger('testrunner')
 
 
 class BugTracker(object):
@@ -18,30 +21,39 @@ class BugTracker(object):
                                  username=None,
                                  password=None,
                                  **kwargs):
-        import requests
-        import csv
-        from StringIO import StringIO
+        import xmlrpclib
 
+        proxy = xmlrpclib.ServerProxy("%sxmlrpc.cgi" % (self.tracker['url']))
+        query_dict = {
+            'ids': [int(x) for x in bug_id_list],
+            'include_fields': ['id','status','summary','severity'],
+            'permissive': True # inaccessible or invalid bug IDs don't cause exception
+        }
         if username and password:
-            response = requests.get(
-                "%sbuglist.cgi?bug_id=%s&ctype=csv&bug_id_type=anyexact&query_format=advanced&columnlist=bug_status,short_desc,bug_severity" % (self.tracker['url'], '%2C'.join(str(x) for x in bug_id_list)),
-                auth=(username, password))
-        else:
-            response = requests.get(
-                "%sbuglist.cgi?bug_id=%s&ctype=csv&bug_id_type=anyexact&query_format=advanced&columnlist=bug_status,short_desc,bug_severity" % (self.tracker['url'], '%2C'.join(str(x) for x in bug_id_list))
-            )
+            authresp = proxy.User.login(
+                {'login': username,
+                 'password': password
+                })
+            login_token = authresp['token']
+            query_dict.update({'token': login_token})
 
-        if response.status_code == 200:
-            tmp_file = StringIO(response.text)
-            resultlist = csv.DictReader(tmp_file)
-            for row in resultlist:
+        buglist = proxy.Bug.get(query_dict)
+        if username and password:
+            proxy.User.logout()
+
+        if buglist:
+            log.debug("updating {0} bugs".format(self.tracker_name))
+            log.debug("buglist requested: {0}".format(bug_id_list))
+            for bug in buglist['bugs']:
+                log.debug("updating {0}".format(bug['id']))
+                log.debug("fields: {0}".format(str(bug)))
                 bug_defaults = {
-                    'summary': row['short_desc'],
-                    'status': row['bug_status'],
-                    'severity': row['bug_severity'],
+                    'summary': bug['summary'],
+                    'status': bug['status'],
+                    'severity': bug['severity'],
                 }
                 db_bug, created = Bug.objects.get_or_create(
-                    alias=row['bug_id'],
+                    alias=bug['id'],
                     tracker=self.tracker_name,
                     defaults=bug_defaults)
                 if not created:
@@ -68,6 +80,7 @@ class BugTracker(object):
             headers=headers,
             auth=(username, password))
         if response.status_code == 200:
+            log.debug("updating {0} bugs".format(self.tracker_name))
             resp_json = json.loads(response.text)
             for bug in resp_json['issues']:
                 bug_defaults = {
@@ -90,12 +103,14 @@ class BugTracker(object):
                                   password=None,
                                   **kwargs):
         from launchpadlib.launchpad import Launchpad
+        log.debug("updating {0} bugs".format(self.tracker_name))
         cachedir = "/tmp/launchpadcache"
         lp = Launchpad.login_anonymously('qa-reports.linaro.org',
                                  'production',
                                   cachedir,
                                   version='devel')
         for bug_id in bug_id_list:
+            log.debug("updating {0}".format(bug_id))
             lp_bug = lp.bugs[int(bug_id)]
             lp_severity = ''
             lp_status = ''

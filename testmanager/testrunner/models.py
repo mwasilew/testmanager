@@ -254,37 +254,33 @@ class Bug(models.Model):
 
     def _get_bugzilla_bug(self, type, url, username=None, password=None):
         if not self.summary:
-            import requests
-            from lxml import etree
-            from lxml.etree import fromstring
+            import xmlrpclib
 
+            proxy = xmlrpclib.ServerProxy("%sxmlrpc.cgi" % (url))
+            query_dict = {
+                'ids': [self.alias],
+                'include_filds': ['id','status','summary','severity'],
+            }
             if username and password:
-                response = requests.get(
-                    "%sshow_bug.cgi?id=%s&ctype=xml" % (url, self.alias),
-                    auth=(username, password))
-            else:
-                response = requests.get(
-                    "%sshow_bug.cgi?id=%s&ctype=xml" % (url, self.alias)
-                )
-
-            parser = etree.XMLParser(ns_clean=True, recover=True, encoding='utf-8')
-            h = fromstring(response.text.encode('utf-8'), parser=parser)
-            bug = h.find(".//bug")
-            if 'NotFound' in bug.values():
-                return {}
-
-            short_desc = h.find(".//short_desc")
-            bug_status = h.find(".//bug_status")
-            bug_severity= h.find(".//bug_severity")
+                authresp = proxy.User.login(
+                    {'login': username, 
+                     'password': password
+                    })
+                login_token = authresp['token']
+                query_dict.update({'token': login_token})
             try:
-                self.summary = short_desc.text
-                self.status = bug_status.text
-                self.severity = bug_severity.text
-                self.web_link = "%sshow_bug.cgi?id=%s" % (url, self.alias)
-                self.save()
-            except AttributeError:
-                self.summary = ">>Bug not found or private<<"
-                self.save()
+                buglist = proxy.Bug.get(query_dict)
+                for bug in buglist['bugs']:
+                    if bug['id'] == self.alias:
+                        self.summary = bug['summry']
+                        self.status = bug['status']
+                        self.severity = bug['severity']
+            except:
+                self.summary = ">> Bug doesn't exist or is private <<"
+            if username and password:
+                proxy.User.logout()
+            self.web_link = "%sshow_bug.cgi?id=%s" % (url, self.alias)
+            self.save()
 
         return {
             'id': self.alias,
