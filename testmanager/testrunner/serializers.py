@@ -15,7 +15,7 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Testmanager.  If not, see <http://www.gnu.org/licenses/>.
-
+import markdown
 
 from rest_framework import serializers
 from testmanager.testrunner import models
@@ -30,9 +30,13 @@ class BuildSerializer(serializers.ModelSerializer):
 
 class TagSerializer(serializers.ModelSerializer):
     builds = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    description_markup = serializers.SerializerMethodField('get_description_markup')
 
     class Meta:
         model = models.Tag
+
+    def get_description_markup(self, obj):
+        return markdown.markdown(obj.description or "")
 
 
 class LavaJobResultSerializer(serializers.ModelSerializer):
