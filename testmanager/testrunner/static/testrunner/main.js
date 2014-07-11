@@ -10,3 +10,20 @@ APP.controller('JenkinsBuild', ['$scope', 'Tag', 'Build', function($scope, Tag, 
 		})
 	}
 }]);
+
+
+APP.controller('FetchLavaJob', ['$scope', 'FetchLavaJob', function($scope, FetchLavaJob) {
+
+	$scope.fetch = function(build_id) {
+		FetchLavaJob.get({
+			build_id:build_id,
+			lavajob_id: $scope.lavajob_id
+		}, function(data) {
+			$scope.lavajob_fetch_error = data.error;
+			if (data.reload == true) {
+				location.reload();
+			}
+		})
+
+	}
+}]);

@@ -15,7 +15,7 @@
 
           {% for subbuild in build.jenkinsbuild_set.all %}
 	    <div class="panel panel-default">
-	      
+
 	      <div class="panel-heading">
 		<b>{{ subbuild.get_hwpack_name }}</b>
 	      </div>
@@ -23,7 +23,7 @@
 	      <div class="panel-body">
 
 		<div class="row">
-		  
+
 		  <div class="col-lg-9">
 
 		    <table id="job-status" class="table table-striped table-condensed">
@@ -66,10 +66,10 @@
 			<tbody id="job-status-body">
 			  {% for testrun in subbuild.testruns.all %}
 		    	    <tr>
-		    	      <td> 
+		    	      <td>
 				<a href="/testmanualrunner/#/testrun/{{testrun.id}}">
 				  {{ testrun.test_plan.name }}
-				</a> 
+				</a>
 			      </td>
 			      <td> {{ testrun.created_at }}</td>
 			      {% for name, count in testrun.get_results %}
@@ -81,7 +81,30 @@
                       </table>
 		    {% endif %}
 
-		    <h3>Automated test results</h3>
+		    <h3>
+		      Automated test results
+		    </h3>
+
+		    <div class="row">
+		      <div class="col-md-5" ng-controller="FetchLavaJob">
+
+			  <div class="form-group" ng-class="{'has-error':lavajob_fetch_error}">
+			    <p class="help-block" ng-bind="lavajob_fetch_error"></p>
+			    <div class="input-group">
+			      <input type="text" class="form-control input-sm" placeholder="Lava ID" 
+				     ng-model="lavajob_id"/ >
+				     <span class="input-group-btn">
+				       <a href="" ng-click="fetch({{ subbuild.id }})" 
+					       class="btn btn-default btn-sm" ng-disabled="!lavajob_id">
+					       Fetch Lava Job
+				       </a>
+				     </span>
+			    </div>
+			  </div>
+			
+		      </div>
+		    </div>
+
 		    {% for lavajob in subbuild.lavajob_set.all %}
 		      <h4>
 			{{ lavajob.device_type.name }}
@@ -120,15 +143,15 @@
 
 		    <div class="well">
 		      <b>Tags</b>
-		      
-		      <div ng-repeat="tag in tags" class="checkbox"> 
-			<label> 
-		    	  <input type="checkbox" ng-model="_tags[{{ subbuild.id }}][tag.id]" /> 
+
+		      <div ng-repeat="tag in tags" class="checkbox">
+			<label>
+		    	  <input type="checkbox" ng-model="_tags[{{ subbuild.id }}][tag.id]" />
 			  //tag.name//
-			</label> 
-		      </div> 
-		      
-		      <a href="" ng-click="save_tags(_tags[{{ subbuild.id }}],{{ subbuild.id }})" 
+			</label>
+		      </div>
+
+		      <a href="" ng-click="save_tags(_tags[{{ subbuild.id }}],{{ subbuild.id }})"
 			 class="btn btn-default btn-sm">Save</a>
 		    </div>
 

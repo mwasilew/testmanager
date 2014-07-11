@@ -28,6 +28,7 @@ urlpatterns = [
     url(r'view/device/(?P<pk>[0-9]+)/$', views.DeviceDetailsView.as_view()),
 
     url(r'view/definitions/(?P<device_id>.+)/', views.DefinitionView.as_view()),
+    url(r'view/definition-yaml/(?P<pk>\d+)/', views.Definition_Yaml_View.as_view()),
 
     url(r'^$', views.Base.as_view()),
 ]

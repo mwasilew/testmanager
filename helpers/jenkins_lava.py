@@ -63,17 +63,17 @@ class LavaServer(object):
         self.lava_url = lava_url
         self.username = username
         self.token = token
- 
+
     def call_xmlrpc(self, method_name, *method_params):
         payload = xmlrpclib.dumps((method_params), method_name)
-        
+
         response = requests.request('POST', self.lava_url,
                                     data = payload,
                                     headers = {'Content-Type': 'application/xml'},
                                     auth = (self.username, self.token),
                                     timeout = 100,
                                     stream = False)
-        
+
         if response.status_code == 200:
             result = xmlrpclib.loads(response.content)[0][0]
             return result
@@ -83,8 +83,8 @@ class LavaServer(object):
 
 def fetch_jenkins_builds(jenkins_db_job, jenkins_job, jenkins_build):
     lava_server = LavaServer(
-         settings.LAVA_SERVER_URL, 
-         settings.LAVA_SERVER_USERNAME, 
+         settings.LAVA_SERVER_URL,
+         settings.LAVA_SERVER_USERNAME,
          settings.LAVA_SERVER_TOKEN)
 
     lava_job_regexp = re.compile(settings.LAVA_JOB_ID_REGEXP)
@@ -93,7 +93,7 @@ def fetch_jenkins_builds(jenkins_db_job, jenkins_job, jenkins_build):
         build = jenkins_job.get_build(jenkins_build)
     except ConnectionError:
         logger.error("ConnectionError when fetchin Jenkins build: {0}".format(jenkins_build))
-        return 
+        return
     # create umbrella build in DB
     db_build = create_jenkins_build(build, jenkins_db_job)
     log.debug("master build: {0} {1}".format(db_build.number, db_build.name))
@@ -138,13 +138,16 @@ def fetch_jenkins_builds(jenkins_db_job, jenkins_job, jenkins_build):
 def get_lava_job_details(job_id, jenkins_build, lava_server=None):
     if lava_server is None:
         lava_server = LavaServer(
-             settings.LAVA_SERVER_URL, 
-             settings.LAVA_SERVER_USERNAME, 
+             settings.LAVA_SERVER_URL,
+             settings.LAVA_SERVER_USERNAME,
              settings.LAVA_SERVER_TOKEN)
-       
+
     try:
-        job_details = lava_server.call_xmlrpc("scheduler.job_details", job_id)
-        #pprint(job_details)
+        try:
+            job_details = lava_server.call_xmlrpc("scheduler.job_details", job_id)
+        except LavaServerException:
+            return False, "Lava Server Connection Problem"
+        
         db_device = None
         if 'requested_device_type_id' in job_details and job_details['requested_device_type_id']:
             db_device, created = Device.objects.get_or_create(
@@ -247,12 +250,16 @@ def get_lava_job_details(job_id, jenkins_build, lava_server=None):
                             lava_db_test_result.value = test_result['measurement']
                             lava_db_test_result.unit = db_unit
                         lava_db_test_result.save()
+        return True, ""
     except ConnectionError:
+        error = "URLError occured. Probably timeout"
         log.error("URLError occured. Probably timeout")
         log.error(traceback.print_exc())
         build_status, created = JenkinsBuildStatus.objects.get_or_create(name = ERROR)
         jenkins_build.status = build_status
         jenkins_build.save()
+
+        return False, error
 
 def create_jenkins_build(jenkins_build, jenkins_db_job, is_umbrella = True, umbrella_db_build = None):
     status_name = RUNNING

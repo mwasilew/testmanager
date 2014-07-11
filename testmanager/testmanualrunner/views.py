@@ -82,3 +82,4 @@ class TestRunResultBug(LoginRequiredMixin, APIView):
         else:
             test_run_result.bugs.remove(bug)
             return Response(data)
+

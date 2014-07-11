@@ -18,6 +18,9 @@ angular.module('api', ['ngResource'])
 	.factory('Definitions', function($resource) {
 		return $resource('/testplanner/view/definitions/:deviceName/', {}, {});
 	})
+	.factory('DefinitionYaml', function($resource) {
+		return $resource('/testplanner/view/definition-yaml/:id/', {}, {});
+	})
 	.factory('TestRunResult', function($resource) {
 		return $resource('/testmanualrunner/view/testrunresult/:id/', null, {
 			update: { method: 'PUT' }
@@ -42,6 +45,12 @@ angular.module('api', ['ngResource'])
 			'update': {method:'PUT'},
 		});
 	})
+	.factory('FetchLavaJob', function($resource) {
+		return $resource('/testrunner/fetch-lavajob/:build_id/:lavajob_id/', null, {
+			'update': {method:'PUT'},
+		});
+	})
+
 
 
 
