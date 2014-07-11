@@ -139,3 +139,56 @@ class Trackers_Types_View(LoginRequiredMixin, APIView):
         return Response([
             {"name": a, "type": b["type"]} for a,b in settings.TRACKERS.items()
         ])
+
+
+class Fetch_LavaJob(LoginRequiredMixin, APIView):
+    def get(self, request, build_id, lavajob_id, format=None):
+
+        try:
+            build = JenkinsBuild.objects.get(id=build_id)
+        except JenkinsBuild.DoesNotExist:
+            return Response({
+                "error": "JenkinsBuild with given id does not exist",
+                "data": ""
+            })
+
+        try:
+            lavajob = LavaJob.objects.get(number=lavajob_id)
+            if lavajob.jenkins_build == build:
+                return Response({
+                    "error": "LavaJob already connected to the build",
+                    "data": ""
+                })
+            elif lavajob.jenkins_build:
+                return Response({
+                    "error": "LavaJob already connected with build:%s" % lavajob.jenkins_build.id,
+                    "data": "",
+                })
+            else:
+                build.lavajob_set.add(lavajob)
+                return Response({
+                    "reload": True,
+                    "data": "LavaJob connected the build",
+                    "error": ""
+                })
+        except LavaJob.DoesNotExist:
+            from helpers.jenkins_lava import get_lava_job_details
+
+            success, message = get_lava_job_details(lavajob_id, build_id)
+
+            if success:
+                return Response({
+                    "reload": True,
+                    "data": "LavaJob connected the build",
+                    "error": ""
+                })
+            else:
+                return Response({
+                    "reload": True,
+                    "data": "",
+                    "error": message
+                })
+
+
+    def put(self, *args, **kwargs):
+        return self.get(*args, **kwargs)

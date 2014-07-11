@@ -45,6 +45,12 @@ angular.module('api', ['ngResource'])
 			'update': {method:'PUT'},
 		});
 	})
+	.factory('FetchLavaJob', function($resource) {
+		return $resource('/testrunner/fetch-lavajob/:build_id/:lavajob_id/', null, {
+			'update': {method:'PUT'},
+		});
+	})
+
 
 
 

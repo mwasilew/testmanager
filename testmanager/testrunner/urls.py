@@ -45,5 +45,6 @@ urlpatterns = [
     url(r'^build/$', views.JenkinsBuild_ListCreate_View.as_view()),
 
     url(r'^trackers/$', views.Trackers_Types_View.as_view()),
+    url(r'^fetch-lavajob/(?P<build_id>[0-9]+)/(?P<lavajob_id>[0-9]+)/$', views.Fetch_LavaJob.as_view()),
 
 ]
