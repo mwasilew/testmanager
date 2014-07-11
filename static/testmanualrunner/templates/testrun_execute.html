@@ -118,7 +118,31 @@
       </div>
       
       <div class="col-md-5">
-	<pre class="well">// yaml //</pre>
+          <div class="panel panel-primary">
+              <div class="panel-heading">
+              Test Description
+              </div>
+              <div class="panel-body">
+         	  // yaml.description //
+              </div>
+          </div>
+          <div class="panel panel-primary">
+              <div class="panel-heading">
+              Test Steps
+              </div>
+              <div class="list-group">
+                 <a class="list-group-item" ng-repeat="test_step in yaml.steps">// test_step //</a>
+              </div>
+          </div>
+        
+          <div class="panel panel-primary">
+              <div class="panel-heading">
+              Test Expected Results
+              </div>
+              <div class="list-group">
+                 <a class="list-group-item" ng-repeat="test_expected in yaml.expected">// test_expected //</a>
+              </div>
+          </div>
       </div>
     </div>
     

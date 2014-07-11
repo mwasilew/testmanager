@@ -74,7 +74,8 @@ function Execute($scope, $window, $routeParams, $q,
 	$scope.set_active_test_definition = function(test_definition) {
 		$scope.active_test_definition = test_definition;
 		DefinitionYaml.get({id:test_definition.id}, function(data) {
-			$scope.yaml = jsyaml.load(data.yaml)
+			//$scope.yaml = jsyaml.load(data.yaml)
+			$scope.yaml = data.yaml
 		});
 	}
 

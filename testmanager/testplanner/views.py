@@ -15,6 +15,7 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Testmanager.  If not, see <http://www.gnu.org/licenses/>.
+import yaml
 from os import path
 from django.views.generic import TemplateView
 
@@ -46,8 +47,14 @@ class Definition_Yaml_View(LoginRequiredMixin, APIView):
     def get(self, request, pk, format=None):
         obj = models.TestDefinition.objects.get(pk=pk)
         location = path.join(obj.repository.local_dir, obj.test_file_name)
+        yaml_file = open(location,'r').read()
+        yaml_content = yaml.load(yaml_file)
         return Response({
-            "yaml": open(location,'r').read()
+            #"yaml": open(location,'r').read()
+            "yaml": {'description': yaml_content['metadata']['description'],
+                     'steps': [x.replace("\n", "<br/>") for x in yaml_content['run']['steps']], 
+                     'expected': [x.replace("\n", "<br/>") for x in yaml_content['run']['expected']], 
+                    }
         })
 
 
