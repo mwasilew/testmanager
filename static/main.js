@@ -1,4 +1,4 @@
-angular.module('api', ['ngResource'])
+angular.module('api', ['ngResource', 'ngSanitize'])
 	.factory('TestRun', function($resource) {
 		return $resource('testmanualrunner/view/testrun/:id/', {}, {
 			update: { method: 'PUT' }

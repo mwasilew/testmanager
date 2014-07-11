@@ -131,7 +131,7 @@
               Test Steps
               </div>
               <div class="list-group">
-                 <a class="list-group-item" ng-repeat="test_step in yaml.steps">// test_step //</a>
+                <a class="list-group-item" ng-bind-html="test_step" ng-repeat="test_step in yaml.steps"></a>
               </div>
           </div>
         

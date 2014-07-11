@@ -50,10 +50,9 @@ class Definition_Yaml_View(LoginRequiredMixin, APIView):
         yaml_file = open(location,'r').read()
         yaml_content = yaml.load(yaml_file)
         return Response({
-            #"yaml": open(location,'r').read()
-            "yaml": {'description': yaml_content['metadata']['description'],
-                     'steps': [x.replace("\n", "<br/>") for x in yaml_content['run']['steps']], 
-                     'expected': [x.replace("\n", "<br/>") for x in yaml_content['run']['expected']], 
+            "yaml": {'description': yaml_content['metadata'].get('description', ''),
+                     'steps': [x.replace("\n", "<br/>") for x in yaml_content['run'].get('steps', '')],
+                     'expected': [x.replace("\n", "<br/>") for x in yaml_content['run'].get('expected', '')],
                     }
         })
 
