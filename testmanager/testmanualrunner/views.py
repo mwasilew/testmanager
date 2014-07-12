@@ -28,7 +28,7 @@ from testmanager.testmanualrunner import models
 from testmanager.testrunner import models as testrunner_models
 
 from testmanager.testmanualrunner.serializers import (
-    TestStatusSerializer, TestRunSerializer, TestRunResultSerializer
+    TestStatusSerializer, TestRunSerializer, TestRunResultSerializer, TestRunSimpleSerializer
 )
 from testmanager.testrunner.serializers import BugSerializer
 
@@ -38,7 +38,7 @@ class Base(LoginRequiredMixin, TemplateView):
 
 
 class TestRun_ListCreate_View(LoginRequiredMixin, generics.ListCreateAPIView):
-    serializer_class = TestRunSerializer
+    serializer_class = TestRunSimpleSerializer
     model = models.TestRun
 
 

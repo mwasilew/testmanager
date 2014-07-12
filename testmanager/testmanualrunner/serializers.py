@@ -22,6 +22,13 @@ from testmanager.testrunner.serializers import BugSerializer
 from testmanager.testplanner.serializers import TestPlanSerializer
 
 
+class TestRunSimpleSerializer(serializers.ModelSerializer):
+    result = serializers.Field(source='get_results')
+
+    class Meta:
+        model = models.TestRun
+
+
 class TestRunSerializer(serializers.ModelSerializer):
     result = serializers.Field(source='get_results')
     test_plan = TestPlanSerializer()
