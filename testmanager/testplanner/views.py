@@ -76,6 +76,10 @@ class TestPlanDetails(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView)
     queryset = models.TestPlan.objects.all()
     serializer_class = serializers.TestPlanSerializer
 
+    def post_save(self, obj, created):
+        for testrun in obj.testrun_set.all():
+            testrun.save()
+
 
 class DeviceView(LoginRequiredMixin, generics.ListCreateAPIView):
     serializer_class = serializers.DeviceSerializer

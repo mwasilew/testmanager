@@ -18,32 +18,44 @@ class TestRun(models.Model):
         for status in statuses:
             ret.append((
                 status,
-                self.tests_definitions_results.filter(status__name=status).count()
+                self.results.filter(status__name=status).count()
             ))
 
         return ret
 
     def get_bug_count(self):
-        b = Bug.objects.filter(testrunresult__in=list(self.tests_definitions_results.all()))
+        b = Bug.objects.filter(testrunresult__in=list(self.results.all()))
         return b.distinct().count()
 
-    def save(self, *args, **kwargs):
-        created = self.id
-        super(TestRun, self).save(*args, **kwargs)
+    def update_results(self):
+        test_definition_restuls_ids = self.results\
+                                          .values_list('test_definition', flat=True)
+        test_definition_ids = self.test_plan.testplantestdefinition_set\
+                                            .values_list('test_definition_id', flat=True)
 
-        if not created:
-            for testplan_testdefinition in self.test_plan.testplantestdefinition_set.all():
-                TestRunResult.objects.create(
-                    test_run=self,
-                    test_definition=testplan_testdefinition.test_definition
-                )
+
+        for test_definition_id in set(test_definition_ids) - set(test_definition_restuls_ids):
+            TestRunResult.objects.create(
+                test_run=self,
+                test_definition_id=test_definition_id
+            )
+
+        for test_definition_id in set(test_definition_restuls_ids) - set(test_definition_ids):
+            TestRunResult.objects.get(
+                test_run=self,
+                test_definition_id=test_definition_id
+            ).delete()
+
+    def save(self, *args, **kwargs):
+        super(TestRun, self).save(*args, **kwargs)
+        self.update_results()
 
 
 class TestRunResult(models.Model):
     class Meta:
         unique_together = ("test_run", "test_definition")
 
-    test_run = models.ForeignKey('TestRun', related_name='tests_definitions_results')
+    test_run = models.ForeignKey('TestRun', related_name='results')
     test_definition = models.ForeignKey('testplanner.TestDefinition')
 
     status = models.ForeignKey('TestStatus', null=True, blank=True)
