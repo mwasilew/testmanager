@@ -50,7 +50,9 @@ function Execute($scope, $window, $routeParams, $q,
 			'test_definition'
 		);
 
-		$scope.set_active_test_definition($scope.test_plan.tests_definitions[0]);
+		if ($scope.test_plan.tests_definitions.length) {
+			$scope.set_active_test_definition($scope.test_plan.tests_definitions[0]);
+		}
 	})
 
 	$scope.get_status = function(test_definition) {
