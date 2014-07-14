@@ -125,7 +125,7 @@ class JenkinsBuild(models.Model):
         if self.is_umbrella:
             for build in self.jenkinsbuild_set.all():
                 if build != self:
-                    build.tag = self.tag
+                    build.tags.add(*self.tags.all())
                     build.save()
 
 
