@@ -297,30 +297,3 @@ def create_jenkins_build(jenkins_build, jenkins_db_job, is_umbrella = True, umbr
         if umbrella_db_build:
             umbrella_db_build.status = build_status
             umbrella_db_build.save()
-
-
-def get_lava_hardware():
-    lava_response = [
-        {'idle': 0, 'busy': 1, 'name': 'arndale', 'offline': 2},
-        {'idle': 1, 'busy': 0, 'name': 'arndale-octa', 'offline': 0},
-        {'idle': 2, 'busy': 0, 'name': 'beaglebone-black', 'offline': 2},
-        {'idle': 0, 'busy': 0, 'name': 'beaglexm', 'offline': 0},
-        {'idle': 0, 'busy': 0, 'name': 'dynamic-vm', 'offline': 0},
-        {'idle': 0, 'busy': 0, 'name': 'highbank', 'offline': 0},
-        {'idle': 1, 'busy': 0, 'name': 'ifc6410', 'offline': 0},
-        {'idle': 5, 'busy': 0, 'name': 'kvm', 'offline': 3},
-        {'idle': 0, 'busy': 0, 'name': 'origen', 'offline': 0},
-        {'idle': 3, 'busy': 0, 'name': 'panda', 'offline': 0},
-        {'idle': 0, 'busy': 0, 'name': 'qemu', 'offline': 3},
-        {'idle': 1, 'busy': 0, 'name': 'rtsm_foundation-armv8', 'offline': 0},
-        {'idle': 2, 'busy': 0, 'name': 'rtsm_fvp_base-aemv8a', 'offline': 1},
-        {'idle': 0, 'busy': 0, 'name': 'rtsm_ve-a15x1-a7x1', 'offline': 0},
-        {'idle': 0, 'busy': 0, 'name': 'snowball_sd', 'offline': 0},
-        {'idle': 2, 'busy': 0, 'name': 'vayu', 'offline': 0},
-        {'idle': 1, 'busy': 0, 'name': 'vexpress-a9', 'offline': 0},
-        {'idle': 1, 'busy': 0, 'name': 'vexpress-tc2', 'offline': 0},
-        {'idle': 1, 'busy': 0, 'name': 'wg', 'offline': 0},
-        {'idle': 0, 'busy': 0, 'name': 'x86', 'offline': 0}
-    ]
-
-    return [hw['name'] for hw in lava_response]
