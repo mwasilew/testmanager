@@ -37,7 +37,7 @@ class DefinitionView(LoginRequiredMixin, APIView):
     serializer_class = serializers.TestDefinitionSerializer
 
     def get(self, request, device_id, format=None):
-        query = models.TestDefinition.objects.filter(device__id=device_id)
+        query = models.TestDefinition.objects.filter(device__id=device_id, is_automated=False)
         serializer = self.serializer_class(query)
         return Response(serializer.data)
 
