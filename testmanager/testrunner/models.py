@@ -270,8 +270,8 @@ class Bug(models.Model):
             try:
                 buglist = proxy.Bug.get(query_dict)
                 for bug in buglist['bugs']:
-                    if bug['id'] == self.alias:
-                        self.summary = bug['summry']
+                    if str(bug['id']) == self.alias:
+                        self.summary = bug['summary']
                         self.status = bug['status']
                         self.severity = bug['severity']
             except:

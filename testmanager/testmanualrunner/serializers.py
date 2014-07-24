@@ -19,7 +19,7 @@
 from rest_framework import serializers
 from testmanager.testmanualrunner import models
 from testmanager.testrunner.serializers import BugSerializer
-from testmanager.testplanner.serializers import TestPlanSerializer
+from testmanager.testplanner.serializers import TestPlanSimpleSerializer, TestDefinitionSerializer
 
 
 class TestRunSimpleSerializer(serializers.ModelSerializer):
@@ -29,18 +29,20 @@ class TestRunSimpleSerializer(serializers.ModelSerializer):
         model = models.TestRun
 
 
+class TestRunResultSerializer(serializers.ModelSerializer):
+    bugs = BugSerializer(many=True, read_only=True)
+    test_definition = TestDefinitionSerializer(read_only=True) 
+    class Meta:
+        model = models.TestRunResult
+
+
 class TestRunSerializer(serializers.ModelSerializer):
     result = serializers.Field(source='get_results')
-    test_plan = TestPlanSerializer()
+    results = TestRunResultSerializer(source='get_run_results')
+    test_plan = TestPlanSimpleSerializer(read_only=True)
 
     class Meta:
         model = models.TestRun
-
-
-class TestRunResultSerializer(serializers.ModelSerializer):
-    bugs = BugSerializer(many=True, read_only=True)
-    class Meta:
-        model = models.TestRunResult
 
 
 class TestStatusSerializer(serializers.ModelSerializer):

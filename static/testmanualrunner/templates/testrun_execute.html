@@ -18,21 +18,21 @@
       <div class="col-md-7">
 
 	<div class="list-group results closed" ng-show="test_run.closed">
-	  <a ng-style="{'color': get_status(test_definition).color }"
-	     ng-repeat-start="test_definition in test_plan.tests_definitions"
-	     ng-click="set_active_test_definition(test_definition)"
-	     ng-class="{'disabled': active_test_definition == test_definition}"
+	  <a ng-style="{'color': get_status(test_result).color }"
+	     ng-repeat-start="test_result in test_run_results"
+	     ng-click="set_active_test_result(test_result)"
+	     ng-class="{'disabled': active_test_result == test_result}"
 	     class="list-group-item">
 
-	     <span class="badge">// get_test_run_results(test_definition).bugs.length //</span>   
-	     // test_definition.name //  
+	     <span class="badge">// test_result.bugs.length //</span>   
+	     // test_result.test_definition.name //  
 
 	  </a>
-	  <div ng-repeat-end class="list-group-item bugs" ng-show="active_test_definition == test_definition && get_test_run_results(test_definition).bugs.length > 0"
-	       ng-class="{'active-test': active_test_definition == test_definition}">
+	  <div ng-repeat-end class="list-group-item bugs" ng-show="active_test_result == test_result && test_result.bugs.length > 0"
+	       ng-class="{'active-test': active_test_result == test_result}">
 	       <table class="table"> 
 
-	    	 <tr ng-repeat="bug in get_test_run_results(test_definition).bugs"> 
+	    	 <tr ng-repeat="bug in test_result.bugs"> 
 	    	   <td><a target="blank" ng-href="//bug.data.weblink//">// bug.alias //</a></td> 
 	    	   <td><a target="blank" ng-href="//bug.data.weblink//">// bug.tracker //</a></td> 
 	    	   <td><a target="blank" ng-href="//bug.data.weblink//"><b>// bug.data.description //</a><b></td> 
@@ -43,35 +43,35 @@
 	</div>
 
 	<div class="list-group open" ng-hide="test_run.closed">
-	  <a ng-style="{'color': get_status(test_definition).color }"
-	     ng-repeat-start="test_definition in test_plan.tests_definitions"
-	     ng-click="set_active_test_definition(test_definition)"
-	     ng-class="{'active': active_test_definition == test_definition}"
+	  <a ng-style="{'color': get_status(test_result).color }"
+	     ng-repeat-start="test_result in test_run_results"
+	     ng-click="set_active_test_result(test_result)"
+	     ng-class="{'active': active_test_result == test_result}"
 	     class="list-group-item">
 
-	     <span class="badge pull-left">// get_test_run_results(test_definition).bugs.length //</span>  
-	     // test_definition.name //  
+	     <span class="badge pull-left">// test_result.bugs.length //</span>  
+	     // test_result.test_definition.name //  
 
 	     <button href="" title="Remove Status" class="pull-right btn btn-default btn-xs"
-		     ng-click='set_status(null, test_definition)'>
+		     ng-click='set_status(null, test_result)'>
 		     <span class="glyphicon glyphicon-question-sign" class="glyphicon"></span>
 	     </button>
 
 	     <div class="btn-group pull-right">
 
 	       <button title="// status.name //"
-		       ng-click='set_status(status, test_definition)'
+		       ng-click='set_status(status, test_result)'
 		       ng-style="{'color': status.color}"
 		       class="btn btn-default btn-xs"
-		       ng-class="{active: get_status(test_definition) == status.id}"
+		       ng-class="{active: get_status(test_result) == status.id}"
 		       ng-repeat="status in statuses">
 		       <span ng-class="status.icon" class="glyphicon"></span>
 	       </button>
 	     </div>
 	  </a>
-	  <div ng-repeat-end class="list-group-item" ng-show="active_test_definition == test_definition" ng-class="{'active-test': active_test_definition == test_definition}">
+	  <div ng-repeat-end class="list-group-item" ng-show="active_test_result == test_result" ng-class="{'active-test': active_test_result == test_result}">
 
-	    <form class="form-inline" role="form" ng-submit="add_bug(alias, tracker, test_definition)">
+	    <form class="form-inline" role="form" ng-submit="add_bug(alias, tracker, test_result)">
 	      <div class="form-group">
 		<input type="text" ng-model="alias" class="form-control input-sm" placeholder="issue" />
 		
@@ -90,7 +90,7 @@
 
 	    <table class="table">
 	      <tbody>
-		<tr ng-repeat="bug in get_test_run_results(test_definition).bugs">
+		<tr ng-repeat="bug in test_result.bugs">
 		  <td><a ng-href="//bug.data.weblink//">// bug.alias //</a></td>
 		  <td><a ng-href="//bug.data.weblink//">// bug.tracker //</a></td>
 		  <td><a ng-href="//bug.data.weblink//"><b>// bug.data.description //</a><b></td>
@@ -104,7 +104,7 @@
 		      <span style="color:green" class="pull-right glyphicon glyphicon-remove "></span> 
 		    </a>
 		    
-		    <a href="" ng-click="remove_bug(bug, test_definition)" ng-show="bug.to_remove" title="remove">
+		    <a href="" ng-click="remove_bug(bug, test_result)" ng-show="bug.to_remove" title="remove">
 		      <span style="color:red" class="pull-right glyphicon glyphicon-ok"></span>
 		    </a>
 		    

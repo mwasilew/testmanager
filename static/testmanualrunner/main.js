@@ -21,7 +21,7 @@ function Index($scope, $window, $routeParams, TestRun) {
 }
 
 function Execute($scope, $window, $routeParams, $q,
-				 TestRun, TestPlan, Status, TestRunResult, TestRunResultBug,
+				 TestRun, Status, TestRunResult, TestRunResultBug,
 				 Build, DefinitionYaml, Trackers) {
 
 	$q.all([
@@ -43,82 +43,73 @@ function Execute($scope, $window, $routeParams, $q,
 	}).then(function(responses) {
 		$scope.build = responses[0];
 		$scope.test_run_results = responses[1];
-		$scope.test_plan = $scope.test_run.test_plan;
 
 		$scope.test_run_results_by_test_definition = _.indexBy(
 			$scope.test_run_results,
 			'test_definition'
 		);
 
-		if ($scope.test_plan.tests_definitions.length) {
-			$scope.set_active_test_definition($scope.test_plan.tests_definitions[0]);
+		if ($scope.test_run_results.length) {
+			$scope.set_active_test_result($scope.test_run_results[0]);
 		}
 	})
 
-	$scope.get_status = function(test_definition) {
-		var status = $scope.test_run_results_by_test_definition[test_definition.id].status;
-		if (status) {
-			return $scope.statuses_by_id[status]
+	$scope.get_status = function(test_result) {
+		if (test_result.status) {
+			return $scope.statuses_by_id[test_result.status]
 		}
 		return {}
 	}
 
-	$scope.set_status = function(status, test_definition) {
-		var test_run_result = $scope.test_run_results_by_test_definition[test_definition.id];
+	$scope.set_status = function(status, test_result) {
 		if (status) {
-			test_run_result.status = status.id;
+			test_result.status = status.id;
 		} else {
-			test_run_result.status = null;
+			test_result.status = null;
 		}
-		TestRunResult.update({id: test_run_result.id}, test_run_result);
+		TestRunResult.update({id: test_result.id}, test_result);
 	}
 
-	$scope.set_active_test_definition = function(test_definition) {
-		$scope.active_test_definition = test_definition;
-		DefinitionYaml.get({id:test_definition.id}, function(data) {
+	$scope.set_active_test_result = function(test_result) {
+		$scope.active_test_result = test_result;
+		DefinitionYaml.get({id:test_result.test_definition.id}, function(data) {
 			//$scope.yaml = jsyaml.load(data.yaml)
 			$scope.yaml = data.yaml
 		});
 	}
 
-	$scope.add_bug = function(alias, tracker, test_definition) {
-		var test_run_result = $scope.test_run_results_by_test_definition[test_definition.id];
+	$scope.add_bug = function(alias, tracker, test_result) {
 		TestRunResultBug.add(
-			{id:test_run_result.id},
+			{id:test_result.id},
 			{alias:alias, tracker:tracker, action:"add"}).$promise
 			.then(function(bug) {
 				missing = true;
-				_.each(test_run_result.bugs, function(value, i) {
+				_.each(test_result.bugs, function(value, i) {
 					if (value.id == bug.id) {
 						missing = false
 					}
 				});
 				if (missing) {
-					test_run_result.bugs.unshift(bug);
+					test_result.bugs.unshift(bug);
 				}
 			});
 	}
 
-	$scope.remove_bug = function(bug, test_definition) {
-		var test_run_result = $scope.test_run_results_by_test_definition[test_definition.id];
+	$scope.remove_bug = function(bug, test_result) {
 		TestRunResultBug.remove(
-			{id:test_run_result.id},
+			{id:test_result.id},
 			{alias:bug.alias, tracker:bug.tracker, action:"remove"}).$promise
 			.then(function(bug) {
 				var index = -1;
-				_.each(test_run_result.bugs, function(value, i) {
+				_.each(test_result.bugs, function(value, i) {
 					if (value.id == bug.id) {
 						index = i;
 					}
 				});
 				if (index != -1) {
-					test_run_result.bugs.splice(index, 1);
+					test_result.bugs.splice(index, 1);
 				}
 			});
-	}
-
-	$scope.get_test_run_results = function(test_definition) {
-		return $scope.test_run_results_by_test_definition[test_definition.id];
 	}
 
 	$scope.close = function(state) {

@@ -25,6 +25,14 @@ class DeviceSerializer(serializers.ModelSerializer):
         model = models.Device
 
 
+class TestPlanSimpleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.TestPlan
+
+    owner = serializers.RelatedField()
+    device= serializers.RelatedField()
+
+
 class TestPlanSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.TestPlan

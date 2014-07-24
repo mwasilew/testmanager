@@ -23,6 +23,9 @@ class TestRun(models.Model):
 
         return ret
 
+    def get_run_results(self):
+        return self.results.all()
+
     def get_bug_count(self):
         b = Bug.objects.filter(testrunresult__in=list(self.results.all()))
         return b.distinct().count()
@@ -30,21 +33,23 @@ class TestRun(models.Model):
     def update_results(self):
         test_definition_restuls_ids = self.results\
                                           .values_list('test_definition', flat=True)
-        test_definition_ids = self.test_plan.testplantestdefinition_set\
-                                            .values_list('test_definition_id', flat=True)
+        # execute this code only on initial object creation
+        if not test_definition_restuls_ids:
+            test_definition_ids = self.test_plan.testplantestdefinition_set\
+                                                .values_list('test_definition_id', flat=True)
 
 
-        for test_definition_id in set(test_definition_ids) - set(test_definition_restuls_ids):
-            TestRunResult.objects.create(
-                test_run=self,
-                test_definition_id=test_definition_id
-            )
+            for test_definition_id in set(test_definition_ids) - set(test_definition_restuls_ids):
+                TestRunResult.objects.create(
+                    test_run=self,
+                    test_definition_id=test_definition_id
+                )
 
-        for test_definition_id in set(test_definition_restuls_ids) - set(test_definition_ids):
-            TestRunResult.objects.get(
-                test_run=self,
-                test_definition_id=test_definition_id
-            ).delete()
+            for test_definition_id in set(test_definition_restuls_ids) - set(test_definition_ids):
+                TestRunResult.objects.get(
+                    test_run=self,
+                    test_definition_id=test_definition_id
+                ).delete()
 
     def save(self, *args, **kwargs):
         super(TestRun, self).save(*args, **kwargs)
@@ -57,6 +62,8 @@ class TestRunResult(models.Model):
 
     test_run = models.ForeignKey('TestRun', related_name='results')
     test_definition = models.ForeignKey('testplanner.TestDefinition')
+    # add revision field so the proper data is taken into use
+    #test_definition_revision = models.ForeignKey('testplanner.TestDefinitionRevision')
 
     status = models.ForeignKey('TestStatus', null=True, blank=True)
     bugs = models.ManyToManyField('testrunner.Bug', blank=True)
