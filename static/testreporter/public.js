@@ -6,11 +6,15 @@ APP.config(['$routeProvider', function($routeProvider) {
 		});
   }]);
 
-function Report($scope, $window, $routeParams, $http, $sce, Tag) {
+function Report($scope, $window, $routeParams, $http, $sce, $location, Tag) {
 	$scope.tag = Tag.get({id:$routeParams.id}, function() {
 		$scope.description_markup = $sce.trustAsHtml($scope.tag.description_markup);
 	})
 	$http.get('/testreporter/report/'+ $routeParams.id +'/').success(function(data) {
 		$scope.data = data;
 	});
+	$scope.testRunUrl = function(testrun_id) {
+        $window.location.pathname = "/testmanualrunner/#/testrun/" + testrun_id + "/";
+    }
+
 }

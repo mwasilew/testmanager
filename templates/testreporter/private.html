@@ -1,5 +1,11 @@
 {% extends 'base.html' %}
 
+{% block css_include %}
+  {{ block.super }}
+  
+  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}testreporter/main.css">
+{% endblock %}
+
 {% block js_include %}
   {{ block.super }}
   

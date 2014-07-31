@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-lg-12">
-
+    <h1> Bulshit! </h1>
     <h2>Builds</h2>
 
     <table class="table">
@@ -50,7 +50,7 @@
     <hr/>
 
     <h2>Manual Testruns</h2>
-
+some bulshit
     <table class="table">
       <thead>
 	<tr>
@@ -62,9 +62,8 @@
       </thead>
       <tbody>
 	<tr ng-repeat="testrun in data.testruns">
-	  <td><a ng-href='/testplanner/#//testrun.test_plan.id//'>//testrun.test_plan.name//</a></td>
+	  <td><span ng-click="testRunUrl(testrun.id); " class="text-primary">//testrun.test_plan.name// (//testrun.id//)</span></td>
 	  <td ng-repeat="name in testrun.result">// name[1] //</td>
-	  <td>//result.results.fail//</td>
 	</tr>
       </tbody>
     </table>
