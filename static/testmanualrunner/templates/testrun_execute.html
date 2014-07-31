@@ -140,7 +140,7 @@
               Test Expected Results
               </div>
               <div class="list-group">
-                 <a class="list-group-item" ng-repeat="test_expected in yaml.expected">// test_expected //</a>
+                 <a class="list-group-item" ng-bind-html="test_expected" ng-repeat="test_expected in yaml.expected"></a>
               </div>
           </div>
       </div>
