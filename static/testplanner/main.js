@@ -27,7 +27,7 @@ function Index($scope, $window, $routeParams, TestPlan) {
 
 }
 
-function Edit($scope, $location, $window, $routeParams, $q, TestPlan, Device, Definitions) {
+function Edit($scope, $location, $window, $routeParams, $q, TestPlan, Device, Definitions, DefinitionYaml) {
 	$scope.availableDevices = Device.query();
 	$scope.testPlan = TestPlan.get({id:$routeParams.testPlanId}, function(testPlan) {
 		$scope.device = Device.get({id:testPlan.device}, function() {
@@ -46,6 +46,13 @@ function Edit($scope, $location, $window, $routeParams, $q, TestPlan, Device, De
 	$scope.selectDefinition = function(testDefinition) {
 		testDefinition.active = !testDefinition.active;
 	}
+
+    $scope.previewDefinition = function(testDefinition) {
+        DefinitionYaml.get({id:testDefinition.id}, function(data) {
+            //$scope.yaml = jsyaml.load(data.yaml)
+            $scope.yaml = data.yaml
+        });
+    }
 
 	$scope.submit = function() {
 		$scope.testPlan.device = $scope.device.id;
@@ -99,4 +106,12 @@ function New($scope, $window, $routeParams, $location, Device, TestPlan, Definit
 	$scope.selectDefinition = function(testDefinition) {
 		testDefinition.active = !testDefinition.active;
 	}
+
+    $scope.previewDefinition = function(testDefinition) {
+        DefinitionYaml.get({id:testDefinition.id}, function(data) {
+            //$scope.yaml = jsyaml.load(data.yaml)
+            $scope.yaml = data.yaml
+        });
+    }
+
 }

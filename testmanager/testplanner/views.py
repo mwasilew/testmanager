@@ -53,6 +53,7 @@ class Definition_Yaml_View(LoginRequiredMixin, APIView):
             "yaml": {'description': yaml_content['metadata'].get('description', ''),
                      'steps': [x.replace("\n", "<br/>") for x in yaml_content['run'].get('steps', '')],
                      'expected': [x.replace("\n", "<br/>") for x in yaml_content['run'].get('expected', '')],
+                     'metadata': yaml_content['metadata'],
                     }
         })
 
