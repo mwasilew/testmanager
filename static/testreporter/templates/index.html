@@ -12,11 +12,13 @@
     </div>
 
 
-    <table class="table table-striped">
+    <h1 ng-hide="!tags_progress" class="center-block"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading...</h1>
+    <table ng-hide="tags_progress" class="table table-striped">
       <thead>
 	<tr>
 	  <th>#</th>
 	  <th>Name</th>
+	  <th></th>
 	  <th></th>
 	</tr>
       </thead>
@@ -25,8 +27,13 @@
 	  <td><a ng-href="#//tag.id//">//tag.id//</a></td>
 	  <td class="text-left">
 	    <span title="builds attached" class="badge">//tag.builds.length//</span>
-	    <a ng-href="#//tag.id//">//tag.name//</a>
+	    <a ng-href="public/#//tag.id//">//tag.name//</a>
 	  </td>
+      <td>
+        <a ng-href="#//tag.id//">
+          <span class="glyphicon glyphicon-edit"></span>
+        </a>
+      </td>
 	  <td>
 	    <a href="" ng-click="tag.to_remove = true" ng-hide="tag.to_remove">
 	      <span class="pull-right glyphicon glyphicon-trash"></span>

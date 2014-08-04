@@ -22,9 +22,22 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from testmanager.views import LoginRequiredMixin
-from testmanager.testrunner.models import JenkinsBuild, LavaJob, Tag
-from testmanager.testrunner.serializers import BuildSerializer, TagSerializer, LavaJobSerializer
-from testmanager.testmanualrunner.models import TestRun
+from testmanager.testrunner.models import (
+    JenkinsBuild,
+    LavaJob,
+    Tag,
+    Bug
+)
+from testmanager.testrunner.serializers import (
+    BuildSerializer,
+    TagSerializer,
+    LavaJobSerializer,
+    BugSerializer
+)
+from testmanager.testmanualrunner.models import (
+    TestRun,
+    TestRunResult
+)
 from testmanager.testmanualrunner.serializers import TestRunSerializer
 
 
@@ -51,3 +64,19 @@ class Report_View(APIView):
             "testruns": TestRunSerializer(testruns).data,
         })
 
+
+class Report_Bugs_View(APIView):
+
+    def get(self, request, tag_id, format=None):
+
+        tag = Tag.objects.get(id=tag_id)
+        builds = JenkinsBuild.objects.filter(tags=tag)
+        lava_jobs = LavaJob.objects.filter(jenkins_build__in=builds)
+        testruns = TestRun.objects.filter(build__in=builds)
+        testrun_results = TestRunResult.objects.filter(test_run__in=testruns)
+        lava_job_bugs = Bug.objects.filter(lavajob__in=lava_jobs)
+        testruns_bugs = Bug.objects.filter(testrunresult__in=testrun_results)
+
+        return Response({
+            "bugs": BugSerializer(lava_job_bugs | testruns_bugs).data,
+        })

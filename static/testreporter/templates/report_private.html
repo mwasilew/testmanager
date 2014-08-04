@@ -1,12 +1,17 @@
-<div class="row">
+<div ng-hide="!tag_progress" class="row ng-hide">
+  <div class="col-lg-12">
+    <h1 class="center-block"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading...</h1>
+  </div>
+</div>
+<div ng-hide="tag_progress" class="row ng-hide">
   <div class="col-lg-12">
 
-    <div class="page-header">
-      <h1>Report: <small>"//data.tag.name//"</small></h1>
-    </div>
-
-    
     <form role="form" ng-submit="submit()" >
+    <div class="page-header">
+	  <label>Tag name:</label>
+	  <span class="help-inline" ng-bind="error.0"></span>
+      <input class="form-control" ng-model="tag.name" />
+    </div>
 
       <div class="form-group" ng-class="{'has-error':error.description}">
 	<label>Description:</label>
@@ -17,10 +22,15 @@
       <button type="submit" class="btn btn-default btn-sm pull-right input-sm">
 	Save
       </button>
-      
+
     </form>
 
   </div>
 </div>
 
-<div ng-include="'/static/testreporter/templates/report.html'"></div>
+<div ng-hide="!data_progress" class="row ng-hide">
+  <div class="col-lg-12">
+    <h1 class="center-block"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading...</h1>
+  </div>
+</div>
+<div ng-hide="data_progress" ng-include="'/static/testreporter/templates/report.html'"></div>
