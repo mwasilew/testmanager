@@ -180,7 +180,7 @@ class Fetch_LavaJob(LoginRequiredMixin, APIView):
         except LavaJob.DoesNotExist:
             from helpers.jenkins_lava import get_lava_job_details
 
-            success, message = get_lava_job_details(lavajob_id, build_id)
+            success, message = get_lava_job_details(lavajob_id, build)
 
             if success:
                 return Response({
