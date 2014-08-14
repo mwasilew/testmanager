@@ -18,6 +18,7 @@
 
 import re
 from django.db import models
+from django.db.models import Count
 from django.core.urlresolvers import reverse
 from django.conf import settings
 
@@ -196,12 +197,9 @@ class LavaJobResult(models.Model):
 
     def get_resultset_count_by_status(self):
         status_count = {}
-        # TODO: fix this, use aggregate to collect the numbers
-        for testresult in self.lavajobtestresult_set.all():
-            if testresult.status.name in status_count:
-                status_count[testresult.status.name] += 1
-            else:
-                status_count[testresult.status.name] = 1
+        result_count = self.lavajobtestresult_set.values("status__name").annotate(Count("status"))
+        for item in result_count:
+            status_count[item['status__name']] = item['status__count']
         return status_count
 
 

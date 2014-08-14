@@ -119,6 +119,7 @@
 		    	    <th>Test status</th>
 		    	    <th>Pass</th>
 		    	    <th>Fail</th>
+		    	    <th>Skip</th>
 		    	    <th>Compare</th>
 			  </tr>
 			</thead>
@@ -129,6 +130,7 @@
 		    	      <td>{% if testresult %} OK {% else %} Missing {% endif %}</td>
 		    	      <td>{{ testresult.get_resultset_count_by_status.pass }}</td>
 		    	      <td>{{ testresult.get_resultset_count_by_status.fail }}</td>
+		    	      <td>{{ testresult.get_resultset_count_by_status.skip }}</td>
 		    	      <td>
 		    		{% if testresult %}
 		    		  <input type="checkbox" value="{{ testresult.pk }}" name="testresults"/>
