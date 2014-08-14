@@ -18,17 +18,20 @@
 	<tr>
 	  <th>#</th>
 	  <th>Name</th>
-	  <th></th>
-	  <th></th>
+	  <th># of builds in the report</th>
+	  <th>Edit</th>
+	  <th>Delete</th>
 	</tr>
       </thead>
       <tbody>
 	<tr ng-repeat="tag in tags">
 	  <td><a ng-href="#//tag.id//">//tag.id//</a></td>
 	  <td class="text-left">
-	    <span title="builds attached" class="badge">//tag.builds.length//</span>
 	    <a ng-href="public/#//tag.id//">//tag.name//</a>
 	  </td>
+      <td>
+          //tag.builds.length//
+      </td>
       <td>
         <a ng-href="#//tag.id//">
           <span class="glyphicon glyphicon-edit"></span>
