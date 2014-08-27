@@ -93,22 +93,27 @@ def compare_results(request):
             testsets = form.cleaned_data['testresults']
             testcase_names = LavaJobTestResult.objects.filter(
                 lava_job_result__in=testsets).order_by("test_case_id").values("test_case_id").distinct("test_case_id")
+            lavajobs = LavaJob.objects.filter(lavajobresult__in=testsets).distinct("pk").order_by("pk").order_by("pk")
+            lavajob_list = [x['pk'] for x in lavajobs.values('pk')]
             testcase_list = []
-            for testcase in testcase_names:
-                tc_id = testcase['test_case_id']
-                testcase_list.append({'name': tc_id, 'results': [], 'is_different': False})
-                for testset in testsets:
-                    result = testset.lavajobtestresult_set.filter(test_case_id=tc_id)
-                    if result:
-                        testcase_list[-1]['results'].append(result[0].status.name) # there should be only one?
-                    else:
-                        testcase_list[-1]['results'].append("-")
+            for testcase_name in testcase_names:
+                name = testcase_name['test_case_id']
+                tc_statuses = LavaJobTestResult.objects.filter(
+                    lava_job_result__in=testsets,
+                    test_case_id=name).order_by(
+                        "lava_job_result__lava_job").values(
+                            "test_case_id",
+                            "status__name",
+                            "lava_job_result__lava_job")
+                testcase_list.append({'name': name, 'results': ['-' for x in range(0, len(lavajob_list))], 'is_different': False})
+                for status in tc_statuses:
+                    if status['lava_job_result__lava_job'] in lavajob_list:
+                        testcase_list[-1]['results'][lavajob_list.index(status['lava_job_result__lava_job'])] = status['status__name']
                 if len(set(testcase_list[-1]['results'])) > 1:
                     testcase_list[-1]['is_different'] = True
-
             template = loader.get_template('testrunner/compare_results.html')
             context = RequestContext(request, {
-                'testsets': testsets,
+                'testsets': lavajobs,
                 'testcases': testcase_list,
             })
             return HttpResponse(template.render(context))

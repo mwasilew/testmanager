@@ -170,6 +170,9 @@
 		      <a ng-href="/testmanualrunner/#/testrun/new/{{ subbuild.id }}"
 			 class="btn btn-default btn-sm">Manual Tests</a>
 	      		 <button type="submit" class="btn btn-default btn-sm">Compare</button>
+              {% if subbuild.get_all_result_pks %}
+              <a href="/testrunner/compare_results/?{{ subbuild.get_all_result_pks }}" class="btn btn-default btn-sm">Compare all</a>
+              {% endif %}
 		    </div>
 		  </div>
 		</div>

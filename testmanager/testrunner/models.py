@@ -17,6 +17,7 @@
 # along with Testmanager.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
+from urllib import urlencode
 from django.db import models
 from django.db.models import Count
 from django.core.urlresolvers import reverse
@@ -110,6 +111,9 @@ class JenkinsBuild(models.Model):
 
     def get_absolute_url(self):
         return reverse('jenkins_build_view', args=[str(self.job.name), str(self.number)])
+
+    def get_all_result_pks(self):
+        return urlencode({'testresults': [x['pk'] for x in LavaJobResult.objects.filter(lava_job__in=self.lavajob_set.all()).values('pk')]}, True)
 
     def get_hwpack_name(self):
         if self.is_umbrella:
